@@ -57,9 +57,19 @@ function initFalling(){
   console.log(ranType);
   console.log(ranCol);
   falling = new stone(ranType, ranCol);
+  console.log(falling.cubeList);
+  falling.bewegen("y", false);
+  falling.bewegen("y", false);
+  falling.bewegen("y", false);
+  falling.bewegen("y", false);
+  console.log(falling.cubeList);
+
   //falling.cubeList.get
   //console.log(Object.keys(falling);
-  //console.log(falling.cubeList[7]);
+  // console.log(falling.cubeList[0].x, falling.cubeList[0].y, falling.cubeList[0].z);
+  // falling.cubeList[0].x = 1;
+  // falling.cubeList[0].y = 1;
+  // falling.cubeList[0].z = 1;
   for (var i = 0; i < 4; i++){
      console.log(falling.cubeList[i].x, falling.cubeList[i].y, falling.cubeList[i].z );
    }
