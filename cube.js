@@ -1,6 +1,8 @@
 
 
 var cube = function (x, y, z, color){
+
+
   // if (x == undefined){
   //   this.x = 0;
   //   this.y = 0;
@@ -22,6 +24,15 @@ var cube = function (x, y, z, color){
   }
   this.getZ = function(){
     return this.z;
+  }
+  this.setX = function(value){
+    this.x= value;
+  }
+  this.setY = function(value){
+    this.y= value;
+  }
+  this.setZ = function(value){
+    this.z = value;
   }
   console.log('Instance created');
 }

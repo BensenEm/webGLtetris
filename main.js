@@ -57,12 +57,15 @@ function initFalling(){
   console.log(ranType);
   console.log(ranCol);
   falling = new stone(ranType, ranCol);
-  console.log(falling.cubeList);
-  falling.bewegen("y", false);
-  falling.bewegen("y", false);
-  falling.bewegen("y", false);
-  falling.bewegen("y", false);
-  console.log(falling.cubeList);
+
+  falling.bewegen("x", true);
+  falling.bewegen("x", true);
+  falling.bewegen("x", true);
+  falling.bewegen("x", true);
+  falling.bewegen("x", true);
+  falling.bewegen("x", true);
+  falling.bewegen("x", true);
+
 
   //falling.cubeList.get
   //console.log(Object.keys(falling);
@@ -96,7 +99,7 @@ function drawCubes(){
               ( i === falling.cubeList[1].x && j === falling.cubeList[1].y && k === falling.cubeList[1].z)||
               ( i === falling.cubeList[2].x && j === falling.cubeList[2].y && k === falling.cubeList[2].z)||
               ( i === falling.cubeList[3].x && j === falling.cubeList[3].y && k === falling.cubeList[3].z)){
-                  putCube(i, j, k, cr[falling.col], false);
+                  putCube(i, j, k, cr[falling.col], true);
                 }
           // for (var i = 0; i < 4; i++){
           //    console.log(falling.cubeList[i].x);
