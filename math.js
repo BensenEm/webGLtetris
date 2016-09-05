@@ -14,3 +14,20 @@ function makeIterator (array){
     }
   }
 }
+
+function printArena(slice){
+  var line;
+  for (var i = 11; i >= 0; i--){
+    line ="";
+    for (var j = 0; j < xLen; j ++){
+      if (arena[j][i][slice] == 1){
+        line += "T ";
+      }
+      else {
+         line += arena[j][i][slice];
+         line += " ";
+     }
+    }
+    console.log(line);
+  }
+}
