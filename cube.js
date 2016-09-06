@@ -1,6 +1,6 @@
 
 
-var cube = function (x, y, z, cole){
+function Cube (x, y, z, cole){
     this.x = x;
     this.y = y;
     this.z = z;
