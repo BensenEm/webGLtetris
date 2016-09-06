@@ -50,6 +50,7 @@ function init() {
   document.onkeydown = handleKeyDown;
   document.onkeyup = handleKeyUp;
   handleKeys();
+
 }
 
 function initFalling(){
@@ -60,6 +61,7 @@ function initFalling(){
 
 // creates a new Cube at the given XYZ Position, Color, in wireframe or filled Look
 function putCube(x, y, z, col, fill){
+
   geometry = new THREE.BoxGeometry( cubeDim, cubeDim, cubeDim );
   material = new THREE.MeshBasicMaterial( { color: col, wireframe: fill } );
   mesh = new THREE.Mesh( geometry, material );
@@ -68,6 +70,7 @@ function putCube(x, y, z, col, fill){
 }
 
 function drawCubes(){
+  //clear();
   for (var i = 0; i < xLen; i++){
     for (var j = 0; j < yLen; j++){
       for (var k = 0; k < zLen; k++){
