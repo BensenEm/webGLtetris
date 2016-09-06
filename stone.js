@@ -122,7 +122,7 @@ function Stone (type, col){
          this.cubeList[i].y +=1;
       }
       this.copyInArena();
-      initMicroFall();
+      initFalling();
     }
     console.log(this.cubeList);
   }

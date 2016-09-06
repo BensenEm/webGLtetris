@@ -17,6 +17,8 @@ var diagDistance = 8; // factor for diagonal distance to corner of arena
 var camHight = 250; // height of camera
 var falling;        // Currently falling Tetris Stone
 var geometry, material, mesh;
+var timeUnit = 1000;
+var currentTime = Date.now();
 var cr = new Array() //Holds color values in Hex
   cr[0]= 0x404040; //grey
   cr[1]= 0xff8000; //orange
@@ -68,9 +70,18 @@ function putCube(x, y, z, col, fill){
   scene.add( mesh );
   mesh.position.set(x*cubeDim, y*cubeDim, z*cubeDim);
 }
+function putFloor (){
+  geometry = new THREE.BoxGeometry( 6*cubeDim, 6, 6*cubeDim );
+  material = new THREE.MeshBasicMaterial( { color: 0x8000ff, wireframe: true } );
+  floor = new THREE.Mesh( geometry, material );
+  scene.add( floor );
+  floor.position.set(cubeDim *2.5, -23, cubeDim*2.5);
+  //mesh.position.set(x*cubeDim, y*cubeDim, z*cubeDim);
+}
 
 function drawCubes(){
-  //clear();
+  scene= new THREE.Scene();
+  putFloor();
   for (var i = 0; i < xLen; i++){
     for (var j = 0; j < yLen; j++){
       for (var k = 0; k < zLen; k++){
@@ -98,9 +109,20 @@ function drawCubes(){
 }
 
 
+
+function mainLoop(){
+  now = Date.now();
+  deltaT = now - currentTime;
+  if (deltaT > timeUnit){
+    falling.drop();
+    currentTime = Date.now();
+  }
+}
+
 function run(){
   requestAnimationFrame(function(){run();});
   renderer.render( scene, camera );
+  mainLoop();
   drawCubes();
 
 }
