@@ -4,30 +4,13 @@ function getRandomIntInclusive(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function makeIterator (array){
-  var nextIndex = 0;
-  return {
-    next: function(){
-      return nextIndex < array.length ?
-        {value: array[nextIndex++], done:false} :
-        {done: true};
-    }
-  }
-}
-
-function printArena(slice){
-  var line;
-  for (var i = 11; i >= 0; i--){
-    line ="";
-    for (var j = 0; j < xLen; j ++){
-      if (arena[j][i][slice] == 1){
-        line += "T ";
+// paints black over everything
+function clear(){
+  for (var i = 0; i < xLen; i++){
+    for (var j = 0; j < yLen; j++){
+      for (var k = 0; k < zLen; k++){
+        putCube(i,j,k, 0, true);
       }
-      else {
-         line += arena[j][i][slice];
-         line += " ";
-     }
     }
-    console.log(line);
   }
 }

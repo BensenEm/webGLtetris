@@ -1,4 +1,5 @@
-function stone (type, col){
+
+function Stone (type, col){
   this.cubeList = new Array();
   this.farbe = col;
   this.bewegen = function (axis, direction){
@@ -73,15 +74,18 @@ function stone (type, col){
           }
         }
       }
+      console.log(this.cubeList);
+
 
 
   }
   this.copyInArena = function (){
+    var a, b, c;
     for (var i = 0; i < 4; i++){
       //arena[this.cubeList[i].x][this.cubeList[i].y][this.cubeList[i].z] = this.farbe;
-      var a = this.cubeList[i].x;
-      var b = this.cubeList[i].y;
-      var c = this.cubeList[i].z;
+      a = this.cubeList[i].x;
+      b = this.cubeList[i].y;
+      c = this.cubeList[i].z;
       arena[a][b][c]= this.farbe;
       }
   }
@@ -117,11 +121,13 @@ function stone (type, col){
       for( var i= 0; i < 4; i++){
          this.cubeList[i].y +=1;
       }
+      this.copyInArena();
+      initMicroFall();
     }
-    console.log("dropped");
+    console.log(this.cubeList);
   }
   this.turn = function (axis, direction){
-    var anker = new cube(this.cubeList[0].x, this.cubeList[0].y, this.cubeList[0].z, this.farbe);
+    var anker = new Cube(this.cubeList[0].x, this.cubeList[0].y, this.cubeList[0].z, this.farbe);
     console.log(anker);
     for (var i=0; i<4; i++){
       var diff = this.cubeList[i].transform(axis, direction, anker); //MACHE TRANSFORM
@@ -133,44 +139,43 @@ function stone (type, col){
       this.turn(axis, !direction);
     }
   }
-  //this.prototype = function(){
-    switch (type){
+
+
+
+  switch (type){
     case (1):
-      this.cubeList.push(new cube(xLen/2 - 1, yLen-1, zLen-1 , col));
-      this.cubeList.push(new cube(xLen/2, yLen-1, zLen-1, col));
-			this.cubeList.push(new cube(xLen/2 + 1, yLen-1, zLen-1, col));
-			this.cubeList.push(new cube(xLen/2 + 2, yLen-1, zLen-1, col));
+      this.cubeList.push(new Cube(xLen/2 - 1, yLen-1, zLen-1 , col));
+      this.cubeList.push(new Cube(xLen/2, yLen-1, zLen-1, col));
+			this.cubeList.push(new Cube(xLen/2 + 1, yLen-1, zLen-1, col));
+			this.cubeList.push(new Cube(xLen/2 + 2, yLen-1, zLen-1, col));
       break;
 
     case (2):
-      this.cubeList.push(new cube((xLen / 2) - 1, yLen - 2, zLen-1 , col));
-			this.cubeList.push(new cube((xLen / 2) - 1, yLen-1, zLen-1, col));
-			this.cubeList.push(new cube((xLen / 2), yLen-1, zLen-1, col));
-			this.cubeList.push(new cube((xLen / 2) + 1, yLen-1, zLen-1, col));
+      this.cubeList.push(new Cube((xLen / 2) - 1, yLen - 2, zLen-1 , col));
+			this.cubeList.push(new Cube((xLen / 2) - 1, yLen-1, zLen-1, col));
+			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen-1, col));
+			this.cubeList.push(new Cube((xLen / 2) + 1, yLen-1, zLen-1, col));
 			break;
 
     case (3):
-      this.cubeList.push(new cube((xLen / 2) - 1, yLen - 2, zLen-1, col));
-			this.cubeList.push(new cube((xLen / 2), yLen - 2, zLen-1, col));
-			this.cubeList.push(new cube((xLen / 2), yLen-1, zLen-1, col));
-			this.cubeList.push(new cube((xLen / 2) + 1, yLen-1, zLen-1, col));
+      this.cubeList.push(new Cube((xLen / 2) - 1, yLen - 2, zLen-1, col));
+			this.cubeList.push(new Cube((xLen / 2), yLen - 2, zLen-1, col));
+			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen-1, col));
+			this.cubeList.push(new Cube((xLen / 2) + 1, yLen-1, zLen-1, col));
 			break;
 
     case (4):
-      this.cubeList.push(new cube((xLen / 2) - 1, yLen - 2, zLen-1, col));
-			this.cubeList.push(new cube((xLen / 2), yLen - 2, zLen-1, col));
-			this.cubeList.push(new cube((xLen / 2) - 1, yLen-1, zLen-1, col));
-			this.cubeList.push(new cube((xLen / 2), yLen-1, zLen-1, col));
+      this.cubeList.push(new Cube((xLen / 2) - 1, yLen - 2, zLen-1, col));
+			this.cubeList.push(new Cube((xLen / 2), yLen - 2, zLen-1, col));
+			this.cubeList.push(new Cube((xLen / 2) - 1, yLen-1, zLen-1, col));
+			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen-1, col));
 			break;
 
     case (5):
-      this.cubeList.push(new cube((xLen / 2), yLen - 2, zLen-1, col));
-			this.cubeList.push(new cube((xLen / 2) - 1, yLen-1, zLen-1, col));
-			this.cubeList.push(new cube((xLen / 2), yLen-1, zLen-1, col));
-			this.cubeList.push(new cube((xLen / 2) + 1, yLen-1, zLen-1, col));
+      this.cubeList.push(new Cube((xLen / 2), yLen - 2, zLen-1, col));
+			this.cubeList.push(new Cube((xLen / 2) - 1, yLen-1, zLen-1, col));
+			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen-1, col));
+			this.cubeList.push(new Cube((xLen / 2) + 1, yLen-1, zLen-1, col));
       break;
-
-    default:
   }
-  //}
 }
