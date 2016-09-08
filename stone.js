@@ -41,9 +41,6 @@ function Stone (type, col){
           }
         }
       }
-
-      console.log(this.cubeFree());
-
       if (!this.cubeFree()){
         for (var i =0; i <4; i++){
           if (direction == true){
@@ -74,10 +71,6 @@ function Stone (type, col){
           }
         }
       }
-      console.log(this.cubeList);
-
-
-
   }
   this.copyInArena = function (){
     var a, b, c;
@@ -122,13 +115,14 @@ function Stone (type, col){
          this.cubeList[i].y +=1;
       }
       this.copyInArena();
+      deleteCompletedLines();
+
       initFalling();
+
     }
-    console.log(this.cubeList);
   }
   this.turn = function (axis, direction){
     var anker = new Cube(this.cubeList[0].x, this.cubeList[0].y, this.cubeList[0].z, this.farbe);
-    console.log(anker);
     for (var i=0; i<4; i++){
       var diff = this.cubeList[i].transform(axis, direction, anker); //MACHE TRANSFORM
       this.cubeList[i].x = diff.x + anker.x;

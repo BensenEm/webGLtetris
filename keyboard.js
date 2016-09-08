@@ -1,51 +1,56 @@
 var currentlyPressedKeys = {};
     function handleKeyDown(event) {
-        currentlyPressedKeys[event.keyCode] = true;
+      currentlyPressedKeys[event.keyCode] = true;
+        if (statePause === false){
         if (String.fromCharCode(event.keyCode) == "R") {
             falling.turn("x", true);
-            console.log("R pressed");
         }
         if (String.fromCharCode(event.keyCode) == "E") {
             falling.turn("x", !true);
-            console.log("E pressed");
         }
         if (String.fromCharCode(event.keyCode) == "F") {
             falling.turn("y", true);
-            console.log("F pressed");
         }
         if (String.fromCharCode(event.keyCode) == "D") {
             falling.turn("y", !true);
-            console.log("D pressed");
         }
         if (String.fromCharCode(event.keyCode) == "V") {
             falling.turn("z", true);
-            console.log("V pressed");
         }
         if (String.fromCharCode(event.keyCode) == "C") {
             falling.turn("z", !true);
-            console.log("C pressed");
         }
-
         if (String.fromCharCode(event.keyCode) == "I") {
             falling.bewegen("z", !true);
-            console.log("I pressed");
         }
         if (String.fromCharCode(event.keyCode) == "K") {
             falling.bewegen("z", true);
-            console.log("K pressed");
         }
         if (String.fromCharCode(event.keyCode) == "J") {
             falling.bewegen("x", !true);
-            console.log("J pressed");
         }
         if (String.fromCharCode(event.keyCode) == "L") {
             falling.bewegen("x", true);
-            console.log("L pressed");
         }
         if (String.fromCharCode(event.keyCode) == " ") {
             falling.drop();
-            console.log("SPACE pressed");
         }
+
+      }
+      if (String.fromCharCode(event.keyCode) == "P") {
+          statePause = !statePause;
+          console.log("PAUSE");
+      }
+      if (String.fromCharCode(event.keyCode) == "Q") {
+          console.log("Arena: ", arena);
+      }
+      if (String.fromCharCode(event.keyCode) == "A") {
+          midArena = copyArena();
+          console.log("Midarena: ", midArena);
+      }
+      if (String.fromCharCode(event.keyCode) == "Y") {
+        console.log("Midarena2 ", midArena );
+      }
         // if else (String.fromCharCode(event.keyCode) == "???") {
         //     falling.turn("x", !true);
         //     console.log("E pressed");

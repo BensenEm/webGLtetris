@@ -59,9 +59,7 @@ function Cube (x, y, z, cole){
       diff.y = -1 * diff.x;
       diff.x = temp.y;
     }
-    console.log(diff);
     return diff;
 
   }
-  console.log('Instance created');
 }
