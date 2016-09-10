@@ -20,6 +20,7 @@ var falling;        // Currently falling Tetris Stone
 var geometry, material, mesh;
 var timeUnit = 2000;
 var currentTime = Date.now();
+var memberCount = 4;
 var cr = new Array() //Holds color values in Hex
   cr[0]= 0x404040; //grey
   cr[1]= 0xff8000; //orange
@@ -34,6 +35,13 @@ var stateDeleting = false;
 var statePause = false;
 var oldArena, midArena, newArena;
 var disToFloor;
+var fallingObj = new THREE.Object3D();
+var arenaObj = new THREE.Object3D();
+var groundObj = new THREE.Object3D();
+var backgroundObj = new THREE.Object3D();
+var geo = new THREE.BoxGeometry( cubeDim, cubeDim, cubeDim );
+var matWa = new THREE.MeshBasicMaterial( { color: 0x00000, wireframe: true } ); // generic Wireframe of Cube
+
 
 
 start();
@@ -59,7 +67,13 @@ function init() {
   document.onkeydown = handleKeyDown;
   document.onkeyup = handleKeyUp;
   handleKeys();
-
+  light = new THREE.DirectionalLight( 0xffffff );
+  light.position.set( 0, 1, 1 ).normalize();
+  putFloor();
+  scene.add(fallingObj);
+  scene.add(arenaObj);
+  scene.add(groundObj);
+  //scene.add(backgroundObj);
 }
 
 function initFalling(){
@@ -70,79 +84,97 @@ function initFalling(){
 }
 
 // creates a new Cube at the given XYZ Position, Color, in wireframe or filled Look
+// function putCubeWire(x, y, z){
+//   geometry = new THREE.BoxGeometry( cubeDim, cubeDim, cubeDim );
+//   material = new THREE.MeshBasicMaterial( { color: 0x000001, wireframe: true } );
+//   //material = new THREE.MeshPhongMaterial( { ambient: 0x050505, color: col, specular: 0x555555, shininess: 300 } );
+//   mesh = new THREE.Mesh( geometry, material );
+//   scene.add( mesh );
+//   mesh.position.set(x*cubeDim, y*cubeDim, z*cubeDim);
+// }
+//
+// function putCube(x, y, z, col){
+//   geometry = new THREE.BoxGeometry( cubeDim, cubeDim, cubeDim );
+//   material = new THREE.MeshBasicMaterial( { color: col, wireframe: false } );
+//   //material = new THREE.MeshPhongMaterial( { ambient: 0x050505, color: col, specular: 0x555555, shininess: 30 } );
+//   mesh = new THREE.Mesh( geometry, material );
+//   scene.add( mesh );
+//   mesh.position.set(x*cubeDim, y*cubeDim, z*cubeDim);
+// }
 
-function putCubeWire(x, y, z){
-  geometry = new THREE.BoxGeometry( cubeDim, cubeDim, cubeDim );
-  material = new THREE.MeshBasicMaterial( { color: 0x000001, wireframe: true } );
-  //material = new THREE.MeshPhongMaterial( { ambient: 0x050505, color: col, specular: 0x555555, shininess: 300 } );
-  mesh = new THREE.Mesh( geometry, material );
-  scene.add( mesh );
-  mesh.position.set(x*cubeDim, y*cubeDim, z*cubeDim);
+function updateArena(){
+  for (var i = 0; i < xLen; i++){
+    for (var j = 0; j < yLen; j++){
+      for (var k = 0; k < zLen; k++){
+        if (arena[i][j][k]===1) {continue;}
+        var fa = arena[i][j][k]; // Color at this position in arena
+        console.log(arena[i][j][k]);
+        var mat = new THREE.MeshBasicMaterial( { color: fa, wireframe: false } );
+        mesh = new THREE.Mesh( geo, mat );
+        meshW = new THREE.Mesh (geo, matWa);
+        mesh.position.set(i *cubeDim, j*cubeDim, k*cubeDim);
+        meshW.position.set(i *cubeDim, j*cubeDim, k*cubeDim);
+
+        arenaObj.add (meshW);
+        arenaObj.add (mesh);
+      }
+    }
+  }
 }
 
-function putCube(x, y, z, col){
-  geometry = new THREE.BoxGeometry( cubeDim, cubeDim, cubeDim );
-  material = new THREE.MeshBasicMaterial( { color: col, wireframe: false } );
-  //material = new THREE.MeshPhongMaterial( { ambient: 0x050505, color: col, specular: 0x555555, shininess: 30 } );
-  mesh = new THREE.Mesh( geometry, material );
-  scene.add( mesh );
-  mesh.position.set(x*cubeDim, y*cubeDim, z*cubeDim);
-}
 
 function putFloor (){
   geometry = new THREE.BoxGeometry( 6*cubeDim, 6, 6*cubeDim );
   //material = new THREE.MeshPhongMaterial( { ambient: 0x050505, color: 0x0033ff, specular: 0x555555, shininess: 30 } );
   material = new THREE.MeshBasicMaterial( { color: 0x8000ff, wireframe: true } );
   floor = new THREE.Mesh( geometry, material );
-  scene.add( floor );
-  floor.position.set(cubeDim *2.5, -23, cubeDim*2.5);
+  groundObj.add( floor );
+  groundObj.position.set(cubeDim *2.5, -23, cubeDim*2.5);
   //mesh.position.set(x*cubeDim, y*cubeDim, z*cubeDim);
 }
 
-function drawCubes(){
-  scene= new THREE.Scene();
-  var light = new THREE.DirectionalLight( 0xffffff );
-  light.position.set( 0, 1, 1 ).normalize();
-  scene.add(light);
-  putFloor();
-  for (var i = 0; i < xLen; i++){
-    for (var j = 0; j < yLen; j++){
-      for (var k = 0; k < zLen; k++){
-
-        // draws the empty arena
-        if (arena[i][j][k] === 1);// {putCube(i,j,k, 0x404040, true);}
-
-        // draws cubes within the arena that have halted
-        else {
-          var far = arena[i][j][k];
-          putCube(i, j, k, far, false);
-          putCubeWire (i, j, k);
-        }
-
-        //draws the currently falling "FALLING" Stone
-        if (stateFalling === true) {
-          //updates the Helpstone
-          if ( ( i === falling.helpstoneList[0].x && j === falling.helpstoneList[0].y && k == falling.helpstoneList[0].z)||
-              ( i === falling.helpstoneList[1].x && j === falling.helpstoneList[1].y && k === falling.helpstoneList[1].z)||
-              ( i === falling.helpstoneList[2].x && j === falling.helpstoneList[2].y && k === falling.helpstoneList[2].z)||
-              ( i === falling.helpstoneList[3].x && j === falling.helpstoneList[3].y && k === falling.helpstoneList[3].z)){
-                  //scene.remove(mesh);
-                  //putCube(i, j, k, falling.farbe, false);
-                  putCubeWire(i, j, k);
-          }
-          //updates the actual Falling Stone itself
-          if ( ( i === falling.cubeList[0].x && j === falling.cubeList[0].y && k == falling.cubeList[0].z)||
-              ( i === falling.cubeList[1].x && j === falling.cubeList[1].y && k === falling.cubeList[1].z)||
-              ( i === falling.cubeList[2].x && j === falling.cubeList[2].y && k === falling.cubeList[2].z)||
-              ( i === falling.cubeList[3].x && j === falling.cubeList[3].y && k === falling.cubeList[3].z)){
-                  putCube(i, j, k, falling.farbe, false);
-                  putCubeWire(i, j, k);
-          }
-        }
-      }
-    }
-  }
-}
+// function drawCubes(){
+//   scene= new THREE.Scene();
+//   scene.add(light);
+//   putFloor();
+//   for (var i = 0; i < xLen; i++){
+//     for (var j = 0; j < yLen; j++){
+//       for (var k = 0; k < zLen; k++){
+//
+//         // draws the empty arena
+//         if (arena[i][j][k] === 1);// {putCube(i,j,k, 0x404040, true);}
+//
+//         // draws cubes within the arena that have halted
+//         else {
+//           var far = arena[i][j][k];
+//           putCube(i, j, k, far, false);
+//           putCubeWire (i, j, k);
+//         }
+//
+//         //draws the currently falling "FALLING" Stone
+//         if (stateFalling === true) {
+//           //updates the Helpstone
+//           if ( ( i === falling.helpstoneList[0].x && j === falling.helpstoneList[0].y && k == falling.helpstoneList[0].z)||
+//               ( i === falling.helpstoneList[1].x && j === falling.helpstoneList[1].y && k === falling.helpstoneList[1].z)||
+//               ( i === falling.helpstoneList[2].x && j === falling.helpstoneList[2].y && k === falling.helpstoneList[2].z)||
+//               ( i === falling.helpstoneList[3].x && j === falling.helpstoneList[3].y && k === falling.helpstoneList[3].z)){
+//                   //scene.remove(mesh);
+//                   //putCube(i, j, k, falling.farbe, false);
+//                   putCubeWire(i, j, k);
+//           }
+//           //updates the actual Falling Stone itself
+//           if ( ( i === falling.cubeList[0].x && j === falling.cubeList[0].y && k == falling.cubeList[0].z)||
+//               ( i === falling.cubeList[1].x && j === falling.cubeList[1].y && k === falling.cubeList[1].z)||
+//               ( i === falling.cubeList[2].x && j === falling.cubeList[2].y && k === falling.cubeList[2].z)||
+//               ( i === falling.cubeList[3].x && j === falling.cubeList[3].y && k === falling.cubeList[3].z)){
+//                   putCube(i, j, k, falling.farbe, false);
+//                   putCubeWire(i, j, k);
+//           }
+//         }
+//       }
+//     }
+//   }
+// }
 
 // takes an Arena and sets slots to 1 that are within eraseArray
 function eraseFromArena(typeOfArena, eraseArray){
@@ -269,6 +301,6 @@ function run(){
     if(statePause === false){
     renderer.render( scene, camera );
     mainLoop();
-    drawCubes();
+    //drawCubes();
   }
 }

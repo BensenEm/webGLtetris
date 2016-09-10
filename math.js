@@ -46,7 +46,7 @@ function copyArena(a){
 function updateHelpstone(){
   falling.helpstoneList.length = 0;
   disToFloor = yLen-1;
-  for (var i= 0; i < 4; i++){
+  for (var i= 0; i < memberCount; i++){
 
     var x = falling.cubeList[i].x;
     var y = falling.cubeList[i].y;
@@ -55,13 +55,13 @@ function updateHelpstone(){
     falling.helpstoneList.push(new Cube(x, y, z, 0xffffff));
   }
   distanceToFloor();
-  for (var i = 0; i < 4; i++) {
+  for (var i = 0; i < memberCount; i++) {
     falling.helpstoneList[i].y -= disToFloor;
   }
 }
   //updates distance between FALLING and lowest possible position
   function distanceToFloor() {
-    for (var i= 0; i<4; i++){
+    for (var i= 0; i<memberCount; i++){
       var f = 0;
       var x = falling.cubeList[i].x;
       var z = falling.cubeList[i].z;
