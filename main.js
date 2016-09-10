@@ -18,7 +18,7 @@ var diagDistance = 8; // factor for diagonal distance to corner of arena
 var camHight = 150; // height of camera
 var falling;        // Currently falling Tetris Stone
 var geometry, material, mesh;
-var timeUnit = 1000;
+var timeUnit = 2000;
 var currentTime = Date.now();
 var cr = new Array() //Holds color values in Hex
   cr[0]= 0x404040; //grey
@@ -33,13 +33,16 @@ var stateFalling = true;
 var stateDeleting = false;
 var statePause = false;
 var oldArena, midArena, newArena;
+var disToFloor;
 
 
+start();
 
-
-init();
-initFalling();
-run();
+function start(){
+  init();
+  initFalling();
+  run();
+}
 
 function init() {
   scene = new THREE.Scene();
@@ -63,21 +66,33 @@ function initFalling(){
   var ranType = getRandomIntInclusive(1,5);
   var ranCol = getRandomIntInclusive(1, (Object.keys(cr).length) -1);
   falling = new Stone(ranType,cr[ranCol]);
+  updateHelpstone();
 }
 
 // creates a new Cube at the given XYZ Position, Color, in wireframe or filled Look
 
-function putCube(x, y, z, col, fill){
+function putCubeWire(x, y, z){
   geometry = new THREE.BoxGeometry( cubeDim, cubeDim, cubeDim );
-  material = new THREE.MeshBasicMaterial( { color: col, wireframe: fill } );
+  material = new THREE.MeshBasicMaterial( { color: 0x000001, wireframe: true } );
+  //material = new THREE.MeshPhongMaterial( { ambient: 0x050505, color: col, specular: 0x555555, shininess: 300 } );
   mesh = new THREE.Mesh( geometry, material );
   scene.add( mesh );
   mesh.position.set(x*cubeDim, y*cubeDim, z*cubeDim);
 }
+
+function putCube(x, y, z, col){
+  geometry = new THREE.BoxGeometry( cubeDim, cubeDim, cubeDim );
+  material = new THREE.MeshBasicMaterial( { color: col, wireframe: false } );
+  //material = new THREE.MeshPhongMaterial( { ambient: 0x050505, color: col, specular: 0x555555, shininess: 30 } );
+  mesh = new THREE.Mesh( geometry, material );
+  scene.add( mesh );
+  mesh.position.set(x*cubeDim, y*cubeDim, z*cubeDim);
+}
+
 function putFloor (){
   geometry = new THREE.BoxGeometry( 6*cubeDim, 6, 6*cubeDim );
-  material = new THREE.MeshPhongMaterial( { ambient: 0x050505, color: 0x0033ff, specular: 0x555555, shininess: 30 } );
-  //material = new THREE.MeshBasicMaterial( { color: 0x8000ff, wireframe: true } );
+  //material = new THREE.MeshPhongMaterial( { ambient: 0x050505, color: 0x0033ff, specular: 0x555555, shininess: 30 } );
+  material = new THREE.MeshBasicMaterial( { color: 0x8000ff, wireframe: true } );
   floor = new THREE.Mesh( geometry, material );
   scene.add( floor );
   floor.position.set(cubeDim *2.5, -23, cubeDim*2.5);
@@ -100,17 +115,28 @@ function drawCubes(){
         // draws cubes within the arena that have halted
         else {
           var far = arena[i][j][k];
-          putCube(i, j, k, far, true);
+          putCube(i, j, k, far, false);
+          putCubeWire (i, j, k);
         }
 
         //draws the currently falling "FALLING" Stone
         if (stateFalling === true) {
+          //updates the Helpstone
+          if ( ( i === falling.helpstoneList[0].x && j === falling.helpstoneList[0].y && k == falling.helpstoneList[0].z)||
+              ( i === falling.helpstoneList[1].x && j === falling.helpstoneList[1].y && k === falling.helpstoneList[1].z)||
+              ( i === falling.helpstoneList[2].x && j === falling.helpstoneList[2].y && k === falling.helpstoneList[2].z)||
+              ( i === falling.helpstoneList[3].x && j === falling.helpstoneList[3].y && k === falling.helpstoneList[3].z)){
+                  //scene.remove(mesh);
+                  //putCube(i, j, k, falling.farbe, false);
+                  putCubeWire(i, j, k);
+          }
+          //updates the actual Falling Stone itself
           if ( ( i === falling.cubeList[0].x && j === falling.cubeList[0].y && k == falling.cubeList[0].z)||
               ( i === falling.cubeList[1].x && j === falling.cubeList[1].y && k === falling.cubeList[1].z)||
               ( i === falling.cubeList[2].x && j === falling.cubeList[2].y && k === falling.cubeList[2].z)||
               ( i === falling.cubeList[3].x && j === falling.cubeList[3].y && k === falling.cubeList[3].z)){
-                  //scene.remove(mesh);
-                  putCube(i, j, k, falling.farbe, true);
+                  putCube(i, j, k, falling.farbe, false);
+                  putCubeWire(i, j, k);
           }
         }
       }

@@ -1,6 +1,8 @@
 
 function Stone (type, col){
+  this.disToFloor;
   this.cubeList = new Array();
+  this.helpstoneList = new Array();
   this.farbe = col;
   this.bewegen = function (axis, direction){
       if (direction === true){
@@ -71,6 +73,7 @@ function Stone (type, col){
           }
         }
       }
+    updateHelpstone();
   }
   this.copyInArena = function (){
     var a, b, c;
@@ -110,17 +113,23 @@ function Stone (type, col){
     for (var i=0; i < 4; i++){
       this.cubeList[i].y -=1;
     }
-    if (!this.cubeFree()){
+    if (this.cubeFree()){
+      updateHelpstone();
+    }
+    else{
       for( var i= 0; i < 4; i++){
          this.cubeList[i].y +=1;
       }
       this.copyInArena();
+      console.log(this.cubeList);
+      console.log(this.helpstoneList);
       deleteCompletedLines();
 
       initFalling();
 
     }
   }
+
   this.turn = function (axis, direction){
     var anker = new Cube(this.cubeList[0].x, this.cubeList[0].y, this.cubeList[0].z, this.farbe);
     for (var i=0; i<4; i++){
@@ -132,44 +141,44 @@ function Stone (type, col){
     if (this.cubeFree() == false){
       this.turn(axis, !direction);
     }
+    updateHelpstone();
   }
-
 
 
   switch (type){
     case (1):
-      this.cubeList.push(new Cube(xLen/2 - 1, yLen-1, zLen-1 , col));
-      this.cubeList.push(new Cube(xLen/2, yLen-1, zLen-1, col));
-			this.cubeList.push(new Cube(xLen/2 + 1, yLen-1, zLen-1, col));
-			this.cubeList.push(new Cube(xLen/2 + 2, yLen-1, zLen-1, col));
+      this.cubeList.push(new Cube(xLen/2 - 1, yLen-1, zLen/2 , col));
+      this.cubeList.push(new Cube(xLen/2, yLen-1, zLen/2, col));
+			this.cubeList.push(new Cube(xLen/2 + 1, yLen-1, zLen/2, col));
+			this.cubeList.push(new Cube(xLen/2 + 2, yLen-1, zLen/2, col));
       break;
 
     case (2):
-      this.cubeList.push(new Cube((xLen / 2) - 1, yLen - 2, zLen-1 , col));
-			this.cubeList.push(new Cube((xLen / 2) - 1, yLen-1, zLen-1, col));
-			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen-1, col));
-			this.cubeList.push(new Cube((xLen / 2) + 1, yLen-1, zLen-1, col));
+      this.cubeList.push(new Cube((xLen / 2) - 1, yLen - 2, zLen/2 , col));
+			this.cubeList.push(new Cube((xLen / 2) - 1, yLen-1, zLen/2, col));
+			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen/2, col));
+			this.cubeList.push(new Cube((xLen / 2) + 1, yLen-1, zLen/2, col));
 			break;
 
     case (3):
-      this.cubeList.push(new Cube((xLen / 2) - 1, yLen - 2, zLen-1, col));
-			this.cubeList.push(new Cube((xLen / 2), yLen - 2, zLen-1, col));
-			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen-1, col));
-			this.cubeList.push(new Cube((xLen / 2) + 1, yLen-1, zLen-1, col));
+      this.cubeList.push(new Cube((xLen / 2) - 1, yLen - 2, zLen/2, col));
+			this.cubeList.push(new Cube((xLen / 2), yLen - 2, zLen/2, col));
+			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen/2, col));
+			this.cubeList.push(new Cube((xLen / 2) + 1, yLen-1, zLen/2, col));
 			break;
 
     case (4):
-      this.cubeList.push(new Cube((xLen / 2) - 1, yLen - 2, zLen-1, col));
-			this.cubeList.push(new Cube((xLen / 2), yLen - 2, zLen-1, col));
-			this.cubeList.push(new Cube((xLen / 2) - 1, yLen-1, zLen-1, col));
-			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen-1, col));
+      this.cubeList.push(new Cube((xLen / 2) - 1, yLen - 2, zLen/2, col));
+			this.cubeList.push(new Cube((xLen / 2), yLen - 2, zLen/2, col));
+			this.cubeList.push(new Cube((xLen / 2) - 1, yLen-1, zLen/2, col));
+			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen/2, col));
 			break;
 
     case (5):
-      this.cubeList.push(new Cube((xLen / 2), yLen - 2, zLen-1, col));
-			this.cubeList.push(new Cube((xLen / 2) - 1, yLen-1, zLen-1, col));
-			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen-1, col));
-			this.cubeList.push(new Cube((xLen / 2) + 1, yLen-1, zLen-1, col));
+      this.cubeList.push(new Cube((xLen / 2), yLen - 2, zLen/2, col));
+			this.cubeList.push(new Cube((xLen / 2) - 1, yLen-1, zLen/2, col));
+			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen/2, col));
+			this.cubeList.push(new Cube((xLen / 2) + 1, yLen-1, zLen/2, col));
       break;
   }
 }

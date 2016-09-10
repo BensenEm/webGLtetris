@@ -1,7 +1,7 @@
 var currentlyPressedKeys = {};
     function handleKeyDown(event) {
       currentlyPressedKeys[event.keyCode] = true;
-        if (statePause === false){
+    //    if (statePause === false){
         if (String.fromCharCode(event.keyCode) == "R") {
             falling.turn("x", true);
         }
@@ -36,13 +36,14 @@ var currentlyPressedKeys = {};
             falling.drop();
         }
 
-      }
+    //  }
       if (String.fromCharCode(event.keyCode) == "P") {
           statePause = !statePause;
           console.log("PAUSE");
       }
       if (String.fromCharCode(event.keyCode) == "Q") {
-          console.log("Arena: ", arena);
+          console.log("QUIT/RESTART");
+          start();
       }
       if (String.fromCharCode(event.keyCode) == "A") {
           midArena = copyArena();
