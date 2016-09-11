@@ -77,3 +77,12 @@ function updateHelpstone(){
       }
     }
   }
+
+function rotateArena(){
+  r_now = Date.now();
+  r_deltaT = r_now - currentTime;
+  if (r_deltaT > 125){
+    arenaCase.rotation.y += Math.PI/8;
+    currentTime = Date.now();
+  }
+}

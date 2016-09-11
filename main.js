@@ -41,19 +41,23 @@ var arenaObj = new THREE.Object3D();
 var arOld =new THREE.Object3D();
 var arMid =new THREE.Object3D();
 var arNew =new THREE.Object3D();
+var arenaCase = new THREE.Object3D();
 arOld.name ="arOld";
 arMid.name ="arMid";
 arNew.name ="arNew";
 arMid.visible = false;
 arNew.visible = false;
-arenaObj.add(arOld);
-arenaObj.add(arMid);
-arenaObj.add(arNew);
 
 var groundObj = new THREE.Object3D();
 var backgroundObj = new THREE.Object3D();
 var geo = new THREE.BoxGeometry( cubeDim, cubeDim, cubeDim );
 var matWa = new THREE.MeshBasicMaterial( { color: 0x00000, wireframe: true } ); // generic Wireframe of Cube
+arenaObj.add(arOld);
+arenaObj.add(arMid);
+arenaObj.add(arNew);
+arenaObj.add(fallingObj);
+arenaObj.add(groundObj);
+arenaCase.add(arenaObj);
 
 
 
@@ -68,11 +72,13 @@ function start(){
 function init() {
   scene = new THREE.Scene();
 	camera = new THREE.PerspectiveCamera( 70, window.innerWidth / (window.innerHeight), 1, 10000 );
-  camera.position.z = 5.5*(cubeDim) +diagDistance*cubeDim;
-  camera.position.y = camHight+200;
-  camera.position.x = -cubeDim*diagDistance;
-  var look = new THREE.Vector3(cubeDim *2.5, camHight, cubeDim*2.5);
-  camera.lookAt (look);
+  camera.position.z = 600;
+  //camera.position.z = 5.5*(cubeDim) +diagDistance*cubeDim;
+  camera.position.y = 300;
+  // camera.position.y = camHight+200;
+  // camera.position.x = -cubeDim*diagDistance;
+  // var look = new THREE.Vector3(cubeDim *2.5, camHight, cubeDim*2.5);
+  // camera.lookAt (look);
 	renderer = new THREE.WebGLRenderer();
   renderer.setClearColor(0x181a20);
 	renderer.setSize( window.innerWidth, window.innerHeight );
@@ -83,13 +89,17 @@ function init() {
   light = new THREE.DirectionalLight( 0xffffff );
   light.position.set( 0, 1, 1 ).normalize();
   putFloor();
-  scene.add(fallingObj);
-  scene.add(arenaObj);
-  scene.add(groundObj);
+  scene.add(light);
+  scene.add(arenaCase);
+//  arenaObj.position.set(cubeDim *2., 0, cubeDim*2.5);
+  arenaObj.position.set(-cubeDim *2.5, 0, -cubeDim*2.5);
+  //scene.add(arenaObj);
+  //scene.add(groundObj);
   //scene.add(backgroundObj);
 }
 
 function initFalling(){
+  console.log(camera.position.z);
   var ranType = getRandomIntInclusive(1,5);
   var ranCol = getRandomIntInclusive(1, (Object.keys(cr).length) -1);
   falling = new Stone(ranType,cr[ranCol]);
@@ -128,12 +138,13 @@ function updateArena(arObjType, arenaArrayType){
       for (var k = 0; k < zLen; k++){
         if (arenaArrayType[i][j][k]===1) {continue;}
         var fa = arenaArrayType[i][j][k]; // Color at this position in arena
-        var mat = new THREE.MeshBasicMaterial( { color: fa, wireframe: false } );
+        var mat = new THREE.MeshPhongMaterial( { color: fa, specular: 0x009900, shininess: 30, shading: THREE.SmoothShading } )
+    //    var mat = new THREE.MeshNormalMaterial( { color: fa, wireframe: false } );
         mesh = new THREE.Mesh( geo, mat );
-        meshW = new THREE.Mesh (geo, matWa);
+      //  meshW = new THREE.Mesh (geo, matWa);
         mesh.position.set(i *cubeDim, j*cubeDim, k*cubeDim);
-        meshW.position.set(i *cubeDim, j*cubeDim, k*cubeDim);
-        arObjType.add (meshW);
+      //  meshW.position.set(i *cubeDim, j*cubeDim, k*cubeDim);
+      //  arObjType.add (meshW);
         arObjType.add (mesh);
       }
     }
@@ -153,7 +164,6 @@ function putFloor (){
 
 // function drawCubes(){
 //   scene= new THREE.Scene();
-//   scene.add(light);
 //   putFloor();
 //   for (var i = 0; i < xLen; i++){
 //     for (var j = 0; j < yLen; j++){
@@ -278,7 +288,9 @@ function deleteCompletedLines(){
       updateArena(arNew, newArena);
 
     }
+    return false;
   }
+  else return true;
 }
 function setArenaVisibility(val){
   switch (val) {
@@ -335,6 +347,8 @@ function mainLoop(){
       stateDeleting = false;
       stateFalling = true;
       currentTime = Date.now();
+      console.log("loopfnct");
+      initFalling();
     }
   }
 }

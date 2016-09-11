@@ -123,11 +123,12 @@ function Stone (type, col){
          this.cubeList[i].y +=1;
       }
       this.copyInArena();
-      deleteCompletedLines();
+      var init = deleteCompletedLines();
       updateArena(arOld, oldArena);
-
-      initFalling();
-
+      console.log("dropfnct");
+      if (init === true){
+        initFalling();
+      }
     }
   }
 
@@ -146,20 +147,21 @@ function Stone (type, col){
     updateHelpstone();
   }
 
-  this.mat = new THREE.MeshBasicMaterial( { color: this.farbe, wireframe: false } );
-  this.makeCube = function (pos){
+    //this.mat = new THREE.MeshNormalMaterial( { color: this.farbe, wireframe: false } );
+    this.mat = new THREE.MeshPhongMaterial( { color: this.farbe, specular: 0x009900, shininess: 30, shading: THREE.FlatShading } )
+    this.makeCube = function (pos){
     mesh = new THREE.Mesh( geo, this.mat );
-    meshW = new THREE.Mesh (geo, matWa);
-    meshW.position.set(this.cubeList[pos].x *cubeDim, this.cubeList[pos].y*cubeDim, this.cubeList[pos].z*cubeDim);
+    //meshW = new THREE.Mesh (geo, matWa);
+    //meshW.position.set(this.cubeList[pos].x *cubeDim, this.cubeList[pos].y*cubeDim, this.cubeList[pos].z*cubeDim);
     mesh.position.set(this.cubeList[pos].x *cubeDim, this.cubeList[pos].y*cubeDim, this.cubeList[pos].z*cubeDim);
-    this.Object.add (meshW);
+    //this.Object.add (meshW);
     this.Object.add (mesh);
   }
   //Turns Fallingstone into Datastructure THREE.Object3D
   this.makeObj = function (){
     var childrenCount= this.Object.children.length;
     if (this.Object.children.length !== 0) {
-        this.removeObjs(childrenCount);
+      this.removeObjs(childrenCount);
     }
     console.log(this.Object.children);
 
@@ -167,23 +169,23 @@ function Stone (type, col){
       this.makeCube(i);
     }
   }
-      this.removeObjs = function (amount){
-      for(var i=amount-1; i>=0; i--){
-        console.log("just removed children");
+  this.removeObjs = function (amount){
+    for(var i=amount-1; i>=0; i--){
+      console.log("just removed children");
 
-        this.Object.remove(this.Object.children[i]);
-      }
+      this.Object.remove(this.Object.children[i]);
     }
+  }
 
   this.updateObjPos = function (){
     childrenCount= this.Object.children.length;
-    for (var i =0; i < childrenCount/2; i++){
+    for (var i =0; i < childrenCount; i++){
       var x = this.cubeList[i].x;
       var y = this.cubeList[i].y;
       var z = this.cubeList[i].z;
-      var j = 2*i;
-      this.Object.children[j].position.set(x*cubeDim, y* cubeDim, z* cubeDim);
-      this.Object.children[j+1].position.set(x*cubeDim, y* cubeDim, z* cubeDim);
+      //var j = 2*i;
+      this.Object.children[i].position.set(x*cubeDim, y* cubeDim, z* cubeDim);
+      //this.Object.children[j+1].position.set(x*cubeDim, y* cubeDim, z* cubeDim);
 
     }
   }

@@ -42,8 +42,7 @@ var currentlyPressedKeys = {};
           console.log("PAUSE");
       }
       if (String.fromCharCode(event.keyCode) == "Q") {
-          console.log("QUIT/RESTART");
-          start();
+          rotateArena();
       }
       if (String.fromCharCode(event.keyCode) == "A") {
           midArena = copyArena();
