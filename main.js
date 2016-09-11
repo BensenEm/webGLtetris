@@ -34,9 +34,22 @@ var stateFalling = true;
 var stateDeleting = false;
 var statePause = false;
 var oldArena, midArena, newArena;
+oldArena=arena;
 var disToFloor;
 var fallingObj = new THREE.Object3D();
 var arenaObj = new THREE.Object3D();
+var arOld =new THREE.Object3D();
+var arMid =new THREE.Object3D();
+var arNew =new THREE.Object3D();
+arOld.name ="arOld";
+arMid.name ="arMid";
+arNew.name ="arNew";
+arMid.visible = false;
+arNew.visible = false;
+arenaObj.add(arOld);
+arenaObj.add(arMid);
+arenaObj.add(arNew);
+
 var groundObj = new THREE.Object3D();
 var backgroundObj = new THREE.Object3D();
 var geo = new THREE.BoxGeometry( cubeDim, cubeDim, cubeDim );
@@ -102,21 +115,26 @@ function initFalling(){
 //   mesh.position.set(x*cubeDim, y*cubeDim, z*cubeDim);
 // }
 
-function updateArena(){
+function updateArena(arObjType, arenaArrayType){
+  var childrenCount = arObjType.children.length;
+  if (childrenCount !== 0){
+    for (var i = childrenCount-1; i >= 0; i--){
+      arObjType.remove(arObjType.children[i]);
+    }
+  }
+  console.log("this should be empty: ", arObjType.children);
   for (var i = 0; i < xLen; i++){
     for (var j = 0; j < yLen; j++){
       for (var k = 0; k < zLen; k++){
-        if (arena[i][j][k]===1) {continue;}
-        var fa = arena[i][j][k]; // Color at this position in arena
-        console.log(arena[i][j][k]);
+        if (arenaArrayType[i][j][k]===1) {continue;}
+        var fa = arenaArrayType[i][j][k]; // Color at this position in arena
         var mat = new THREE.MeshBasicMaterial( { color: fa, wireframe: false } );
         mesh = new THREE.Mesh( geo, mat );
         meshW = new THREE.Mesh (geo, matWa);
         mesh.position.set(i *cubeDim, j*cubeDim, k*cubeDim);
         meshW.position.set(i *cubeDim, j*cubeDim, k*cubeDim);
-
-        arenaObj.add (meshW);
-        arenaObj.add (mesh);
+        arObjType.add (meshW);
+        arObjType.add (mesh);
       }
     }
   }
@@ -199,7 +217,7 @@ function findCompletedLines(){
     for (var i = 0; i < xLen; i++){
       var zlines=0;
       for (var k = 0; k < zLen; k++){
-        if (arena[i][j][k] !== 1){
+        if (oldArena[i][j][k] !== 1){
           zlines += 1;
         }
       }
@@ -215,7 +233,7 @@ function findCompletedLines(){
     for (var k = 0; k < zLen; k++){
       var xlines=0;
       for (var i = 0; i < xLen; i++){
-        if (arena[i][j][k] !== 1){
+        if (oldArena[i][j][k] !== 1){
           xlines += 1;
         }
       }
@@ -240,10 +258,11 @@ function deleteCompletedLines(){
     var fullRowsSet = makeSet(fullRows);
     //
     oldArena = copyArena(arena);
-
+    updateArena(arOld, oldArena);
     //turns floor(arena) to a floor without fullRows( = midArena)
     midArena = copyArena(arena);
     midArena = eraseFromArena(midArena, fullRowsSet);
+    updateArena (arMid, midArena);
 
     //turns midArena to newArena (Cubes drop down if deleted Spots underneath)
     newArena = copyArena(arena);
@@ -256,14 +275,35 @@ function deleteCompletedLines(){
   			newArena[x][i][z] = newArena[x][i+1][z];
   		}
   		newArena[x][yLen - 1][z] = 1;
+      updateArena(arNew, newArena);
 
     }
-    //arena = copyArena(newArena);
   }
 }
+function setArenaVisibility(val){
+  switch (val) {
+    case "oA":
+      arOld.visible=true;
+      arMid.visible=false;
+      arNew.visible=false;
+      break;
+    case "mA":
+      arOld.visible=false;
+      arMid.visible=true;
+      arNew.visible=false;
+      break;
+    case "nA":
+      arOld.visible=false;
+      arMid.visible=false;
+      arNew.visible=true;
+      break;
+    default:
 
+  }
+}
 function mainLoop(){
   if (stateFalling === true){
+    setArenaVisibility("oA");
     now = Date.now();
     deltaT = now - currentTime;
     if (deltaT > timeUnit){
@@ -276,22 +316,25 @@ function mainLoop(){
     now2 = Date.now();
     deltaT2 = now2 - currentTime;
     if (deltaT2 > 500 && deltaT2 <=1000){
-       arena = oldArena;
+       setArenaVisibility("oA");
     }
     else if (deltaT2 > 1000 && deltaT2 <=1500){
-      arena = midArena;
+       setArenaVisibility("mA");
+
     }
     else if (deltaT2 > 1500 && deltaT2 <=2000){
-       arena = oldArena;
+      setArenaVisibility("oA");
     }
     else if (deltaT2 > 2000 && deltaT2 <=2500){
-       arena = midArena;
+      setArenaVisibility("mA");
     }
     else if (deltaT2>1500){
-       arena = newArena;
-       stateDeleting = false;
-       stateFalling = true;
-       currentTime = Date.now();
+      oldArena = copyArena(newArena);
+      updateArena(arOld, oldArena);
+      setArenaVisibility("oA");
+      stateDeleting = false;
+      stateFalling = true;
+      currentTime = Date.now();
     }
   }
 }

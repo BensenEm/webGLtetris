@@ -29,17 +29,17 @@ function makeSet(myList){
 
 // returns CopyByValue of a
 function copyArena(a){
-  var newArena = new Array(xLen);
+  var nA = new Array(xLen);
   for (var i = 0; i < xLen; i++){
-    newArena[i]= new Array(yLen);
+    nA[i]= new Array(yLen);
     for (var j = 0; j < yLen; j++){
-      newArena[i][j]= new Array(zLen);
+      nA[i][j]= new Array(zLen);
       for (var k = 0; k < zLen; k++){
-        newArena[i][j][k] = a[i][j][k];
+        nA[i][j][k] = a[i][j][k];
       }
     }
   }
-  return newArena;
+  return nA;
 }
 
 //updates the Helpstones Coordinates

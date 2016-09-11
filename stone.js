@@ -83,7 +83,7 @@ function Stone (type, col){
       a = this.cubeList[i].x;
       b = this.cubeList[i].y;
       c = this.cubeList[i].z;
-      arena[a][b][c]= this.farbe;
+      oldArena[a][b][c]= this.farbe;
       }
   }
   this.insideArena = function (){
@@ -123,8 +123,8 @@ function Stone (type, col){
          this.cubeList[i].y +=1;
       }
       this.copyInArena();
-      updateArena();
       deleteCompletedLines();
+      updateArena(arOld, oldArena);
 
       initFalling();
 
@@ -157,7 +157,7 @@ function Stone (type, col){
   }
   //Turns Fallingstone into Datastructure THREE.Object3D
   this.makeObj = function (){
-    childrenCount= this.Object.children.length;
+    var childrenCount= this.Object.children.length;
     if (this.Object.children.length !== 0) {
         this.removeObjs(childrenCount);
     }
