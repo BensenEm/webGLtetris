@@ -11,6 +11,7 @@ var oldArena = new Array(xLen);
         }
       }
     }
+var arenaPos =0;
 var cubeDim = 40; // size of single Cube
 var pause = false;
 var scene, camera, renderer;
@@ -18,8 +19,12 @@ var diagDistance = 8; // factor for diagonal distance to corner of arena
 var camHight = 150; // height of camera
 var falling;        // Currently falling Tetris Stone
 var geometry, material, mesh;
-var timeUnit = 2000;
+var timeUnit = 10000;
 var currentTime = Date.now();
+var currentTime_turning = Date.now();
+var turningSteps = (Math.PI/2)/20;
+console.log(turningSteps);
+var turningCounter =1;
 var memberCount = 4;
 var cr = new Array() //Holds color values in Hex
   cr[0]= 0x404040; //grey
@@ -33,10 +38,12 @@ var cr = new Array() //Holds color values in Hex
 var stateFalling = true;
 var stateDeleting = false;
 var statePause = false;
+var stateTurning = false;
 var midArena, newArena;
 //oldArena=arena;
 var disToFloor;
 var fallingObj = new THREE.Object3D();
+var helpObj = new THREE.Object3D();
 var arenaObj = new THREE.Object3D();
 var arOld =new THREE.Object3D();
 var arMid =new THREE.Object3D();
@@ -93,6 +100,7 @@ function init() {
   scene.add(arenaCase);
 //  arenaObj.position.set(cubeDim *2., 0, cubeDim*2.5);
   arenaObj.position.set(-cubeDim *2.5, 0, -cubeDim*2.5);
+  arenaCase.rotation.y = Math.PI/4;
   //scene.add(arenaObj);
   //scene.add(groundObj);
   //scene.add(backgroundObj);
@@ -101,6 +109,7 @@ function init() {
 function initFalling(){
   console.log(camera.position.z);
   var ranType = getRandomIntInclusive(1,5);
+  ranType=5;
   var ranCol = getRandomIntInclusive(1, (Object.keys(cr).length) -1);
   falling = new Stone(ranType,cr[ranCol]);
   updateHelpstone();
@@ -353,11 +362,23 @@ function mainLoop(){
   }
 }
 
+function animate(){
+  if (stateTurning === true){
+    arenaCase.rotation.y += turningSteps;
+    turningCounter++;
+    if(turningCounter>20){
+      stateTurning = false;
+      turningCounter=1;
+    }
+  }
+}
+
 function run(){
     requestAnimationFrame(function(){run();});
     if(statePause === false){
     renderer.render( scene, camera );
     mainLoop();
+    animate();
     //drawCubes();
   }
 }

@@ -3,6 +3,7 @@ function Stone (type, col){
   this.disToFloor;
   this.cubeList = new Array();
   this.Object = fallingObj;
+  this.Help =  helpObj;
   this.helpstoneList = new Array();
   this.farbe = col;
   this.bewegen = function (axis, direction){
@@ -84,7 +85,10 @@ function Stone (type, col){
       b = this.cubeList[i].y;
       c = this.cubeList[i].z;
       oldArena[a][b][c]= this.farbe;
-      }
+    }
+    for (var i = memberCount-1; i>=0; i--){
+    fallingObj.remove(fallingObj.children[i]);
+    }
   }
   this.insideArena = function (){
     var withinArena = true;
@@ -143,17 +147,26 @@ function Stone (type, col){
     if (this.cubeFree() == false){
       this.turn(axis, !direction);
     }
-    this.updateObjPos();
     updateHelpstone();
+    this.updateObjPos();
   }
 
-    //this.mat = new THREE.MeshNormalMaterial( { color: this.farbe, wireframe: false } );
-    this.mat = new THREE.MeshPhongMaterial( { color: this.farbe, specular: 0x009900, shininess: 30, shading: THREE.FlatShading } )
-    this.makeCube = function (pos){
+  //this.mat = new THREE.MeshNormalMaterial( { color: this.farbe, wireframe: false } );
+  this.mat = new THREE.MeshPhongMaterial( { color: this.farbe, specular: 0x009900, shininess: 30, shading: THREE.FlatShading } )
+
+  this.makeCube = function (pos){
     mesh = new THREE.Mesh( geo, this.mat );
     //meshW = new THREE.Mesh (geo, matWa);
     //meshW.position.set(this.cubeList[pos].x *cubeDim, this.cubeList[pos].y*cubeDim, this.cubeList[pos].z*cubeDim);
     mesh.position.set(this.cubeList[pos].x *cubeDim, this.cubeList[pos].y*cubeDim, this.cubeList[pos].z*cubeDim);
+    //this.Object.add (meshW);
+    this.Object.add (mesh);
+  }
+  this.makeHelpCube = function (pos){
+    mesh = new THREE.Mesh( geo, this.mat );
+    //meshW = new THREE.Mesh (geo, matWa);
+    //meshW.position.set(this.cubeList[pos].x *cubeDim, this.cubeList[pos].y*cubeDim, this.cubeList[pos].z*cubeDim);
+    mesh.position.set(this.helpstoneList[pos].x *cubeDim, this.helpstoneList[pos].y*cubeDim, this.helpstoneList[pos].z*cubeDim);
     //this.Object.add (meshW);
     this.Object.add (mesh);
   }
@@ -163,17 +176,16 @@ function Stone (type, col){
     if (this.Object.children.length !== 0) {
       this.removeObjs(childrenCount);
     }
-    console.log(this.Object.children);
-
     for(var i=0; i<memberCount; i++){
       this.makeCube(i);
+      this.makeHelpCube(i);
     }
   }
+
   this.removeObjs = function (amount){
     for(var i=amount-1; i>=0; i--){
-      console.log("just removed children");
-
       this.Object.remove(this.Object.children[i]);
+      this.Help.remove(this.Help.children[i]);
     }
   }
 
@@ -196,43 +208,48 @@ function Stone (type, col){
   //   }
   // }
   switch (type){
-    case (1):
+    case (1):// I Stone
       this.cubeList.push(new Cube(xLen/2 - 1, yLen-1, zLen/2 , col));
       this.cubeList.push(new Cube(xLen/2, yLen-1, zLen/2, col));
 			this.cubeList.push(new Cube(xLen/2 + 1, yLen-1, zLen/2, col));
 			this.cubeList.push(new Cube(xLen/2 + 2, yLen-1, zLen/2, col));
+      updateHelpstone();
       this.makeObj();
       break;
 
-    case (2):
+    case (2):// L Stone
       this.cubeList.push(new Cube((xLen / 2) - 1, yLen - 2, zLen/2 , col));
 			this.cubeList.push(new Cube((xLen / 2) - 1, yLen-1, zLen/2, col));
 			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen/2, col));
 			this.cubeList.push(new Cube((xLen / 2) + 1, yLen-1, zLen/2, col));
+      updateHelpstone();
       this.makeObj();
       break;
 
-    case (3):
+    case (3):// S Stone
       this.cubeList.push(new Cube((xLen / 2) - 1, yLen - 2, zLen/2, col));
 			this.cubeList.push(new Cube((xLen / 2), yLen - 2, zLen/2, col));
 			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen/2, col));
 			this.cubeList.push(new Cube((xLen / 2) + 1, yLen-1, zLen/2, col));
+      updateHelpstone();
       this.makeObj();
       break;
 
-    case (4):
+    case (4):// O Stone
       this.cubeList.push(new Cube((xLen / 2) - 1, yLen - 2, zLen/2, col));
 			this.cubeList.push(new Cube((xLen / 2), yLen - 2, zLen/2, col));
 			this.cubeList.push(new Cube((xLen / 2) - 1, yLen-1, zLen/2, col));
 			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen/2, col));
+      updateHelpstone();
       this.makeObj();
       break;
 
-    case (5):
+    case (5):// T Stone
       this.cubeList.push(new Cube((xLen / 2), yLen - 2, zLen/2, col));
 			this.cubeList.push(new Cube((xLen / 2) - 1, yLen-1, zLen/2, col));
 			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen/2, col));
 			this.cubeList.push(new Cube((xLen / 2) + 1, yLen-1, zLen/2, col));
+      updateHelpstone();
       this.makeObj();
       break;
   }
