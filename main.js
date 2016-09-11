@@ -1,13 +1,13 @@
 var xLen = 6;
 var yLen = 12;
 var zLen = 6;
-var arena = new Array(xLen);
+var oldArena = new Array(xLen);
   for (var i = 0; i < xLen; i++){
-    arena[i]= new Array(yLen);
+    oldArena[i]= new Array(yLen);
     for (var j = 0; j < yLen; j++){
-      arena[i][j]= new Array(zLen);
+      oldArena[i][j]= new Array(zLen);
         for (var k = 0; k < zLen; k++){
-          arena[i][j][k] = 1;
+          oldArena[i][j][k] = 1;
         }
       }
     }
@@ -33,8 +33,8 @@ var cr = new Array() //Holds color values in Hex
 var stateFalling = true;
 var stateDeleting = false;
 var statePause = false;
-var oldArena, midArena, newArena;
-oldArena=arena;
+var midArena, newArena;
+//oldArena=arena;
 var disToFloor;
 var fallingObj = new THREE.Object3D();
 var arenaObj = new THREE.Object3D();
@@ -257,15 +257,15 @@ function deleteCompletedLines(){
     // turns fullRows into a Set of UNIQUE Vector3
     var fullRowsSet = makeSet(fullRows);
     //
-    oldArena = copyArena(arena);
+    //oldArena = copyArena(arena);
     updateArena(arOld, oldArena);
     //turns floor(arena) to a floor without fullRows( = midArena)
-    midArena = copyArena(arena);
+    midArena = copyArena(oldArena);
     midArena = eraseFromArena(midArena, fullRowsSet);
     updateArena (arMid, midArena);
 
     //turns midArena to newArena (Cubes drop down if deleted Spots underneath)
-    newArena = copyArena(arena);
+    newArena = copyArena(oldArena);
     var len = fullRowsSet.length;
     for (var j = len-1; j >= 0; j--){
       var x= fullRowsSet[j].x;
@@ -312,7 +312,7 @@ function mainLoop(){
     }
   }
   if (stateDeleting === true){
-    arena = midArena;
+    //arena = midArena;
     now2 = Date.now();
     deltaT2 = now2 - currentTime;
     if (deltaT2 > 500 && deltaT2 <=1000){

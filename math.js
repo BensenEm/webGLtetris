@@ -67,7 +67,7 @@ function updateHelpstone(){
       var z = falling.cubeList[i].z;
       var y = falling.cubeList[i].y;
       for (var j = y-1 ; j >= 0; j--) {
-        if (arena[x][j][z] === 1) {
+        if (oldArena[x][j][z] === 1) {
           f++;
         }
         else break;

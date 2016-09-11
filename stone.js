@@ -104,7 +104,7 @@ function Stone (type, col){
       var x= this.cubeList[i].x;
       var y= this.cubeList[i].y;
       var z= this.cubeList[i].z;
-      if (arena[x][y][z] !== 1){
+      if (oldArena[x][y][z] !== 1){
         cubeFree = false;
       }
     }
