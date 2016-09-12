@@ -147,12 +147,11 @@ function Stone (type, col){
     if (this.cubeFree() == false){
       this.turn(axis, !direction);
     }
-    updateHelpstone();
     this.updateObjPos();
   }
 
   //this.mat = new THREE.MeshNormalMaterial( { color: this.farbe, wireframe: false } );
-  this.mat = new THREE.MeshPhongMaterial( { color: this.farbe, specular: 0x009900, shininess: 30, shading: THREE.FlatShading } )
+  this.mat = new THREE.MeshPhongMaterial( { color: 0x324575, specular: 0x009900, shininess: 30, shading: THREE.FlatShading } )
 
   this.makeCube = function (pos){
     mesh = new THREE.Mesh( geo, this.mat );
@@ -163,12 +162,12 @@ function Stone (type, col){
     this.Object.add (mesh);
   }
   this.makeHelpCube = function (pos){
-    mesh = new THREE.Mesh( geo, this.mat );
+    mesh = new THREE.Mesh( geo, 0x324575 );
     //meshW = new THREE.Mesh (geo, matWa);
     //meshW.position.set(this.cubeList[pos].x *cubeDim, this.cubeList[pos].y*cubeDim, this.cubeList[pos].z*cubeDim);
     mesh.position.set(this.helpstoneList[pos].x *cubeDim, this.helpstoneList[pos].y*cubeDim, this.helpstoneList[pos].z*cubeDim);
     //this.Object.add (meshW);
-    this.Object.add (mesh);
+    this.Help.add (mesh);
   }
   //Turns Fallingstone into Datastructure THREE.Object3D
   this.makeObj = function (){
@@ -191,6 +190,7 @@ function Stone (type, col){
 
   this.updateObjPos = function (){
     childrenCount= this.Object.children.length;
+    console.log(childrenCount);
     for (var i =0; i < childrenCount; i++){
       var x = this.cubeList[i].x;
       var y = this.cubeList[i].y;
@@ -199,6 +199,23 @@ function Stone (type, col){
       this.Object.children[i].position.set(x*cubeDim, y* cubeDim, z* cubeDim);
       //this.Object.children[j+1].position.set(x*cubeDim, y* cubeDim, z* cubeDim);
 
+    }
+  }
+  this.updateHelpObjPos = function (){
+    childrenCount= this.Help.children.length;
+    for (var i =0; i < childrenCount; i++){
+      var x = this.helpstoneList[i].x;
+      var y = this.helpstoneList[i].y;
+      var z = this.helpstoneList[i].z;
+      //var j = 2*i;
+      this.Help.children[i].position.set(x*cubeDim, y* cubeDim, z* cubeDim);
+      //this.Object.children[j+1].position.set(x*cubeDim, y* cubeDim, z* cubeDim);
+
+    }
+  }
+  this.initHelpStoneList = function(){
+    for (var i = 0; i < memberCount; i++){
+      this.helpstoneList.push(new Cube(this.cubeList[i].x, this.cubeList[i].y, this.cubeList[i].z, 1))
     }
   }
   // this.updateObj = function (){
@@ -213,7 +230,7 @@ function Stone (type, col){
       this.cubeList.push(new Cube(xLen/2, yLen-1, zLen/2, col));
 			this.cubeList.push(new Cube(xLen/2 + 1, yLen-1, zLen/2, col));
 			this.cubeList.push(new Cube(xLen/2 + 2, yLen-1, zLen/2, col));
-      updateHelpstone();
+      this.initHelpStoneList();
       this.makeObj();
       break;
 
@@ -222,7 +239,7 @@ function Stone (type, col){
 			this.cubeList.push(new Cube((xLen / 2) - 1, yLen-1, zLen/2, col));
 			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen/2, col));
 			this.cubeList.push(new Cube((xLen / 2) + 1, yLen-1, zLen/2, col));
-      updateHelpstone();
+      this.initHelpStoneList();
       this.makeObj();
       break;
 
@@ -231,7 +248,7 @@ function Stone (type, col){
 			this.cubeList.push(new Cube((xLen / 2), yLen - 2, zLen/2, col));
 			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen/2, col));
 			this.cubeList.push(new Cube((xLen / 2) + 1, yLen-1, zLen/2, col));
-      updateHelpstone();
+      this.initHelpStoneList();
       this.makeObj();
       break;
 
@@ -240,7 +257,7 @@ function Stone (type, col){
 			this.cubeList.push(new Cube((xLen / 2), yLen - 2, zLen/2, col));
 			this.cubeList.push(new Cube((xLen / 2) - 1, yLen-1, zLen/2, col));
 			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen/2, col));
-      updateHelpstone();
+      this.initHelpStoneList();
       this.makeObj();
       break;
 
@@ -249,7 +266,7 @@ function Stone (type, col){
 			this.cubeList.push(new Cube((xLen / 2) - 1, yLen-1, zLen/2, col));
 			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen/2, col));
 			this.cubeList.push(new Cube((xLen / 2) + 1, yLen-1, zLen/2, col));
-      updateHelpstone();
+      this.initHelpStoneList();
       this.makeObj();
       break;
   }

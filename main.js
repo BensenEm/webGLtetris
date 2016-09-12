@@ -22,9 +22,9 @@ var geometry, material, mesh;
 var timeUnit = 10000;
 var currentTime = Date.now();
 var currentTime_turning = Date.now();
-var turningSteps = (Math.PI/2)/20;
+var turningSteps = (THREE.Math.degToRad(90))/20;
 console.log(turningSteps);
-var turningCounter =1;
+var turningCounter =0;
 var memberCount = 4;
 var cr = new Array() //Holds color values in Hex
   cr[0]= 0x404040; //grey
@@ -109,7 +109,6 @@ function init() {
 function initFalling(){
   console.log(camera.position.z);
   var ranType = getRandomIntInclusive(1,5);
-  ranType=5;
   var ranCol = getRandomIntInclusive(1, (Object.keys(cr).length) -1);
   falling = new Stone(ranType,cr[ranCol]);
   updateHelpstone();
@@ -365,10 +364,10 @@ function mainLoop(){
 function animate(){
   if (stateTurning === true){
     arenaCase.rotation.y += turningSteps;
-    turningCounter++;
-    if(turningCounter>20){
+    ++turningCounter;
+    if(turningCounter>=20){
       stateTurning = false;
-      turningCounter=1;
+      turningCounter=0;
     }
   }
 }

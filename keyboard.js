@@ -156,6 +156,8 @@ function handleKeyDown(event) {
   if (String.fromCharCode(event.keyCode) == "Q") {
     stateTurning=true;
     arenaPos=(arenaPos+1)%4;
+    console.log(arenaPos);
+
   }
   if (String.fromCharCode(event.keyCode) == "A") {
     midArena = copyArena();
