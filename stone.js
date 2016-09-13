@@ -121,6 +121,7 @@ function Stone (type, col){
     if (this.cubeFree()){
       this.updateObjPos();
       updateHelpstone();
+
     }
     else{
       for( var i= 0; i < memberCount; i++){
@@ -129,7 +130,7 @@ function Stone (type, col){
       this.copyInArena();
       var init = deleteCompletedLines();
       updateArena(arOld, oldArena);
-      console.log("dropfnct");
+      console.log("init", init);
       if (init === true){
         initFalling();
       }
@@ -148,6 +149,7 @@ function Stone (type, col){
       this.turn(axis, !direction);
     }
     this.updateObjPos();
+    updateHelpstone();
   }
 
   //this.mat = new THREE.MeshNormalMaterial( { color: this.farbe, wireframe: false } );
@@ -162,7 +164,7 @@ function Stone (type, col){
     this.Object.add (mesh);
   }
   this.makeHelpCube = function (pos){
-    mesh = new THREE.Mesh( geo, 0x324575 );
+    mesh = new THREE.Mesh( geo, matWa);
     //meshW = new THREE.Mesh (geo, matWa);
     //meshW.position.set(this.cubeList[pos].x *cubeDim, this.cubeList[pos].y*cubeDim, this.cubeList[pos].z*cubeDim);
     mesh.position.set(this.helpstoneList[pos].x *cubeDim, this.helpstoneList[pos].y*cubeDim, this.helpstoneList[pos].z*cubeDim);
@@ -173,7 +175,10 @@ function Stone (type, col){
   this.makeObj = function (){
     var childrenCount= this.Object.children.length;
     if (this.Object.children.length !== 0) {
-      this.removeObjs(childrenCount);
+      this.removeObjs(childrenCount, "fal");
+    }
+    if (this.Help.children.length!=0){
+      this.removeObjs(childrenCount, "hel");
     }
     for(var i=0; i<memberCount; i++){
       this.makeCube(i);
@@ -181,10 +186,14 @@ function Stone (type, col){
     }
   }
 
-  this.removeObjs = function (amount){
+  this.removeObjs = function (amount, who){
     for(var i=amount-1; i>=0; i--){
-      this.Object.remove(this.Object.children[i]);
-      this.Help.remove(this.Help.children[i]);
+      switch (who) {
+        case "fal": this.Object.remove(this.Object.children[i]);
+          break;
+        case "hel": this.Help.remove(this.Help.children[i]);
+          break;
+      }
     }
   }
 
@@ -201,9 +210,12 @@ function Stone (type, col){
 
     }
   }
+
   this.updateHelpObjPos = function (){
+    console.log("HELPSTONE CHILDREN",this.Help.children);
     childrenCount= this.Help.children.length;
-    for (var i =0; i < childrenCount; i++){
+    debugger;
+    for (var i =0; i < memberCount; i++){
       var x = this.helpstoneList[i].x;
       var y = this.helpstoneList[i].y;
       var z = this.helpstoneList[i].z;
@@ -214,6 +226,10 @@ function Stone (type, col){
     }
   }
   this.initHelpStoneList = function(){
+    if(this.helpstoneList.length!== 0){
+      this.helpstoneList.length=0;
+      this.Help.remove(4,"hel");}
+    //  console.log(helpstoneList.length);
     for (var i = 0; i < memberCount; i++){
       this.helpstoneList.push(new Cube(this.cubeList[i].x, this.cubeList[i].y, this.cubeList[i].z, 1))
     }
@@ -224,6 +240,7 @@ function Stone (type, col){
   //     if (this.Object.children[i].uuid === this.UUIDList[i])
   //   }
   // }
+  console.log( "CURRENT helpstoneList:  ", this.helpstoneList);
   switch (type){
     case (1):// I Stone
       this.cubeList.push(new Cube(xLen/2 - 1, yLen-1, zLen/2 , col));

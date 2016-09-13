@@ -60,7 +60,9 @@ function updateHelpstone(){
   for (var i = 0; i < memberCount; i++) {
     falling.helpstoneList[i].y -= disToFloor;
   }
-  //falling.updateHelpObjPos();
+  console.log(falling.helpstoneList);
+  //debugger;
+  falling.updateHelpObjPos();
 }
   //updates distance between FALLING and lowest possible position
   function distanceToFloor() {

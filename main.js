@@ -19,7 +19,7 @@ var diagDistance = 8; // factor for diagonal distance to corner of arena
 var camHight = 150; // height of camera
 var falling;        // Currently falling Tetris Stone
 var geometry, material, mesh;
-var timeUnit = 10000;
+var timeUnit = 1000;
 var currentTime = Date.now();
 var currentTime_turning = Date.now();
 var turningSteps = (THREE.Math.degToRad(90))/20;
@@ -63,6 +63,7 @@ arenaObj.add(arOld);
 arenaObj.add(arMid);
 arenaObj.add(arNew);
 arenaObj.add(fallingObj);
+arenaObj.add(helpObj);
 arenaObj.add(groundObj);
 arenaCase.add(arenaObj);
 
@@ -111,7 +112,7 @@ function initFalling(){
   var ranType = getRandomIntInclusive(1,5);
   var ranCol = getRandomIntInclusive(1, (Object.keys(cr).length) -1);
   falling = new Stone(ranType,cr[ranCol]);
-  updateHelpstone();
+//  updateHelpstone();
 }
 
 // creates a new Cube at the given XYZ Position, Color, in wireframe or filled Look
@@ -326,10 +327,12 @@ function mainLoop(){
     setArenaVisibility("oA");
     now = Date.now();
     deltaT = now - currentTime;
+
     if (deltaT > timeUnit){
       falling.drop();
       currentTime = Date.now();
     }
+    updateHelpstone();
   }
   if (stateDeleting === true){
     //arena = midArena;
@@ -355,7 +358,6 @@ function mainLoop(){
       stateDeleting = false;
       stateFalling = true;
       currentTime = Date.now();
-      console.log("loopfnct");
       initFalling();
     }
   }
