@@ -11,6 +11,12 @@ var oldArena = new Array(xLen);
         }
       }
     }
+var font;
+var level =1;
+var score = 0;
+var scoreStr="";
+//var totalLinesStr="";
+var totalLines = 0;
 var arenaPos =0;
 var cubeDim = 40; // size of single Cube
 var pause = false;
@@ -22,19 +28,18 @@ var geometry, material, mesh;
 var timeUnit = 1000;
 var currentTime = Date.now();
 var currentTime_turning = Date.now();
-var turningSteps = (THREE.Math.degToRad(90))/20;
-console.log(turningSteps);
+var turningSteps;//console.log(turningSteps);
 var turningCounter =0;
 var memberCount = 4;
 var cr = new Array() //Holds color values in Hex
-  cr[0]= 0x404040; //grey
-  cr[1]= 0xff8000; //orange
-  cr[2]= 0xff00ff; //pink
-  cr[3]= 0xffffff; //white
-  cr[4]= 0x0000ff; //blue
-  cr[5]= 0xff0000; //red
-  cr[6]= 0x00ff00; //green
-  cr[7]= 0xff8888; //???? /
+  cr[0]= 0x0; //grey
+  cr[1]= 0xf8d3ed; //orange
+  cr[2]= 0xdbbbe7; //pink
+  cr[3]= 0xb3c5e6; //white
+  cr[4]= 0xcecbcb; //blue
+  cr[5]= 0xd8d7e1; //red
+  //cr[6]= 0x0; //green
+  //cr[7]= 0x0; //???? /
 var stateFalling = true;
 var stateDeleting = false;
 var statePause = false;
@@ -78,6 +83,7 @@ function start(){
 }
 
 function init() {
+  turningSteps = ( THREE.Math.degToRad(90) )/20;
   scene = new THREE.Scene();
 	camera = new THREE.PerspectiveCamera( 70, window.innerWidth / (window.innerHeight), 1, 10000 );
   camera.position.z = 600;
@@ -105,10 +111,12 @@ function init() {
   //scene.add(arenaObj);
   //scene.add(groundObj);
   //scene.add(backgroundObj);
+  loadFont();
+  //createText();
 }
 
 function initFalling(){
-  console.log(camera.position.z);
+//  console.log(camera.position.z);
   var ranType = getRandomIntInclusive(1,5);
   var ranCol = getRandomIntInclusive(1, (Object.keys(cr).length) -1);
   falling = new Stone(ranType,cr[ranCol]);
@@ -141,7 +149,6 @@ function updateArena(arObjType, arenaArrayType){
       arObjType.remove(arObjType.children[i]);
     }
   }
-  console.log("this should be empty: ", arObjType.children);
   for (var i = 0; i < xLen; i++){
     for (var j = 0; j < yLen; j++){
       for (var k = 0; k < zLen; k++){
@@ -230,6 +237,7 @@ function eraseFromArena(typeOfArena, eraseArray){
   return typeOfArena;
 }
 function findCompletedLines(){
+  var lines=0;
   var fullRowArray = new Array();
   //Iterate through rows on zAxis
   for (var j=0; j<yLen; j++){
@@ -241,6 +249,8 @@ function findCompletedLines(){
         }
       }
       if (zlines === zLen){
+        totalLines +=1;
+        lines+=1;
         for (var k2=0; k2< zLen; k2++){
           fullRowArray.push(new THREE.Vector3(i,j,k2));
         }
@@ -257,13 +267,50 @@ function findCompletedLines(){
         }
       }
       if (xlines === xLen){
+        totalLines +=1;
+        lines+=1;
+
         for (var i2=0; i2< xLen; i2++){
           fullRowArray.push(new THREE.Vector3(i2,j,k));
         }
       }
     }
   }
+  if (lines!==0) {
+    score += calcScore(lines);
+    text="Score: "+ score;
+    textL="Lines:  " +totalLines;
+    refreshText();
+  }
+
   return fullRowArray;
+
+}
+function calcScore(lines){
+  var multiplyer4 = 2;
+  var multiplyer1 = 1;
+  var multiplyer2 = 1.5;
+  var multiplyer8 = 3;
+  switch (lines) {
+    case 1: return 10 * multiplyer1 * lines * level;
+      break;
+    case 2: return 10 * multiplyer2 * lines * level;
+      break;
+    case 3: return 10 * multiplyer2 * lines * level;
+      break;
+    case 4: return 10 * multiplyer4 * lines * level;
+      break;
+    case 5: return 10 * multiplyer4 * lines * level;
+      break;
+    case 6: return 10 * multiplyer4 * lines * level;
+      break;
+    case 7: return 10 * multiplyer4 * lines * level;
+      break;
+    case 8: return 10 * multiplyer8 * lines * level;
+      break;
+
+    default:  return 10 * multiplyer8 * lines * level;
+  }
 }
 function deleteCompletedLines(){
 
@@ -335,10 +382,12 @@ function mainLoop(){
     //updateHelpstone();
   }
   if (stateDeleting === true){
-    //arena = midArena;
     now2 = Date.now();
     deltaT2 = now2 - currentTime;
-    if (deltaT2 > 500 && deltaT2 <=1000){
+    if (deltaT2 <=500){
+       setArenaVisibility("mA");
+    }
+    else if (deltaT2 > 500 && deltaT2 <=1000){
        setArenaVisibility("oA");
     }
     else if (deltaT2 > 1000 && deltaT2 <=1500){

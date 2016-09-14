@@ -145,15 +145,20 @@ function handleKeyDown(event) {
     }
   }
   if (String.fromCharCode(event.keyCode) == " ") {
+    if(stateDeleting===true){
+      return;
+    }
     falling.drop();
   }
 
-  //  }
   if (String.fromCharCode(event.keyCode) == "P") {
     statePause = !statePause;
     console.log("PAUSE");
   }
   if (String.fromCharCode(event.keyCode) == "Q") {
+    if (stateTurning==true) {
+      return;
+    }
     stateTurning=true;
     arenaPos=(arenaPos+1)%4;
     console.log(arenaPos);

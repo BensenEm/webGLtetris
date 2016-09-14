@@ -135,7 +135,7 @@ function Stone (type, col){
       this.copyInArena();
       var init = deleteCompletedLines();
       updateArena(arOld, oldArena);
-      console.log("init", init);
+  //    console.log("init", init);
       if (init === true){
         initFalling();
       }
@@ -158,7 +158,7 @@ function Stone (type, col){
   }
 
   //this.mat = new THREE.MeshNormalMaterial( { color: this.farbe, wireframe: false } );
-  this.mat = new THREE.MeshPhongMaterial( { color: 0x324575, specular: 0x009900, shininess: 30, shading: THREE.FlatShading } )
+  this.mat = new THREE.MeshPhongMaterial( { color: this.farbe, specular: 0x009900, shininess: 30, shading: THREE.FlatShading } )
 
   this.makeCube = function (pos){
     mesh = new THREE.Mesh( geo, this.mat );
@@ -205,7 +205,7 @@ function Stone (type, col){
 
   this.updateObjPos = function (){
     childrenCount= this.Object.children.length;
-    console.log(childrenCount);
+//    console.log(childrenCount);
     for (var i =0; i < childrenCount; i++){
       var x = this.cubeList[i].x;
       var y = this.cubeList[i].y;
@@ -218,9 +218,8 @@ function Stone (type, col){
   }
 
   this.updateHelpObjPos = function (){
-    console.log("HELPSTONE CHILDREN",this.Help.children);
+//    console.log("HELPSTONE CHILDREN",this.Help.children);
     childrenCount= this.Help.children.length;
-    debugger;
     for (var i =0; i < memberCount; i++){
       var x = this.helpstoneList[i].x;
       var y = this.helpstoneList[i].y;
@@ -247,7 +246,7 @@ function Stone (type, col){
   //     if (this.Object.children[i].uuid === this.UUIDList[i])
   //   }
   // }
-  console.log( "CURRENT helpstoneList:  ", this.helpstoneList);
+//  console.log( "CURRENT helpstoneList:  ", this.helpstoneList);
   switch (type){
     case (1):// I Stone
       this.cubeList.push(new Cube(xLen/2 - 1, yLen-1, zLen/2 , col));

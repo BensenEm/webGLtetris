@@ -44,8 +44,7 @@ function copyArena(a){
 
 //updates the Helpstones Coordinates
 function updateHelpstone(){
-  console.log(falling);
-  console.log(falling.helpstoneList);
+
   falling.helpstoneList.length = 0;
   disToFloor = yLen-1;
   for (var i= 0; i < memberCount; i++){
@@ -53,15 +52,12 @@ function updateHelpstone(){
     var x = falling.cubeList[i].x;
     var y = falling.cubeList[i].y;
     var z = falling.cubeList[i].z;
-  //  console.log(x,y,z);
-    falling.helpstoneList.push(new Cube(x, y, z, 0xffffff));
+      falling.helpstoneList.push(new Cube(x, y, z, 0xffffff));
   }
   distanceToFloor();
   for (var i = 0; i < memberCount; i++) {
     falling.helpstoneList[i].y -= disToFloor;
   }
-  console.log(falling.helpstoneList);
-  //debugger;
   falling.updateHelpObjPos();
 }
   //updates distance between FALLING and lowest possible position
