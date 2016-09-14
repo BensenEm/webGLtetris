@@ -124,9 +124,14 @@ function Stone (type, col){
 
     }
     else{
+      if (helpObj.children.length!==0){
+        var count= helpObj.children.length;
+        this.removeObjs(count, "hel");
+      }
       for( var i= 0; i < memberCount; i++){
          this.cubeList[i].y +=1;
       }
+
       this.copyInArena();
       var init = deleteCompletedLines();
       updateArena(arOld, oldArena);
@@ -177,8 +182,9 @@ function Stone (type, col){
     if (this.Object.children.length !== 0) {
       this.removeObjs(childrenCount, "fal");
     }
-    if (this.Help.children.length!=0){
-      this.removeObjs(childrenCount, "hel");
+    if (helpObj.children.length!==0){
+      var count= helpObj.children.length;
+      this.removeObjs(count, "hel");
     }
     for(var i=0; i<memberCount; i++){
       this.makeCube(i);
@@ -233,6 +239,7 @@ function Stone (type, col){
     for (var i = 0; i < memberCount; i++){
       this.helpstoneList.push(new Cube(this.cubeList[i].x, this.cubeList[i].y, this.cubeList[i].z, 1))
     }
+
   }
   // this.updateObj = function (){
   //   objCount= this.Object.children.length;

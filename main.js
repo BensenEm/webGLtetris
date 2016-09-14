@@ -112,7 +112,7 @@ function initFalling(){
   var ranType = getRandomIntInclusive(1,5);
   var ranCol = getRandomIntInclusive(1, (Object.keys(cr).length) -1);
   falling = new Stone(ranType,cr[ranCol]);
-//  updateHelpstone();
+  updateHelpstone();
 }
 
 // creates a new Cube at the given XYZ Position, Color, in wireframe or filled Look
@@ -332,7 +332,7 @@ function mainLoop(){
       falling.drop();
       currentTime = Date.now();
     }
-    updateHelpstone();
+    //updateHelpstone();
   }
   if (stateDeleting === true){
     //arena = midArena;
