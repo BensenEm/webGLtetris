@@ -96,6 +96,9 @@ function init() {
 	renderer = new THREE.WebGLRenderer();
   renderer.setClearColor(0x181a20);
 	renderer.setSize( window.innerWidth, window.innerHeight );
+  screenWidth = window.innerWidth;
+  screenHeight = window.innerHeight;
+  console.log(screenWidth, screenHeight)
 	document.body.appendChild( renderer.domElement );
   document.onkeydown = handleKeyDown;
   document.onkeyup = handleKeyUp;

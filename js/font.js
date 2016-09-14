@@ -2,9 +2,9 @@ var textMesh1, textMesh2, textGeo, material;
 var centerOffset= -200;
 var mirror = false
 var text = "Score: 0", textL = "Lines:  0",
-			height = 50,
-			size = 50,
-			hover = 500,
+			height = 20,
+			size = 20,
+			hover = 0,
 			curveSegments = 1,
 
 			bevelThickness = 1,
@@ -32,8 +32,8 @@ function createText() {
 
 		font: font,
 
-		 size: 20,
-		 height: 20,
+		 size: 40,
+		 height: 0,
 		 curveSegments: 4,
 
 		 bevelThickness: 2,
@@ -50,8 +50,8 @@ function createText() {
 
 		font: font,
 
-		 size: 20,
-		 height: 20,
+		 size: 40,
+		 height: 0,
 		 curveSegments: 4,
 
 		 bevelThickness: 2,
@@ -114,10 +114,10 @@ function createText() {
 	textMesh1 = new THREE.Mesh( textGeo, material );
 	textMesh2 = new THREE.Mesh( textGeoL, material);
 
-	textMesh1.position.x = -500;
-	textMesh2.position.x = -500;
-	textMesh1.position.y = hover;
-	textMesh2.position.y = hover -30;
+	textMesh1.position.x = -550;
+	textMesh2.position.x = -550;
+	textMesh1.position.y = hover-50;
+	textMesh2.position.y = hover -100;
 	textMesh1.position.z = 0;
 
 	textMesh1.rotation.x = 0;
