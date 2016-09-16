@@ -16,7 +16,8 @@ var text = "Score: 0", textL = "Lines:  0",
 function loadFont() {
 
 	var loader = new THREE.FontLoader();
-	loader.load( '/fonts/Nixie One_Regular.json', function ( response ) {
+//	loader.load( '/fonts/Nixie/ One_Regular.json', function ( response ) {
+	loader.load( '/fonts/Inception_Regular.json', function ( response ) {
 
 		font = response;
 

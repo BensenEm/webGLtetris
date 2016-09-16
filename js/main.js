@@ -86,9 +86,9 @@ function init() {
   turningSteps = ( THREE.Math.degToRad(90) )/20;
   scene = new THREE.Scene();
 	camera = new THREE.PerspectiveCamera( 70, window.innerWidth / (window.innerHeight), 1, 10000 );
-  camera.position.z = 600;
+  camera.position.z = 500;
   //camera.position.z = 5.5*(cubeDim) +diagDistance*cubeDim;
-  camera.position.y = 300;
+  camera.position.y = 200;
   // camera.position.y = camHight+200;
   // camera.position.x = -cubeDim*diagDistance;
   // var look = new THREE.Vector3(cubeDim *2.5, camHight, cubeDim*2.5);
