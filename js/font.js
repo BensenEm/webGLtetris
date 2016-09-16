@@ -1,10 +1,12 @@
 var textMesh1, textMesh2, textGeo, material;
 var centerOffset= -200;
 var mirror = false
+var matFont = new THREE.MeshPhongMaterial( { color: 0xadb7bd, wireframe: false} );
+
 var text = "Score: 0", textL = "Lines:  0",
 			height = 20,
 			size = 20,
-			hover = 0,
+			hover = 680,
 			curveSegments = 1,
 
 			bevelThickness = 1,
@@ -17,7 +19,7 @@ function loadFont() {
 
 	var loader = new THREE.FontLoader();
 //	loader.load( '/fonts/Nixie/ One_Regular.json', function ( response ) {
-	loader.load( "fonts/Nixie One_Regular.json", function ( response ) {
+	loader.load( "fonts/Lato Thin_Regular.json", function ( response ) {
 
 		font = response;
 
@@ -33,9 +35,9 @@ function createText() {
 
 		font: font,
 
-		 size: 40,
+		 size: 25,
 		 height: 0,
-		 curveSegments: 4,
+		 curveSegments: 8,
 
 		 bevelThickness: 2,
 		 bevelSize: 1.5,
@@ -51,9 +53,9 @@ function createText() {
 
 		font: font,
 
-		 size: 40,
+		 size: 25,
 		 height: 0,
-		 curveSegments: 4,
+		 curveSegments: 8,
 
 		 bevelThickness: 2,
 		 bevelSize: 1.5,
@@ -112,20 +114,24 @@ function createText() {
 
 	//var centerOffset = -0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
 
-	textMesh1 = new THREE.Mesh( textGeo, material );
-	textMesh2 = new THREE.Mesh( textGeoL, material);
+	textMesh1 = new THREE.Mesh( textGeo, matFont);
+	textMesh2 = new THREE.Mesh( textGeoL, matFont);
 
-	textMesh1.position.x = -550;
-	textMesh2.position.x = -550;
+	textMesh1.position.x = -270;
+	textMesh2.position.x = -270;
 	textMesh1.position.y = hover-50;
-	textMesh2.position.y = hover -100;
+	textMesh2.position.y = hover -90;
 	textMesh1.position.z = 0;
 
 	textMesh1.rotation.x = 0;
 	textMesh1.rotation.y = Math.PI * 2;
 
-	textMesh1.scale.z = 0.1;
-	textMesh2.scale.z = 0.1;
+	textMesh1.scale.z = 1;
+	textMesh2.scale.z = 1;
+	// textMesh1.scale.x = 0.4;
+	// textMesh2.scale.x = 0.4;
+	// textMesh1.scale.y = 0.4;
+	// textMesh2.scale.y = 0.4;
 //	textMesh1.rotation.y = Math.PI * 2;
 
 	scene.add( textMesh1 );

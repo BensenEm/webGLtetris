@@ -25,7 +25,7 @@ var diagDistance = 8; // factor for diagonal distance to corner of arena
 var camHight = 150; // height of camera
 var falling;        // Currently falling Tetris Stone
 var geometry, material, mesh;
-var timeUnit = 1000;
+var timeUnit = 2000;
 var currentTime = Date.now();
 var currentTime_turning = Date.now();
 var turningSteps;//console.log(turningSteps);
@@ -83,19 +83,25 @@ function start(){
 }
 
 function init() {
+  loadCanvas("frame");
+// var canvas = document.getElementById("c");
+  // canvas.width = 400;
+  // canvas.height = 300;
   turningSteps = ( THREE.Math.degToRad(90) )/20;
   scene = new THREE.Scene();
-	camera = new THREE.PerspectiveCamera( 70, window.innerWidth / (window.innerHeight), 1, 10000 );
-  camera.position.z = 500;
+//	camera = new THREE.PerspectiveCamera( 70, window.innerWidth / (window.innerHeight), 1, 10000 );
+	camera = new THREE.PerspectiveCamera( 70,  2/ 3, 1, 10000 );
+  camera.position.z = 600;
   //camera.position.z = 5.5*(cubeDim) +diagDistance*cubeDim;
-  camera.position.y = 200;
+  camera.position.y = 250;
   // camera.position.y = camHight+200;
   // camera.position.x = -cubeDim*diagDistance;
   // var look = new THREE.Vector3(cubeDim *2.5, camHight, cubeDim*2.5);
   // camera.lookAt (look);
 	renderer = new THREE.WebGLRenderer();
   renderer.setClearColor(0x181a20);
-	renderer.setSize( window.innerWidth, window.innerHeight );
+	renderer.setSize( 900, 1350 );
+  console.log(renderer);
   screenWidth = window.innerWidth;
   screenHeight = window.innerHeight;
   console.log(screenWidth, screenHeight)
@@ -115,14 +121,31 @@ function init() {
   //scene.add(groundObj);
   //scene.add(backgroundObj);
   loadFont();
+//  initControllInfo();
   //createText();
+  // var canvas = document.getElementById("myCanvas");
+  // var ctx = canvas.getContext("webgl");
+}
+
+function loadCanvas(id) {
+  var canvas = document.createElement('cavas');
+  div = document.getElementById(id);
+  div.appendChild(canvas);
+  canvas.id     = "CursorLayer";
+  canvas.width  = 900;
+  canvas.height = 1350;
+  canvas.style.zIndex   = 8;
+  canvas.style.position = "absolute";
+  canvas.style.border   = "5px solid #ff3366";
+  div.style.margin = 20;
+  div.style.padding = 0;
 }
 
 function initFalling(){
 //  console.log(camera.position.z);
   var ranType = getRandomIntInclusive(1,5);
-  var ranCol = getRandomIntInclusive(1, (Object.keys(cr).length) -1);
-  falling = new Stone(ranType,cr[ranCol]);
+  var ranCol = getRandomIntInclusive(0, 4);
+  falling = new Stone(ranType,levelCol[level-1][ranCol]);
   updateHelpstone();
 }
 

@@ -1,0 +1,82 @@
+html{
+    background-color: #333366;
+    background-size: cover;
+}
+
+.main {
+    display: flex;
+    font-family: 'Lato', sans-serif;
+    font-size: 20pt;
+    font-weight: 100;
+    justify-content: space-around;
+    align-content: space-between;
+    padding-top: 10pt;
+    padding-bottom: 20pt;
+
+}
+
+.logo {
+    background: url(/background.png) no-repeat center fixed;
+    background-size: cover;
+    display: flex;
+    width: 100%;
+    height: 200px;
+    justify-content: center;
+    align-items: center;
+    border-bottom-style: none;
+}
+
+h1 {
+    font-family: 'Lato', sans-serif;
+    font-size: 50pt;
+    font-weight: 300;
+    line-height: 50px;
+    margin: 0 0 0 0;
+    color: #000000 ;
+    text-align: center;
+}
+
+a {
+    color: #ff3366 ;
+    text-decoration: none;
+
+
+}
+.frame{
+    border: 5px solid green;
+    margin: 20 20 20 20;
+    justify-content: center;
+
+}
+.form{
+    font-family: 'Lato', sans-serif;
+    font-size: 2em;
+    background: #333366;
+
+
+}
+#kont{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+}
+
+#indforme{
+    font-size: 3em;
+    padding: 0 0 0 0;
+    border: 0 0 0 0;
+
+}
+
+#inp{
+    width: 49%;
+    height: 450px;
+
+}
+
+a:hover {
+    color: #ffffff;
+}
+
+p { color: #adb7bd; font-family: 'Lato', Arial, sans-serif; font-size: 16px; line-height: 26px; text-indent: 30px; margin: 0; }
