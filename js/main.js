@@ -74,13 +74,12 @@ arenaCase.add(arenaObj);
 
 
 
-start();
 
-function start(){
   init();
   initFalling();
   run();
-}
+
+
 function windowSize(){
   var hei = window.innerHeight;
   hei =hei*0.8;
@@ -103,15 +102,7 @@ function init() {
   // camera.position.x = -cubeDim*diagDistance;
   // var look = new THREE.Vector3(cubeDim *2.5, camHight, cubeDim*2.5);
   // camera.lookAt (look);
-	renderer = new THREE.WebGLRenderer();
-  renderer.setClearColor(0x181a20);
 
-	renderer.setSize( window.innerHeight*2/3*0.8, window.innerHeight *0.8);
-  console.log(renderer);
-  screenWidth = window.innerWidth;
-  screenHeight = window.innerHeight;
-  console.log(screenWidth, screenHeight)
-	document.body.appendChild( renderer.domElement );
   document.onkeydown = handleKeyDown;
   document.onkeyup = handleKeyUp;
 
@@ -135,17 +126,15 @@ function init() {
 }
 
 function loadCanvas(id) {
-  var canvas = document.createElement('cavas');
+  var canvas = document.createElement('canvas');
   div = document.getElementById(id);
-  div.appendChild(canvas);
-  canvas.id     = "CursorLayer";
-  canvas.width  = 900;
-  canvas.height = 1350;
-  canvas.style.zIndex   = 8;
-  canvas.style.position = "absolute";
-  canvas.style.border   = "5px solid #ff3366";
-  div.style.margin = 20;
-  div.style.padding = 0;
+  // div.appendChild(canvas);
+  div.style.margin = 0;
+  div.style.padding = 20;
+  renderer = new THREE.WebGLRenderer();
+  renderer.setClearColor(0x181a20);
+	renderer.setSize( window.innerHeight*2/3*0.8, window.innerHeight *0.8);
+	div.appendChild( renderer.domElement );
 }
 
 function initFalling(){

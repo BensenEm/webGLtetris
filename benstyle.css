@@ -10,8 +10,8 @@ html{
     font-weight: 100;
     justify-content: space-around;
     align-content: space-between;
-    padding-top: 10pt;
-    padding-bottom: 20pt;
+    /*padding-top: 10pt;
+    padding-bottom: 20pt;*/
 
 }
 
@@ -44,11 +44,12 @@ a {
 }
 .frame{
     width: 100%;
-    text-align: center;
-
 }
 canvas{
-    display: inline;
+    /*width= 400;
+    height= 600;*/
+    display: block;
+    margin:auto;
 }
 .form{
     font-family: 'Lato', sans-serif;
@@ -59,7 +60,7 @@ canvas{
 }
 #kont{
     display: flex;
-    justify-content: space-around;
+    /*justify-content: space-around;*/
     align-items: center;
 
 }
