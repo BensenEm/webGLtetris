@@ -81,7 +81,12 @@ function start(){
   initFalling();
   run();
 }
-
+function windowSize(){
+  var hei = window.innerHeight;
+  hei =hei*0.8;
+  wid = hei*2/3;
+  renderer.setSize(wid, hei);
+}
 function init() {
   loadCanvas("frame");
 // var canvas = document.getElementById("c");
@@ -100,7 +105,8 @@ function init() {
   // camera.lookAt (look);
 	renderer = new THREE.WebGLRenderer();
   renderer.setClearColor(0x181a20);
-	renderer.setSize( 900, 1350 );
+
+	renderer.setSize( window.innerHeight*2/3*0.8, window.innerHeight *0.8);
   console.log(renderer);
   screenWidth = window.innerWidth;
   screenHeight = window.innerHeight;
@@ -108,6 +114,7 @@ function init() {
 	document.body.appendChild( renderer.domElement );
   document.onkeydown = handleKeyDown;
   document.onkeyup = handleKeyUp;
+
   handleKeys();
   light = new THREE.DirectionalLight( 0xffffff );
   light.position.set( 0, 1, 1 ).normalize();
