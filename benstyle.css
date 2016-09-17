@@ -43,10 +43,12 @@ a {
 
 }
 .frame{
-    border: 5px solid green;
-    margin: 20 20 20 20;
-    justify-content: center;
+    width: 100%;
+    text-align: center;
 
+}
+canvas{
+    display: inline;
 }
 .form{
     font-family: 'Lato', sans-serif;
