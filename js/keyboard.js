@@ -165,8 +165,7 @@ function handleKeyDown(event) {
 
   }
   if (String.fromCharCode(event.keyCode) == "A") {
-    midArena = copyArena();
-    console.log("Midarena: ", midArena);
+    toggleCameraView();
   }
   if (String.fromCharCode(event.keyCode) == "Y") {
     console.log("Midarena2 ", midArena );

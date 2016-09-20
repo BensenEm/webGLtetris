@@ -1,8 +1,8 @@
 var textMesh1, textMesh2, textGeo, textMeshGameOver, material;
 var centerOffset= -200;
 var mirror = false
-var matFont = new THREE.MeshPhongMaterial( { color: 0xadb7bd, wireframe: false} );
-var fontType = "fonts/Lato Thin_Regular.json";
+var matFont = new THREE.MeshPhongMaterial( { color: 0xb83163, wireframe: false} );
+var fontType = "fonts/Lato Semibold_Regular.json";
 
 var text = "Score: 0", textL = "Lines:  0", textGameOver = "Game Over",
 			height = 20,
@@ -10,8 +10,8 @@ var text = "Score: 0", textL = "Lines:  0", textGameOver = "Game Over",
 			hover = 680,
 			curveSegments = 1,
 
-			bevelThickness = 1,
-			bevelSize = 1,
+			bevelThickness = 0,
+			bevelSize = 0,
 			bevelSegments = 1,
 			bevelEnabled = !false;
 

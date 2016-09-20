@@ -31,6 +31,8 @@ var currentTime_turning = Date.now();
 var turningSteps;//console.log(turningSteps);
 var turningCounter =0;
 var memberCount = 4;
+var cameraView1 =true;
+var cameraView2 = false;
 var cr = new Array() //Holds color values in Hex
   cr[0]= 0x0; //grey
   cr[1]= 0xf8d3ed; //orange
@@ -114,15 +116,34 @@ function init() {
   loadFont();
 
 }
+function toggleCameraView(){
+  if (cameraView1===true) {
+    cameraView1= false;
+    cameraView2=true;
+    camera.position.z=200;
+    camera.position.y= 700;
+    camera.lookAt(new THREE.Vector3(0,0,-200))
+    return;
+  }
+  if (cameraView2===true){
+    cameraView2 =false;
+    cameraView1 = true;
+    camera.position.z = 600;
+    camera.position.y = 250;
+    camera.lookAt(new THREE.Vector3(0,250,0))
+
+    return;
+  }
+}
 
 function loadCanvas(id) {
   var canvas = document.createElement('canvas');
   div = document.getElementById(id);
   var t = document.createTextNode('Sorry, your Browser does not support WebGL. Please browse with Chrome (or Firefox).');     // Create a text node
-  div.style.margin = 0;
-  div.style.padding = 20;
+  div.style.margin = "auto";
+  div.style.padding = 10;
   renderer = new THREE.WebGLRenderer();
-  renderer.setClearColor(0x333366);
+  renderer.setClearColor(0x121212);
 	renderer.setSize( window.innerHeight*2/3*0.8, window.innerHeight *0.8);
 	div.appendChild( renderer.domElement );
   renderer.domElement.appendChild(t);
