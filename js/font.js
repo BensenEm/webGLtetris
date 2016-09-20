@@ -1,9 +1,10 @@
-var textMesh1, textMesh2, textGeo, material;
+var textMesh1, textMesh2, textGeo, textMeshGameOver, material;
 var centerOffset= -200;
 var mirror = false
 var matFont = new THREE.MeshPhongMaterial( { color: 0xadb7bd, wireframe: false} );
+var fontType = "fonts/Lato Thin_Regular.json";
 
-var text = "Score: 0", textL = "Lines:  0",
+var text = "Score: 0", textL = "Lines:  0", textGameOver = "Game Over",
 			height = 20,
 			size = 20,
 			hover = 680,
@@ -19,7 +20,7 @@ function loadFont() {
 
 	var loader = new THREE.FontLoader();
 //	loader.load( '/fonts/Nixie/ One_Regular.json', function ( response ) {
-	loader.load( "fonts/Lato Thin_Regular.json", function ( response ) {
+	loader.load( fontType, function ( response ) {
 
 		font = response;
 
@@ -60,6 +61,24 @@ function createText() {
 		 bevelThickness: 2,
 		 bevelSize: 1.5,
 	   bevelSegments: 3,
+		 bevelEnabled: false,
+		//
+		 material: 1,
+		 extrudeMaterial: 0
+
+	});
+
+	textGeoGameOver = new THREE.TextGeometry( textGameOver, {
+
+		font: font,
+
+		 size: 60,
+		 height: 0,
+		 curveSegments: 8,
+
+		 bevelThickness: 2,
+		 bevelSize: 1.5,
+		 bevelSegments: 3,
 		 bevelEnabled: false,
 		//
 		 material: 1,
@@ -116,12 +135,19 @@ function createText() {
 
 	textMesh1 = new THREE.Mesh( textGeo, matFont);
 	textMesh2 = new THREE.Mesh( textGeoL, matFont);
+	textMeshGameOver = new THREE.Mesh( textGeoGameOver, matFont);
 
 	textMesh1.position.x = -270;
 	textMesh2.position.x = -270;
 	textMesh1.position.y = hover-50;
 	textMesh2.position.y = hover -90;
 	textMesh1.position.z = 0;
+
+	textMeshGameOver.position.x = -200;
+	textMeshGameOver.position.y = 300;
+	textMeshGameOver.position.z = 100;
+	textMeshGameOver.visible = false;
+
 
 	textMesh1.rotation.x = 0;
 	textMesh1.rotation.y = Math.PI * 2;
@@ -136,6 +162,7 @@ function createText() {
 
 	scene.add( textMesh1 );
 	scene.add( textMesh2 );
+	scene.add( textMeshGameOver);
 
 	if ( mirror ) {
 

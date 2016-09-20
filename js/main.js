@@ -44,6 +44,7 @@ var stateFalling = true;
 var stateDeleting = false;
 var statePause = false;
 var stateTurning = false;
+var stateGameOver = false;
 var midArena, newArena;
 //oldArena=arena;
 var disToFloor;
@@ -79,7 +80,11 @@ arenaCase.add(arenaObj);
   initFalling();
   run();
 
-
+function setGameOver(){
+  stateGameOver = true;
+  setArenaVisibility("allInvisible");
+  textMeshGameOver.visible = true;
+}
 function windowSize(){
   var hei = window.innerHeight;
   hei =hei*0.8;
@@ -88,20 +93,12 @@ function windowSize(){
 }
 function init() {
   loadCanvas("frame");
-// var canvas = document.getElementById("c");
-  // canvas.width = 400;
-  // canvas.height = 300;
   turningSteps = ( THREE.Math.degToRad(90) )/20;
   scene = new THREE.Scene();
-//	camera = new THREE.PerspectiveCamera( 70, window.innerWidth / (window.innerHeight), 1, 10000 );
 	camera = new THREE.PerspectiveCamera( 70,  2/ 3, 1, 10000 );
   camera.position.z = 600;
-  //camera.position.z = 5.5*(cubeDim) +diagDistance*cubeDim;
   camera.position.y = 250;
-  // camera.position.y = camHight+200;
-  // camera.position.x = -cubeDim*diagDistance;
-  // var look = new THREE.Vector3(cubeDim *2.5, camHight, cubeDim*2.5);
-  // camera.lookAt (look);
+
 
   document.onkeydown = handleKeyDown;
   document.onkeyup = handleKeyUp;
@@ -112,57 +109,50 @@ function init() {
   putFloor();
   scene.add(light);
   scene.add(arenaCase);
-//  arenaObj.position.set(cubeDim *2., 0, cubeDim*2.5);
   arenaObj.position.set(-cubeDim *2.5, 0, -cubeDim*2.5);
   arenaCase.rotation.y = Math.PI/4;
-  //scene.add(arenaObj);
-  //scene.add(groundObj);
-  //scene.add(backgroundObj);
   loadFont();
-//  initControllInfo();
-  //createText();
-  // var canvas = document.getElementById("myCanvas");
-  // var ctx = canvas.getContext("webgl");
+
 }
 
 function loadCanvas(id) {
   var canvas = document.createElement('canvas');
   div = document.getElementById(id);
-  // div.appendChild(canvas);
+  var t = document.createTextNode('Sorry, your Browser does not support WebGL. Please browse with Chrome (or Firefox).');     // Create a text node
   div.style.margin = 0;
   div.style.padding = 20;
   renderer = new THREE.WebGLRenderer();
-  renderer.setClearColor(0x181a20);
+  renderer.setClearColor(0x333366);
 	renderer.setSize( window.innerHeight*2/3*0.8, window.innerHeight *0.8);
 	div.appendChild( renderer.domElement );
+  renderer.domElement.appendChild(t);
+
+}
+function checkGameOver(){
+
+  for (var i = 0; i < xLen; i++){
+    for (var j = 0; j< zLen; j++){
+      if (oldArena[i][yLen-1][j] !== 1){
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 function initFalling(){
 //  console.log(camera.position.z);
   var ranType = getRandomIntInclusive(1,5);
   var ranCol = getRandomIntInclusive(0, 4);
-  falling = new Stone(ranType,levelCol[level-1][ranCol]);
-  updateHelpstone();
+  if (checkGameOver()){
+    setGameOver();
+  }
+  else{
+    falling = new Stone(ranType,levelCol[level-1][ranCol]);
+    updateHelpstone();
+  }
 }
 
-// creates a new Cube at the given XYZ Position, Color, in wireframe or filled Look
-// function putCubeWire(x, y, z){
-//   geometry = new THREE.BoxGeometry( cubeDim, cubeDim, cubeDim );
-//   material = new THREE.MeshBasicMaterial( { color: 0x000001, wireframe: true } );
-//   //material = new THREE.MeshPhongMaterial( { ambient: 0x050505, color: col, specular: 0x555555, shininess: 300 } );
-//   mesh = new THREE.Mesh( geometry, material );
-//   scene.add( mesh );
-//   mesh.position.set(x*cubeDim, y*cubeDim, z*cubeDim);
-// }
-//
-// function putCube(x, y, z, col){
-//   geometry = new THREE.BoxGeometry( cubeDim, cubeDim, cubeDim );
-//   material = new THREE.MeshBasicMaterial( { color: col, wireframe: false } );
-//   //material = new THREE.MeshPhongMaterial( { ambient: 0x050505, color: col, specular: 0x555555, shininess: 30 } );
-//   mesh = new THREE.Mesh( geometry, material );
-//   scene.add( mesh );
-//   mesh.position.set(x*cubeDim, y*cubeDim, z*cubeDim);
-// }
 
 function updateArena(arObjType, arenaArrayType){
   var childrenCount = arObjType.children.length;
@@ -200,47 +190,6 @@ function putFloor (){
   //mesh.position.set(x*cubeDim, y*cubeDim, z*cubeDim);
 }
 
-// function drawCubes(){
-//   scene= new THREE.Scene();
-//   putFloor();
-//   for (var i = 0; i < xLen; i++){
-//     for (var j = 0; j < yLen; j++){
-//       for (var k = 0; k < zLen; k++){
-//
-//         // draws the empty arena
-//         if (arena[i][j][k] === 1);// {putCube(i,j,k, 0x404040, true);}
-//
-//         // draws cubes within the arena that have halted
-//         else {
-//           var far = arena[i][j][k];
-//           putCube(i, j, k, far, false);
-//           putCubeWire (i, j, k);
-//         }
-//
-//         //draws the currently falling "FALLING" Stone
-//         if (stateFalling === true) {
-//           //updates the Helpstone
-//           if ( ( i === falling.helpstoneList[0].x && j === falling.helpstoneList[0].y && k == falling.helpstoneList[0].z)||
-//               ( i === falling.helpstoneList[1].x && j === falling.helpstoneList[1].y && k === falling.helpstoneList[1].z)||
-//               ( i === falling.helpstoneList[2].x && j === falling.helpstoneList[2].y && k === falling.helpstoneList[2].z)||
-//               ( i === falling.helpstoneList[3].x && j === falling.helpstoneList[3].y && k === falling.helpstoneList[3].z)){
-//                   //scene.remove(mesh);
-//                   //putCube(i, j, k, falling.farbe, false);
-//                   putCubeWire(i, j, k);
-//           }
-//           //updates the actual Falling Stone itself
-//           if ( ( i === falling.cubeList[0].x && j === falling.cubeList[0].y && k == falling.cubeList[0].z)||
-//               ( i === falling.cubeList[1].x && j === falling.cubeList[1].y && k === falling.cubeList[1].z)||
-//               ( i === falling.cubeList[2].x && j === falling.cubeList[2].y && k === falling.cubeList[2].z)||
-//               ( i === falling.cubeList[3].x && j === falling.cubeList[3].y && k === falling.cubeList[3].z)){
-//                   putCube(i, j, k, falling.farbe, false);
-//                   putCubeWire(i, j, k);
-//           }
-//         }
-//       }
-//     }
-//   }
-// }
 
 // takes an Arena and sets slots to 1 that are within eraseArray
 function eraseFromArena(typeOfArena, eraseArray){
@@ -387,11 +336,18 @@ function setArenaVisibility(val){
       arMid.visible=false;
       arNew.visible=true;
       break;
+    case "allInvisible" :
+      arOld.visible =true;
+      arMid.visible =false;
+      arNew.visible =false;
     default:
 
   }
 }
 function mainLoop(){
+  if (stateGameOver === true){
+    statePause = true;
+  }
   if (stateFalling === true){
     setArenaVisibility("oA");
     now = Date.now();
