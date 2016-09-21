@@ -1,5 +1,6 @@
 var currentlyPressedKeys = {};
 function handleKeyDown(event) {
+  if(!stateGameOver){
   currentlyPressedKeys[event.keyCode] = true;
   if (String.fromCharCode(event.keyCode) == "R") {
     switch (arenaPos) {
@@ -182,7 +183,7 @@ function handleKeyDown(event) {
   //     falling.turn("x", !true);
   //     console.log("E pressed");
   // }
-
+}
 }
 function handleKeyUp(event) {
   currentlyPressedKeys[event.keyCode] = false;

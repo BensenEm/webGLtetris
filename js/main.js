@@ -432,7 +432,7 @@ function animate(){
       now3 = Date.now();
       deltaT3 = now3-currentTime;
       console.log(deltaT3);
-      if(deltaT3>500 && counter3<=len3){
+      if(deltaT3>100 && counter3 <=len3){
         console.log("print ",counter3);
         arOld.children[counter3].visible=false;
         currentTime=Date.now();
