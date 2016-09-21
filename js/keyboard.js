@@ -1,5 +1,25 @@
 var currentlyPressedKeys = {};
 function handleKeyDown(event) {
+  if (String.fromCharCode(event.keyCode) == "P") {
+    statePause = !statePause;
+    console.log("PAUSE");
+  }
+  if (String.fromCharCode(event.keyCode) == "Q") {
+    if (stateTurning==true) {
+      return;
+    }
+    stateTurning=true;
+    arenaPos=(arenaPos+1)%4;
+    console.log(arenaPos);
+
+  }
+  if (String.fromCharCode(event.keyCode) == "A") {
+    toggleCameraView();
+  }
+  if (String.fromCharCode(event.keyCode) == "Y") {
+    console.log("Midarena2 ", midArena );
+  }
+
   if(!stateGameOver){
   currentlyPressedKeys[event.keyCode] = true;
   if (String.fromCharCode(event.keyCode) == "R") {
@@ -152,25 +172,7 @@ function handleKeyDown(event) {
     falling.drop();
   }
 
-  if (String.fromCharCode(event.keyCode) == "P") {
-    statePause = !statePause;
-    console.log("PAUSE");
-  }
-  if (String.fromCharCode(event.keyCode) == "Q") {
-    if (stateTurning==true) {
-      return;
-    }
-    stateTurning=true;
-    arenaPos=(arenaPos+1)%4;
-    console.log(arenaPos);
 
-  }
-  if (String.fromCharCode(event.keyCode) == "A") {
-    toggleCameraView();
-  }
-  if (String.fromCharCode(event.keyCode) == "Y") {
-    console.log("Midarena2 ", midArena );
-  }
   // if else (String.fromCharCode(event.keyCode) == "???") {
   //     falling.turn("x", !true);
   //     console.log("E pressed");
