@@ -82,11 +82,7 @@ arenaCase.add(arenaObj);
   initFalling();
   run();
 
-function setGameOver(){
-  stateGameOver = true;
-  setArenaVisibility("allInvisible");
-  textMeshGameOver.visible = true;
-}
+
 function windowSize(){
   var hei = window.innerHeight;
   hei =hei*0.8;
@@ -160,13 +156,20 @@ function checkGameOver(){
   }
   return false;
 }
-
+function setGameOver(){
+  stateGameOver = true;
+  setArenaVisibility("allInvisible");
+  textMeshGameOver.visible = true;
+  arOld.children=shuffle(arOld.children);
+}
 function initFalling(){
 //  console.log(camera.position.z);
   var ranType = getRandomIntInclusive(1,5);
   var ranCol = getRandomIntInclusive(0, 4);
   if (checkGameOver()){
     setGameOver();
+    console.log(arOld);
+
   }
   else{
     falling = new Stone(ranType,levelCol[level-1][ranCol]);
@@ -367,7 +370,9 @@ function setArenaVisibility(val){
 }
 function mainLoop(){
   if (stateGameOver === true){
-    statePause = true;
+    if (counter3>=len3){
+      statePause=true;
+    }
   }
   if (stateFalling === true){
     setArenaVisibility("oA");
@@ -410,7 +415,8 @@ function mainLoop(){
     }
   }
 }
-
+counter3=0;
+len3=100;
 function animate(){
   if (stateTurning === true){
     arenaCase.rotation.y += turningSteps;
@@ -420,7 +426,21 @@ function animate(){
       turningCounter=0;
     }
   }
-}
+  if (stateGameOver === true){
+    len3=arOld.children.length;
+
+      now3 = Date.now();
+      deltaT3 = now3-currentTime;
+      console.log(deltaT3);
+      if(deltaT3>500 && counter3<=len3){
+        console.log("print ",counter3);
+        arOld.children[counter3].visible=false;
+        currentTime=Date.now();
+          counter3++;
+      }
+    }
+  }
+
 
 function run(){
     requestAnimationFrame(function(){run();});

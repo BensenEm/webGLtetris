@@ -44,7 +44,7 @@ a {
 
 }
 #left{
-  width: 15%;
+  min-width: 200px;
   color: black;
   font-family: 'Lato', Arial, sans-serif;
   font-size: 16px;
@@ -64,11 +64,10 @@ a {
 
 }
 #frame{
-    width: 60%;
+    min-width: 300px;
     border-radius: 15px 50px;
     background: #121212;
     height: 85%;
-
     margin: auto;
 
 }
@@ -84,6 +83,7 @@ a {
 canvas{
 
     display: block;
+    border-left-style: 2px dashed white;
     margin: 10px auto;
 }
 

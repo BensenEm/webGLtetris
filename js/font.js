@@ -1,7 +1,7 @@
 var textMesh1, textMesh2, textGeo, textMeshGameOver, material;
 var centerOffset= -200;
 var mirror = false
-var matFont = new THREE.MeshPhongMaterial( { color: 0xb83163, wireframe: false} );
+var matFont = new THREE.MeshPhongMaterial( { color: 0xfdeba4, wireframe: false} );
 var fontType = "fonts/Lato Semibold_Regular.json";
 
 var text = "Score: 0", textL = "Lines:  0", textGameOver = "Game Over",
