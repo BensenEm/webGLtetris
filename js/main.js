@@ -88,6 +88,7 @@ function windowSize(){
   hei =hei*0.8;
   wid = hei*2/3;
   renderer.setSize(wid, hei);
+  posScoreText();
 }
 function init() {
   loadCanvas("frame");
@@ -137,7 +138,7 @@ function toggleCameraView(){
 }
 
 function loadCanvas(id) {
-  var canvas = document.createElement('canvas');
+  var can = document.createElement('canvas');
   div = document.getElementById(id);
   var t = document.createTextNode('Sorry, your Browser does not support WebGL. Please browse with Chrome (or Firefox).');     // Create a text node
   div.style.margin = "auto";
@@ -149,19 +150,40 @@ function loadCanvas(id) {
 	renderer.setSize( window.innerHeight*2/3*0.8, window.innerHeight *0.8);
 	div.appendChild( renderer.domElement );
   renderer.domElement.appendChild(t);
-  var text2 = document.createElement('div');
+  text2 = document.createElement('div');
+  div.appendChild(text2);
+  text2.id="scoreBox";
   text2.style.position = 'relative';
   text2.style.zIndex = 1;
   //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
-  text2.id = 'scoreText';
   text2.style.width = 200;
   text2.style.height = 200;
   text2.style.margin = 20;
   //text2.style.backgroundColor = "blue";
   text2.innerHTML = "Score: 0<br>Lines: 0";
-  text2.style.top = -1*(window.innerHeight*0.8) + 'px';
-  text2.style.left = 0 + 'px';
-  div.appendChild(text2);
+  posScoreText();
+
+}
+
+function createGameOverText(){
+  console.log("yuuup");
+  textGOdiv = document.createElement('div');
+  console.log(textGOdiv);
+  textGOpar = document.getElementById('frame');
+  textGOpar.appendChild(textGOdiv);
+  textGOdiv.id="gameOverText";
+  textGOdiv.style.zIndex =1;
+  textGOdiv.innerHTML = "Game Over, Bra";
+  textGOdiv.style.top = -1*(window.innerHeight*0.8) + 'px';
+  textGOdiv.style.left = 0 + 'px';
+  textGOdiv.style.position = 'relative';
+  }
+
+function posScoreText(){
+  var text3= document.getElementById("scoreBox");
+  text3.style.top = -1*(window.innerHeight*0.8) + 'px';
+  text3.style.left = 0 + 'px';
+
 }
 function checkGameOver(){
 
@@ -177,7 +199,7 @@ function checkGameOver(){
 function setGameOver(){
   stateGameOver = true;
   setArenaVisibility("allInvisible");
-  textMeshGameOver.visible = true;
+  createGameOverText();
   arOld.children=shuffle(arOld.children);
 }
 function initFalling(){
@@ -294,8 +316,7 @@ function findCompletedLines(){
     text="Score: "+ score;
     textL="Lines:  " +totalLines;
   //  refreshText();
-    console.log("jajaajajaj");
-    document.getElementById('scoreText').innerHTML = "Score: " + score + "<br>Lines: " + totalLines;
+    document.getElementById('scoreBox').innerHTML = "Score: " + score + "<br>Lines: " + totalLines;
 
   }
 

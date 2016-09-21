@@ -31,12 +31,21 @@ table, td {
     align-items: center;
     border-bottom-style: none;
 }
-#scoreText{
+#scoreBox{
+  position: relative;
   font-family: 'Lato', sans-serif;
-  font-size: 20pt;
+  font-size: 16pt;
   font-weight: 100;
 }
 
+#gameOverText{
+  position: relative;
+  font-family: 'Lato', sans-serif;
+  font-size: 50pt;
+  font-weight: 200;
+  text-indent: 20px;
+
+}
 h1 {
     font-family: 'Lato', sans-serif;
     font-size: 40pt;
@@ -54,7 +63,7 @@ a {
 
 }
 #left{
-  min-width: 200px;
+  min-width: 250px;
   color: black;
   font-family: 'Lato', Arial, sans-serif;
   font-size: 20px;
