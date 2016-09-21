@@ -109,9 +109,13 @@ function init() {
   scene.add(arenaCase);
   arenaObj.position.set(-cubeDim *2.5, 0, -cubeDim*2.5);
   arenaCase.rotation.y = Math.PI/4;
-  loadFont();
+  //loadFont();
 
 }
+function overlayText(){
+
+}
+
 function toggleCameraView(){
   if (cameraView1===true) {
     cameraView1= false;
@@ -137,13 +141,27 @@ function loadCanvas(id) {
   div = document.getElementById(id);
   var t = document.createTextNode('Sorry, your Browser does not support WebGL. Please browse with Chrome (or Firefox).');     // Create a text node
   div.style.margin = "auto";
-  div.style.padding = 10;
+  div.style.padding = 0;
+  div.style.position = "relative";
+  div.style.width = window.innerHeight*2/3*0.8;
   renderer = new THREE.WebGLRenderer();
   renderer.setClearColor(0x121212);
 	renderer.setSize( window.innerHeight*2/3*0.8, window.innerHeight *0.8);
 	div.appendChild( renderer.domElement );
   renderer.domElement.appendChild(t);
-
+  var text2 = document.createElement('div');
+  text2.style.position = 'relative';
+  text2.style.zIndex = 1;
+  //text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+  text2.id = 'scoreText';
+  text2.style.width = 200;
+  text2.style.height = 200;
+  text2.style.margin = 20;
+  //text2.style.backgroundColor = "blue";
+  text2.innerHTML = "Score: 0<br>Lines: 0";
+  text2.style.top = -1*(window.innerHeight*0.8) + 'px';
+  text2.style.left = 0 + 'px';
+  div.appendChild(text2);
 }
 function checkGameOver(){
 
@@ -275,7 +293,10 @@ function findCompletedLines(){
     score += calcScore(lines);
     text="Score: "+ score;
     textL="Lines:  " +totalLines;
-    refreshText();
+  //  refreshText();
+    console.log("jajaajajaj");
+    document.getElementById('scoreText').innerHTML = "Score: " + score + "<br>Lines: " + lines;
+
   }
 
   return fullRowArray;
