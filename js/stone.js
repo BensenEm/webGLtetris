@@ -249,46 +249,46 @@ function Stone (type, col){
 //  console.log( "CURRENT helpstoneList:  ", this.helpstoneList);
   switch (type){
     case (1):// I Stone
-      this.cubeList.push(new Cube(xLen/2 - 1, yLen-1, zLen/2 , col));
-      this.cubeList.push(new Cube(xLen/2, yLen-1, zLen/2, col));
-			this.cubeList.push(new Cube(xLen/2 + 1, yLen-1, zLen/2, col));
-			this.cubeList.push(new Cube(xLen/2 + 2, yLen-1, zLen/2, col));
+      this.cubeList.push(new Cube(xLen/2 - 1, yLen-1, zLen/2 , this.farbe));
+      this.cubeList.push(new Cube(xLen/2, yLen-1, zLen/2, this.farbe));
+			this.cubeList.push(new Cube(xLen/2 + 1, yLen-1, zLen/2, this.farbe));
+			this.cubeList.push(new Cube(xLen/2 + 2, yLen-1, zLen/2, this.farbe));
       this.initHelpStoneList();
       this.makeObj();
       break;
 
     case (2):// L Stone
-      this.cubeList.push(new Cube((xLen / 2) - 1, yLen - 2, zLen/2 , col));
-			this.cubeList.push(new Cube((xLen / 2) - 1, yLen-1, zLen/2, col));
-			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen/2, col));
-			this.cubeList.push(new Cube((xLen / 2) + 1, yLen-1, zLen/2, col));
+      this.cubeList.push(new Cube((xLen / 2) - 1, yLen - 2, zLen/2 , this.farbe));
+			this.cubeList.push(new Cube((xLen / 2) - 1, yLen-1, zLen/2, this.farbe));
+			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen/2, this.farbe));
+			this.cubeList.push(new Cube((xLen / 2) + 1, yLen-1, zLen/2, this.farbe));
       this.initHelpStoneList();
       this.makeObj();
       break;
 
     case (3):// S Stone
-      this.cubeList.push(new Cube((xLen / 2) - 1, yLen - 2, zLen/2, col));
-			this.cubeList.push(new Cube((xLen / 2), yLen - 2, zLen/2, col));
-			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen/2, col));
-			this.cubeList.push(new Cube((xLen / 2) + 1, yLen-1, zLen/2, col));
+      this.cubeList.push(new Cube((xLen / 2) - 1, yLen - 2, zLen/2, this.farbe));
+			this.cubeList.push(new Cube((xLen / 2), yLen - 2, zLen/2, this.farbe));
+			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen/2, this.farbe));
+			this.cubeList.push(new Cube((xLen / 2) + 1, yLen-1, zLen/2, this.farbe));
       this.initHelpStoneList();
       this.makeObj();
       break;
 
     case (4):// O Stone
-      this.cubeList.push(new Cube((xLen / 2) - 1, yLen - 2, zLen/2, col));
-			this.cubeList.push(new Cube((xLen / 2), yLen - 2, zLen/2, col));
-			this.cubeList.push(new Cube((xLen / 2) - 1, yLen-1, zLen/2, col));
-			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen/2, col));
+      this.cubeList.push(new Cube((xLen / 2) - 1, yLen - 2, zLen/2, this.farbe));
+			this.cubeList.push(new Cube((xLen / 2), yLen - 2, zLen/2, this.farbe));
+			this.cubeList.push(new Cube((xLen / 2) - 1, yLen-1, zLen/2, this.farbe));
+			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen/2, this.farbe));
       this.initHelpStoneList();
       this.makeObj();
       break;
 
     case (5):// T Stone
-      this.cubeList.push(new Cube((xLen / 2), yLen - 2, zLen/2, col));
-			this.cubeList.push(new Cube((xLen / 2) - 1, yLen-1, zLen/2, col));
-			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen/2, col));
-			this.cubeList.push(new Cube((xLen / 2) + 1, yLen-1, zLen/2, col));
+      this.cubeList.push(new Cube((xLen / 2), yLen - 2, zLen/2, this.farbe));
+			this.cubeList.push(new Cube((xLen / 2) - 1, yLen-1, zLen/2, this.farbe));
+			this.cubeList.push(new Cube((xLen / 2), yLen-1, zLen/2, this.farbe));
+			this.cubeList.push(new Cube((xLen / 2) + 1, yLen-1, zLen/2, this.farbe));
       this.initHelpStoneList();
       this.makeObj();
       break;

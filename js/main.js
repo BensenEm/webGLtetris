@@ -14,18 +14,18 @@ var oldArena = new Array(xLen);
 var font;
 var level =1;
 var score = 0;
-var scoreStr="";
+//var scoreStr="";
 //var totalLinesStr="";
 var totalLines = 0;
 var arenaPos =0;
 var cubeDim = 40; // size of single Cube
-var pause = false;
+//var pause = false;
 var scene, camera, renderer;
 var diagDistance = 8; // factor for diagonal distance to corner of arena
 var camHight = 150; // height of camera
 var falling;        // Currently falling Tetris Stone
 var geometry, material, mesh;
-var timeUnit = 2000;
+var currentLevel;
 var currentTime = Date.now();
 var currentTime_turning = Date.now();
 var turningSteps;//console.log(turningSteps);
@@ -33,15 +33,15 @@ var turningCounter =0;
 var memberCount = 4;
 var cameraView1 =true;
 var cameraView2 = false;
-var cr = new Array() //Holds color values in Hex
-  cr[0]= 0x0; //grey
-  cr[1]= 0xf8d3ed; //orange
-  cr[2]= 0xdbbbe7; //pink
-  cr[3]= 0xb3c5e6; //white
-  cr[4]= 0xcecbcb; //blue
-  cr[5]= 0xd8d7e1; //red
-  //cr[6]= 0x0; //green
-  //cr[7]= 0x0; //???? /
+// var cr = new Array() //Holds color values in Hex
+//   cr[0]= currentLevel.colorset[0]; //grey
+//   cr[1]= 0xf8d3ed; //orange
+//   cr[2]= 0xdbbbe7; //pink
+//   cr[3]= 0xb3c5e6; //white
+//   cr[4]= 0xcecbcb; //blue
+//   cr[5]= 0xd8d7e1; //red
+//   //cr[6]= 0x0; //green
+//   //cr[7]= 0x0; //???? /
 var stateFalling = true;
 var stateDeleting = false;
 var statePause = false;
@@ -111,10 +111,9 @@ function init() {
   arenaObj.position.set(-cubeDim *2.5, 0, -cubeDim*2.5);
   arenaCase.rotation.y = Math.PI/4;
   //loadFont();
-
-}
-function overlayText(){
-
+  console.log("YOYO");
+  currentLevel = new Level(level);
+  console.log("YOYO2");
 }
 
 function toggleCameraView(){
@@ -160,7 +159,7 @@ function loadCanvas(id) {
   text2.style.height = 200;
   text2.style.margin = 20;
   //text2.style.backgroundColor = "blue";
-  text2.innerHTML = "Score: 0<br>Lines: 0";
+  text2.innerHTML = "Score: 0<br>Lines: 0<br>Level: 1";
   posScoreText();
 
 }
@@ -208,11 +207,9 @@ function initFalling(){
   var ranCol = getRandomIntInclusive(0, 4);
   if (checkGameOver()){
     setGameOver();
-    console.log(arOld);
-
   }
   else{
-    falling = new Stone(ranType,levelCol[level-1][ranCol]);
+    falling = new Stone(ranType, currentLevel.colorset[ranCol]);
     updateHelpstone();
   }
 }
@@ -313,11 +310,14 @@ function findCompletedLines(){
   }
   if (lines!==0) {
     score += calcScore(lines);
-    text="Score: "+ score;
-    textL="Lines:  " +totalLines;
-  //  refreshText();
-    document.getElementById('scoreBox').innerHTML = "Score: " + score + "<br>Lines: " + totalLines;
 
+  //  refreshText();
+    document.getElementById('scoreBox').innerHTML = "Score: " + score + "<br>Lines: " + totalLines + "<br>Level: "+level;
+    if (score > currentLevel.threshholdScore){
+      level++;
+      currentLevel = new Level(level);
+
+    }
   }
 
   return fullRowArray;
@@ -421,7 +421,7 @@ function mainLoop(){
     now = Date.now();
     deltaT = now - currentTime;
 
-    if (deltaT > timeUnit){
+    if (deltaT > currentLevel.dropTime){
       falling.drop();
       currentTime = Date.now();
     }
