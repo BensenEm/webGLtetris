@@ -295,7 +295,7 @@ function findCompletedLines(){
     textL="Lines:  " +totalLines;
   //  refreshText();
     console.log("jajaajajaj");
-    document.getElementById('scoreText').innerHTML = "Score: " + score + "<br>Lines: " + lines;
+    document.getElementById('scoreText').innerHTML = "Score: " + score + "<br>Lines: " + totalLines;
 
   }
 
