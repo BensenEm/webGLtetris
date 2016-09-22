@@ -17,7 +17,6 @@ function handleKeyDown(event) {
     toggleCameraView();
   }
   if (String.fromCharCode(event.keyCode) == "Y") {
-    console.log("Midarena2 ", midArena );
   }
 
   if(!stateGameOver){
@@ -65,16 +64,16 @@ function handleKeyDown(event) {
   if (String.fromCharCode(event.keyCode) == "V") {
     switch (arenaPos) {
       case 0:
-      falling.turn("z", true);
-      break;
-      case 1:
-      falling.turn("x", true);
-      break;
-      case 2:
       falling.turn("z", false);
       break;
-      case 3:
+      case 1:
       falling.turn("x", false);
+      break;
+      case 2:
+      falling.turn("z", true);
+      break;
+      case 3:
+      falling.turn("x", true);
       break;
       default:
     }
@@ -83,16 +82,16 @@ function handleKeyDown(event) {
     //falling.turn("z", !true);
     switch (arenaPos) {
       case 0:
-      falling.turn("z", false);
-      break;
-      case 1:
-      falling.turn("x", false);
-      break;
-      case 2:
       falling.turn("z", true);
       break;
-      case 3:
+      case 1:
       falling.turn("x", true);
+      break;
+      case 2:
+      falling.turn("z", false);
+      break;
+      case 3:
+      falling.turn("x", false);
       break;
       default:
     }

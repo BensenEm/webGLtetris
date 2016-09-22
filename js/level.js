@@ -2,9 +2,6 @@
 Level: consists of
  dropspeed, colorset, backgroundpic, backgroundObj, floorObj, maybe additional stones, sound, gameOverAnimation;
 
-
-
-
 */
 
 function Level(lev){
@@ -14,6 +11,7 @@ function Level(lev){
   this.floorObj;
   this.gameOverAnimation;
   this.threshholdScore;
+  this.scoreMultiplyer;
 
   switch (lev) {
     case 1:
@@ -24,6 +22,8 @@ function Level(lev){
     this.colorset.push(0x333366);
     this.colorset.push(0x993366);
     this.threshholdScore=199;
+    this.scoreMultiplyer=1;
+
 
       break;
     case 2:
@@ -34,10 +34,11 @@ function Level(lev){
     this.colorset.push(0x95b9ff);
     this.colorset.push(0x7bddff);
     this.threshholdScore=399;
+    this.scoreMultiplyer=1.5;
 
       break;
 
-    case 3:
+    default:
     this.dropTime=1200;
     this.colorset.push(0x195037);
     this.colorset.push(0x0c6e38);
@@ -45,9 +46,8 @@ function Level(lev){
     this.colorset.push(0xbb7e27);
     this.colorset.push(0xefbb29);
     this.threshholdScore=599;
+    this.scoreMultiplyer=2;
+
     break;
-
-    default:
-
   }
 }

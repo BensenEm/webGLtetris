@@ -131,7 +131,7 @@ function Stone (type, col){
       for( var i= 0; i < memberCount; i++){
          this.cubeList[i].y +=1;
       }
-
+    //  playSound(soundAufsetzen);
       this.copyInArena();
       var init = deleteCompletedLines();
       updateArena(arOld, oldArena);

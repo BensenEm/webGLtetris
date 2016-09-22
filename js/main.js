@@ -47,6 +47,7 @@ var stateDeleting = false;
 var statePause = false;
 var stateTurning = false;
 var stateGameOver = false;
+var stateMusicOn = false;
 var midArena, newArena;
 //oldArena=arena;
 var disToFloor;
@@ -74,7 +75,8 @@ arenaObj.add(fallingObj);
 arenaObj.add(helpObj);
 arenaObj.add(groundObj);
 arenaCase.add(arenaObj);
-
+var bckgMusic;
+var bckgMusicAdr;
 
 
 
@@ -111,12 +113,12 @@ function init() {
   arenaObj.position.set(-cubeDim *2.5, 0, -cubeDim*2.5);
   arenaCase.rotation.y = Math.PI/4;
   //loadFont();
-  console.log("YOYO");
   currentLevel = new Level(level);
-  console.log("YOYO2");
+
 }
 
 function toggleCameraView(){
+
   if (cameraView1===true) {
     cameraView1= false;
     cameraView2=true;
@@ -172,10 +174,11 @@ function createGameOverText(){
   textGOpar.appendChild(textGOdiv);
   textGOdiv.id="gameOverText";
   textGOdiv.style.zIndex =1;
-  textGOdiv.innerHTML = "Game Over, Bra";
+  textGOdiv.innerHTML = "Game Over";
   textGOdiv.style.top = -1*(window.innerHeight*0.8) + 'px';
   textGOdiv.style.left = 0 + 'px';
   textGOdiv.style.position = 'relative';
+  textGOdiv.style.textAlign= 'center';
   }
 
 function posScoreText(){
@@ -312,12 +315,13 @@ function findCompletedLines(){
     score += calcScore(lines);
 
   //  refreshText();
-    document.getElementById('scoreBox').innerHTML = "Score: " + score + "<br>Lines: " + totalLines + "<br>Level: "+level;
+
     if (score > currentLevel.threshholdScore){
       level++;
       currentLevel = new Level(level);
 
     }
+    document.getElementById('scoreBox').innerHTML = "Score: " + score + "<br>Lines: " + totalLines + "<br>Level: "+level;
   }
 
   return fullRowArray;
@@ -329,21 +333,21 @@ function calcScore(lines){
   var multiplyer2 = 1.5;
   var multiplyer8 = 3;
   switch (lines) {
-    case 1: return 10 * multiplyer1 * lines * level;
+    case 1: return 10 * multiplyer1 * lines * currentLevel.scoreMultiplyer;
       break;
-    case 2: return 10 * multiplyer2 * lines * level;
+    case 2: return 10 * multiplyer2 * lines * currentLevel.scoreMultiplyer;
       break;
-    case 3: return 10 * multiplyer2 * lines * level;
+    case 3: return 10 * multiplyer2 * lines * currentLevel.scoreMultiplyer;
       break;
-    case 4: return 10 * multiplyer4 * lines * level;
+    case 4: return 10 * multiplyer4 * lines * currentLevel.scoreMultiplyer;
       break;
-    case 5: return 10 * multiplyer4 * lines * level;
+    case 5: return 10 * multiplyer4 * lines * currentLevel.scoreMultiplyer;
       break;
-    case 6: return 10 * multiplyer4 * lines * level;
+    case 6: return 10 * multiplyer4 * lines * currentLevel.scoreMultiplyer;
       break;
-    case 7: return 10 * multiplyer4 * lines * level;
+    case 7: return 10 * multiplyer4 * lines * currentLevel.scoreMultiplyer;
       break;
-    case 8: return 10 * multiplyer8 * lines * level;
+    case 8: return 10 * multiplyer8 * lines * currentLevel.scoreMultiplyer;
       break;
 
     default:  return 10 * multiplyer8 * lines * level;
