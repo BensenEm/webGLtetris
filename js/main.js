@@ -114,6 +114,7 @@ function init() {
   arenaCase.rotation.y = Math.PI/4;
   //loadFont();
   currentLevel = new Level(level);
+  putBckg();
 
 }
 
@@ -254,6 +255,24 @@ function putFloor (){
   //mesh.position.set(x*cubeDim, y*cubeDim, z*cubeDim);
 }
 
+function putBckg(){
+  var loader = new THREE.TextureLoader();
+  loader.load('images/abstractGeometricShapes.jpg', function ( texture ) {
+    var geometry = new THREE.BoxGeometry(16000, 9000, 9000);
+    var material = new THREE.MeshBasicMaterial({map: texture, overdraw: 0.5, side: THREE.DoubleSide});
+    var mesh = new THREE.Mesh(geometry, material);
+    mesh.position.y=500;
+    scene.add(mesh);
+  });
+
+
+//
+//   geometry = new THREE.BoxGeometry(900,900,900);
+//   material= new THREE.MeshPhongMaterial({ color: 0xaaaaaa, wireframe: true });
+//   bckg=new THREE.Mesh(geometry, material);
+//   scene.add(bckg);
+//
+ }
 
 // takes an Arena and sets slots to 1 that are within eraseArray
 function eraseFromArena(typeOfArena, eraseArray){
