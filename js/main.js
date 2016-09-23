@@ -107,14 +107,14 @@ function init() {
   handleKeys();
   light = new THREE.DirectionalLight( 0xffffff );
   light.position.set( 0, 1, 1 ).normalize();
-  // putFloor();
+  putFloor();
   scene.add(light);
   scene.add(arenaCase);
   arenaObj.position.set(-cubeDim *2.5, 0, -cubeDim*2.5);
   arenaCase.rotation.y = Math.PI/4;
   //loadFont();
   currentLevel = new Level(level);
-  putBckg();
+  //putBckg();
 
 }
 
@@ -248,7 +248,7 @@ function updateArena(arObjType, arenaArrayType){
 function putFloor (){
   geometry = new THREE.BoxGeometry( 6*cubeDim, 6, 6*cubeDim );
   //material = new THREE.MeshPhongMaterial( { ambient: 0x050505, color: 0x0033ff, specular: 0x555555, shininess: 30 } );
-  material = new THREE.MeshBasicMaterial( { color: 0x121212, wireframe: false } );
+  material = new THREE.MeshBasicMaterial( { color: 0x0033ff, wireframe: false } );
   floor = new THREE.Mesh( geometry, material );
   groundObj.add( floor );
   groundObj.position.set(cubeDim *2.5, -23, cubeDim*2.5);
