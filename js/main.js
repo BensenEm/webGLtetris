@@ -88,7 +88,7 @@ var bckgMusicAdr;
 function windowSize(){
   var hei = window.innerHeight;
   hei =hei*0.8;
-  wid = hei*2/3;
+  wid = hei*4/3;
   renderer.setSize(wid, hei);
   posScoreText();
 }
@@ -96,7 +96,7 @@ function init() {
   loadCanvas("frame");
   turningSteps = ( THREE.Math.degToRad(90) )/20;
   scene = new THREE.Scene();
-	camera = new THREE.PerspectiveCamera( 70,  2/ 3, 1, 10000 );
+	camera = new THREE.PerspectiveCamera( 70,  4/3, 1, 10000 );
   camera.position.z = 600;
   camera.position.y = 250;
 
@@ -107,7 +107,7 @@ function init() {
   handleKeys();
   light = new THREE.DirectionalLight( 0xffffff );
   light.position.set( 0, 1, 1 ).normalize();
-  putFloor();
+  // putFloor();
   scene.add(light);
   scene.add(arenaCase);
   arenaObj.position.set(-cubeDim *2.5, 0, -cubeDim*2.5);
@@ -146,10 +146,10 @@ function loadCanvas(id) {
   div.style.margin = "auto";
   div.style.padding = 0;
   div.style.position = "relative";
-  div.style.width = window.innerHeight*2/3*0.8;
+  div.style.width = window.innerHeight*4/3*0.8;
   renderer = new THREE.WebGLRenderer();
   renderer.setClearColor(0x121212);
-	renderer.setSize( window.innerHeight*2/3*0.8, window.innerHeight *0.8);
+	renderer.setSize( window.innerHeight*4/3*0.8, window.innerHeight *0.8);
 	div.appendChild( renderer.domElement );
   renderer.domElement.appendChild(t);
   text2 = document.createElement('div');
@@ -248,7 +248,7 @@ function updateArena(arObjType, arenaArrayType){
 function putFloor (){
   geometry = new THREE.BoxGeometry( 6*cubeDim, 6, 6*cubeDim );
   //material = new THREE.MeshPhongMaterial( { ambient: 0x050505, color: 0x0033ff, specular: 0x555555, shininess: 30 } );
-  material = new THREE.MeshBasicMaterial( { color: 0x8000ff, wireframe: true } );
+  material = new THREE.MeshBasicMaterial( { color: 0x121212, wireframe: false } );
   floor = new THREE.Mesh( geometry, material );
   groundObj.add( floor );
   groundObj.position.set(cubeDim *2.5, -23, cubeDim*2.5);
@@ -257,12 +257,13 @@ function putFloor (){
 
 function putBckg(){
   var loader = new THREE.TextureLoader();
-  loader.load('images/abstractGeometricShapes.jpg', function ( texture ) {
-    var geometry = new THREE.BoxGeometry(16000, 9000, 9000);
+  loader.load('images/psysky.png', function ( texture ) {
+    var geometry = new THREE.BoxGeometry(13500, 9000, 9000);
     var material = new THREE.MeshBasicMaterial({map: texture, overdraw: 0.5, side: THREE.DoubleSide});
     var mesh = new THREE.Mesh(geometry, material);
     mesh.position.y=500;
     scene.add(mesh);
+    loadCloud();
   });
 
 

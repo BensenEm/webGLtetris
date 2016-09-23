@@ -7,7 +7,7 @@ function loadSound(){
 
 function playSound() {
 		if (soundinstance==="null"){
-			soundinstance= createjs.Sound.play("music", {offset: 4000, loop: 2});
+			soundinstance= createjs.Sound.play("music", {offset: 4000, loop: 10});
 			soundinstance.volume=0.5;
 			stateMusicOn= true;
 			return;

@@ -106,3 +106,15 @@ function shuffle(array) {
 
   return array;
 }
+
+function loadCloud(){
+  var loader = new THREE.OBJLoader();
+	loader.load( 'images/swanky_leelo.obj', function ( object ) {
+    object.wireframe= false;
+    console.log(object);
+    scene.add( object );
+    object.scale.set(10,10,10);
+    object.rotation.x=Math.PI/2;
+    object.position.z=-1000;
+  });
+}

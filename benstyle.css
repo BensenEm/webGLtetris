@@ -67,8 +67,8 @@ a {
 }
 
 #left{
-  display: inline;
-  min-width: 250px;
+  display: block;
+  width: 15%;
   color: black;
   font-family: 'Lato', Arial, sans-serif;
   font-size: 20px;
@@ -85,8 +85,20 @@ a {
 }
 #mid{
   width: 70%;
+  height: 100%;
+  margin-top: 10;
+  margin-left: 10;
+
   padding: 0px;
 
+}
+
+#frame{
+    width: 100%;
+    /*border-radius: 15px 50px;*/
+    /*background: #121212;*/
+    height: 100%;
+    margin: auto;
 }
 .soundButton{
    display: block;
@@ -116,14 +128,7 @@ a {
  background-color: #993366;
 }
 
-#frame{
-    max-width: 600px;
-    /*border-radius: 15px 50px;*/
-    /*background: #121212;*/
-    height: 80%;
-    margin: auto;
 
-}
 
 #right{
   width: 15%;
@@ -131,14 +136,14 @@ a {
 
 #all{
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   height:80%;
 }
 canvas{
 
     display: block;
     border-left-style: 2px dashed white;
-    margin: 10px auto;
+    margin: auto;
 }
 
 .form{

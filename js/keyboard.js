@@ -17,7 +17,7 @@ function handleKeyDown(event) {
     toggleCameraView();
   }
   if (String.fromCharCode(event.keyCode) == "Y") {
-    camera.position.z+=50;
+    camera.position.z-=50;
   }
 
   if(!stateGameOver){
