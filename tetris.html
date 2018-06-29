@@ -2,12 +2,12 @@
 <html>
   <head>
     <meta name="author" content="Benjamin Molnár">
-    <meta name="keywords" content="bazingaa">
-    <meta data-app-slug='651-mad-sheep'>
+    <meta name="keywords" content="tetris online 3D">
+    
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <title>Tetris</title>
-    <link href='https://fonts.googleapis.com/css?family=Lato:400,900,100' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Lato:100, 300, 400,900' rel='stylesheet' type='text/css'>
     <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
 
     <link href="benstyle.css" rel="stylesheet" type="text/css" >
@@ -17,49 +17,45 @@
     <div class="logo">
       <h1>3D TETRIS</h1>
     </div>
-    <!-- <nav class="main">
-      <a href="/index.html"> Start</a>
-      <a href="/contact.html"> Contact </a>
-      <a href="/imprint.html"> Imprint</a>
-    </nav> -->
+   
 <div id="all">
-    <div id="left" class="main">
-      <table class="main" style="width: 100%">
+    <div id="left">
+      <table>
         <tr>
-          <td>Move to front/back</td>
-          <td>k-i</td>
+          <td class="c1">Move to front/back</td>
+          <td class="c2">k-i</td>
         </tr>
         <tr>
-          <td>Move left/right</td>
-          <td>j-l</td>
+          <td class="c1">Move left/right</td>
+          <td class="c2">j-l</td>
         </tr>
         <tr>
-          <td>Rotate around X</td>
-          <td>e-r</td>
+          <td class="c1">Rotate around X</td>
+          <td class="c2">e-r</td>
         </tr>
         <tr>
-          <td>Rotate around Y</td>
-          <td>d-f</td>
+          <td class="c1">Rotate around Y</td>
+          <td class="c2">d-f</td>
         </tr>
         <tr>
-          <td>Rotate around Z</td>
-          <td>c-v</td>
+          <td class="c1">Rotate around Z</td>
+          <td class="c2">c-v</td>
         </tr>
         <tr>
-          <td>Rotate Game</td>
-          <td>q</td>
+          <td class="c1">Rotate Game</td>
+          <td class="c2">q</td>
         </tr>
         <tr>
-          <td>Toggle View</td>
-          <td>a</td>
+          <td class="c1">Toggle View</td>
+          <td class="c2">a</td>
         </tr>
         <tr>
-          <td>Drop</td>
-          <td>space</td>
+          <td class="c1">Drop</td>
+          <td class="c2">space</td>
         </tr>
         <tr>
-          <td>Pause</td>
-          <td>p</td>
+          <td class="c1">Pause</td>
+          <td class="c2">p</td>
         </tr>
       </table>
       <button onclick="playSound();" class="soundButton">Sound</button>
@@ -68,12 +64,13 @@
       <div id="frame">
       </div>
     </div>
-    <div id="right">
-    </div>
-</div>
-  <footer>
-    <!-- <p><a href="/admin.html"> Admin</a></p> -->
-  </footer>
+  </div>
+      <div id="wrong-device">
+        <div class="wrapper">
+          <p>Sorry. Your Device is not supported. Please play the game on a large Screen with a Keyboard Connected.</p>
+        </div>
+      </div>
+
   <script src="js/three.min.js" type="text/javascript"></script>
   <script src="js/OBJLoader.js" type="text/javascript"></script>
   <script src="js/cube.js" type="text/javascript"></script>

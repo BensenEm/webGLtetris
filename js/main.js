@@ -87,6 +87,7 @@ var bckgMusicAdr;
 
 function windowSize(){
   var hei = window.innerHeight;
+  console.log("height:  ", hei);
   hei =hei*0.8;
   wid = hei*4/3;
   renderer.setSize(wid, hei);
