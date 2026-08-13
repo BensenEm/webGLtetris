@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Benjamin Molnár">
+    <meta name="keywords" content="tetris online 3D">
+    <title>3D Tetris</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;900&display=swap" rel="stylesheet">
+    <link href="benstyle.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="logo">
+      <h1>3D TETRIS</h1>
+    </div>
+
+    <div id="all">
+      <div id="left">
+        <table>
+          <tbody>
+            <tr><td class="c1">Move to front/back</td><td class="c2">k-i</td></tr>
+            <tr><td class="c1">Move left/right</td><td class="c2">j-l</td></tr>
+            <tr><td class="c1">Rotate around X</td><td class="c2">e-r</td></tr>
+            <tr><td class="c1">Rotate around Y</td><td class="c2">d-f</td></tr>
+            <tr><td class="c1">Rotate around Z</td><td class="c2">c-v</td></tr>
+            <tr><td class="c1">Rotate Game</td><td class="c2">q</td></tr>
+            <tr><td class="c1">Toggle View</td><td class="c2">a</td></tr>
+            <tr><td class="c1">Drop</td><td class="c2">space</td></tr>
+            <tr><td class="c1">Pause</td><td class="c2">p</td></tr>
+          </tbody>
+        </table>
+        <button type="button" id="soundButton" class="soundButton">Sound</button>
+      </div>
+
+      <div id="mid">
+        <div id="frame">
+          <div id="hud">
+            <div id="scoreBox">Score: 0<br>Lines: 0<br>Level: 1</div>
+          </div>
+          <div id="gameOverText" hidden>Game Over</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="wrong-device">
+      <div class="wrapper">
+        <p>Sorry. Your Device is not supported. Please play the game on a large Screen with a Keyboard Connected.</p>
+      </div>
+    </div>
+
+    <noscript>
+      <p>This game requires JavaScript and WebGL.</p>
+    </noscript>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
