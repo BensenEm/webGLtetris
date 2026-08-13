@@ -1,168 +1,141 @@
 # 3D Tetris — Overhaul Guide
 
-Rough working document from the initial code review (three.js r80, no build step, all
-globals). Ordered roughly by priority. Tick items off as they land; add notes inline.
+Working document from the initial code review of the original three.js r80
+codebase. `[x]` items are done; the rest is the remaining backlog.
 
 ---
 
-## 0. Baseline
+## 0. Baseline (as found)
 
 - three.js **r80** (2016), vendored minified at `js/three.min.js`
 - No package.json, no build step, no lint, no tests
 - 11 scripts loaded via `<script>` tags in `tetris.html`, everything on `window`
-- Arena is `6 x 12 x 6`, cube size 40 units, pieces are always 4 cubes (`memberCount`)
+- Arena is `6 x 12 x 6`, pieces are always 4 cubes (`memberCount`)
+
+Now: three **r185** via npm, Vite build, ES modules under `src/`.
 
 ---
 
-## 1. Correctness bugs (fix before or during the refactor)
+## 1. Correctness bugs — DONE
 
-- [ ] **Line-clear collapse off by one** — `js/main.js:402`
-  `for (var i = y; i < yLen-2; ++i)` never writes row `yLen-2`, leaving a stale
-  duplicate cube in the second-from-top row after a clear. Should be `yLen-1`.
+- [x] **Line-clear collapse off by one** (was `main.js:402`)
+  `for (var i = y; i < yLen-2; ++i)` never wrote row `yLen-2`, leaving a stale
+  duplicate cube after a clear.
 
-- [ ] **Multi-row clears collapse in the wrong order** — `js/main.js:398-408`
-  Shifts one cell at a time over `fullRowsSet`, which `makeSet` sorted by x -> y -> z
-  and which is then walked backwards, so within a column the *upper* cleared row is
-  collapsed before the lower one. Two cleared rows in one column give a wrong stack.
-  Rewrite as: per column, filter out cleared cells and repack downward once.
-  Also move `updateArena(arNew, newArena)` out of the inner loop — it currently
-  rebuilds all 432 cells per cleared cell.
+- [x] **Multi-row clears collapsed in the wrong order** (was `main.js:398-408`)
+  Cells were shifted one at a time in an order derived from a sorted set, so a
+  column containing two completed rows collapsed the upper one first.
+  Now `arena.js:collapseCells` repacks each (x, z) column in a single pass.
 
-- [ ] **Game-over animation crashes** — `js/main.js:502`
-  `counter3 <= len3` then `arOld.children[counter3].visible` -> TypeError on the last
-  iteration. Use `<`.
+- [x] **Game-over animation crashed** (was `main.js:502`) — `counter3 <= len3`
+  read one past the end of `arOld.children`.
 
-- [ ] **Game-over detection misses half the spawn area** — `js/main.js:194`
-  `checkGameOver()` only tests row `yLen-1`, but pieces spawn into `yLen-1` *and*
-  `yLen-2` (`js/stone.js:261+`). A stack topping out at `yLen-2` silently overwrites
-  cells instead of ending the game. Test the actual spawn cells of the next piece.
+- [x] **Game-over detection missed half the spawn area** (was `main.js:194`)
+  Only the top row was tested, but pieces spawn into the top *two*. Now the
+  spawning piece's actual cells are tested.
 
-- [ ] **`turn()` can blow the stack** — `js/stone.js:153`
-  Recurses with `!direction` on failure; if the reverted state is also blocked the two
-  calls ping-pong forever. Replace with: compute candidate cells, validate, commit or
-  discard (no mutation-then-revert).
+- [x] **`turn()` could blow the stack** (was `stone.js:153`) — mutate-then-
+  recurse-to-undo could ping-pong. Rotation is now build-validate-commit.
 
-- [ ] **Resize distorts the scene** — `js/main.js:88`
-  `windowSize()` calls `renderer.setSize` but never updates `camera.aspect` /
-  `camera.updateProjectionMatrix()`. Also `div.style.width = <number>` (`main.js:150`)
-  is missing a `px` unit and is a silent no-op.
+- [x] **Resize distorted the scene** (was `main.js:88`) — `camera.aspect` was
+  never updated. The missing `px` unit on the container width is fixed too.
 
-- [ ] **Deletion-flash timing is partly dead code** — `js/main.js:455-483`
-  The final `else if (deltaT2 > 1500)` is only reachable at >2500ms because of the
-  earlier chained ranges. Replace the ms magic numbers with a small state/timeline.
+- [x] **Deletion-flash timing was partly dead code** (was `main.js:455-483`) —
+  replaced with a single timeline driven by `CLEAR_FLASH_*` constants.
 
 ---
 
-## 2. three.js upgrade + modularisation  <-- current phase
+## 2. three.js upgrade + modularisation — DONE
 
-Prerequisite for all rendering work. Notes:
-
-- [ ] Move to modern three (ESM). Delete the vendored `three.min.js`.
-- [ ] APIs used here that no longer exist and must be replaced:
-  - `shading: THREE.FlatShading` (`stone.js:161`, `main.js:235`) -> `flatShading: true`
-  - `THREE.GeometryUtils` (`font.js`) — removed
-  - `overdraw` (`main.js:263`) — removed (CanvasRenderer leftover)
-  - `THREE.Geometry`-based `TextGeometry` face/vertex fiddling (`font.js`) — removed
-  - `THREE.Math.degToRad` (`main.js:98`) -> `THREE.MathUtils.degToRad`
-  - `renderer.setClearColor` still fine; colour management is now sRGB-by-default
-- [ ] Delete dead/broken code paths while migrating: `js/font.js` (never called —
-  `loadFont()` is commented out at `main.js:116`), `putBckg()` + `loadCloud()` +
-  `js/OBJLoader.js`, `js/controllInfo.js` (entirely commented out).
-- [ ] Split into ES modules with an explicit game-state object instead of ~40 globals.
-  Kill the accidental implicit globals: `div`, `wid`, `mesh`, `floor`, `light`, `now`,
-  `deltaT`, `now2`, `deltaT2`, `now3`, `deltaT3`, `counter3`, `len3`, `text2`,
-  `textGOdiv`, `textGOpar`, `childrenCount`. Add `"use strict"` / module scope.
-- [ ] Suggested module split: `arena.js` (grid + collapse), `piece.js` (shapes,
-  rotation), `render.js` (scene/camera/materials), `input.js`, `levels.js`,
-  `audio.js`, `ui.js`, `main.js` (loop only).
+- [x] Modern three (r185) via npm + Vite. Vendored `three.min.js` deleted.
+- [x] All removed APIs replaced (`THREE.FlatShading`, `THREE.GeometryUtils`,
+      `overdraw`, `THREE.Math`, Geometry-based `TextGeometry`).
+- [x] Dead code deleted: `font.js`, `OBJLoader.js`, `controllInfo.js`,
+      `putBckg()`, `loadCloud()`.
+- [x] Split into modules; the ~40 globals and all implicit globals are gone.
+      `src/`: `config`, `arena`, `piece`, `levels`, `scoring`, `game`,
+      `render`, `scenery`, `textures`, `input`, `audio`, `ui`, `main`.
 
 ---
 
-## 3. Rendering / materials  <-- the actual near-term goal
+## 3. Rendering / materials
 
-Once on modern three:
+- [x] `MeshStandardMaterial` for cubes, floor and sand.
+- [x] Image-based lighting — `PMREMGenerator` captures the sky into an
+      environment map, so cubes and water carry real sky reflections.
+- [x] `ACESFilmicToneMapping`, `setPixelRatio`, sRGB output.
+- [x] Shadow map from a key light aimed along the sky's own sun vector.
+- [x] Ghost piece is a translucent black wireframe (was opaque black).
+- [x] Shared cached materials per colour — the per-cube material leak is gone.
+- [ ] Real arena surfaces: glass/frosted case walls, a grid on the floor to
+      read x/z position.
+- [ ] Post-processing (bloom on line clears, vignette).
+- [ ] Per-level environment/palette swap driven by `Level` — `levels.js`
+      already carries `colors` per level; the sky/water could shift with it.
+- [ ] `InstancedMesh` for the arena instead of add/remove of ~400 meshes per
+      landing. Not urgent now that materials are shared, but it is the right
+      structure.
 
-- [ ] `MeshStandardMaterial` (or `MeshPhysicalMaterial`) for cubes — real roughness /
-  metalness instead of `MeshPhongMaterial` + `specular: 0x009900`.
-- [ ] Image-based lighting: an HDR/EXR environment via `PMREMGenerator`, so cubes pick
-  up reflections. Biggest single visual win.
-- [ ] `renderer.toneMapping = ACESFilmicToneMapping`, correct sRGB output, and
-  `renderer.setPixelRatio(Math.min(devicePixelRatio, 2))` (currently unset — the whole
-  thing renders soft on HiDPI).
-- [ ] Shadow map from the key light so the piece reads against the floor; the drop
-  ghost currently does that job alone.
-- [ ] Real arena surfaces: glass//frosted case walls, a proper floor material instead of
-  the flat blue `MeshBasicMaterial` box (`main.js:249`), subtle grid on the floor to
-  read x/z position.
-- [ ] Ghost/help piece: currently a black wireframe (`matWa`, `main.js:70`) — make it a
-  translucent additive material.
-- [ ] Post-processing pass (bloom on line clears, slight vignette) — optional, after
-  the above.
-- [ ] Per-level environment/palette swap driven by `Level` (`js/level.js` already
-  carries `colorset`; it also declares unused `backgroundpic` / `floorObj` /
-  `gameOverAnimation` slots that were clearly meant for this).
+### Beach scenery (added this pass)
 
-### Performance to fix at the same time
-
-- [ ] `updateArena()` (`main.js:230`) allocates a fresh `MeshPhongMaterial` per cube on
-  every rebuild and never `dispose()`s removed meshes — a steady leak over a long game.
-  One shared material per level colour.
-- [ ] Better: a single `InstancedMesh` for the whole arena, updating instance matrices
-  and colours instead of add/remove of ~400 `Mesh` objects per landing.
+- Atmospheric `Sky` with a low sun, positioned behind-left of the camera so
+  its glare is not aimed at the viewer.
+- `Water` object (real planar reflection + refraction distortion) over a
+  procedurally generated anisotropic swell normal map.
+- Sand: a wide sheet with a meandering shoreline (`SHORE_WAVES`), sloping
+  under the sea, with vertex-baked patchiness and wet-sand darkening.
+- Anti-tiling: vertex colour variation plus a two-scale rotated texture blend
+  patched into the material (`makeNonRepeating`).
+- Cloud billboards from generated puff textures, slowly orbiting.
+- All textures generated procedurally at load — no new binary assets.
 
 ---
 
 ## 4. Input
 
-- [ ] `String.fromCharCode(event.keyCode)` (`js/keyboard.js`) is deprecated and breaks on
-  non-QWERTY layouts -> `event.code`.
-- [ ] No `preventDefault()`, so Space scrolls the page mid-game.
-- [ ] `handleKeys()` (`keyboard.js:193`) is dead code and references an undefined `z`.
-- [ ] No key repeat / DAS — held movement keys don't auto-repeat, movement feels stiff.
-- [ ] The four-way `switch (arenaPos)` blocks repeat 6 times; collapse into a single
-  rotation-mapping table.
+- [x] `event.code` instead of `String.fromCharCode(event.keyCode)`.
+- [x] `preventDefault()` so Space no longer scrolls the page.
+- [x] Dead `handleKeys()` removed.
+- [x] The six repeated four-way `switch (arenaPos)` blocks collapsed into
+      per-key mapping tables.
+- [ ] Key repeat / DAS — held movement keys still do not auto-repeat.
+- [ ] Soft drop.
 
 ---
 
 ## 5. Gameplay features
 
+- [x] Level-up now advances past every threshold crossed, not just one.
 - [ ] Next-piece preview, hold slot.
-- [ ] Soft drop, and lock delay on hard drop.
-- [ ] Genuinely 3D pieces — all 5 current shapes are flat 4-cube tetrominoes despite the
-  3D arena. `memberCount` is a hardcoded global `4` (`main.js:33`); make piece size
-  per-shape so pentacubes / 3D S- and T-shapes become possible.
-- [ ] Piece colour is currently random and unrelated to shape (`main.js:211-217`) —
-  colour by shape so pieces are recognisable.
-- [ ] Level-up only fires on a line clear and only advances one level at a time
-  (`main.js:340`).
-- [ ] Score/game-over are absolutely-positioned divs nudged with negative `top` hacks
-  (`main.js:186`, `main.js:171`) — rebuild as a proper HUD overlay.
-- [ ] SFX exist but are never played — `playSound(soundAufsetzen)` is commented out at
-  `js/stone.js:134`. Wire up landing / rotate / clear / game-over.
+- [ ] Lock delay on hard drop.
+- [ ] Genuinely 3D pieces. All 5 shapes are flat 4-cube tetrominoes despite the
+      3D arena. `Piece` no longer assumes a fixed cube count, so pentacubes and
+      3D S/T shapes are now a data change in `piece.js` rather than a rewrite.
+- [ ] Colour by shape — piece colour is still random and unrelated to shape.
+- [ ] SFX: the wav files ship but are never played (landing, rotate, clear,
+      game over). `sounds/` has them already.
+- [ ] Proper HUD rather than a score div in the corner.
 
 ---
 
 ## 6. Audio
 
-- [ ] Drop the CDN `createjs` dependency (`tetris.html:11`) — it exists to play one mp3.
-  Use `<audio>` or Web Audio.
-- [ ] `soundinstance.muted` is a deprecated SoundJS property.
+- [x] CDN `createjs` dependency dropped; music is a plain `Audio` element.
+- [ ] SFX wiring (see above).
 
 ---
 
 ## 7. Repo hygiene
 
-- [ ] ~10 MB of unused assets committed: `images/controlls.ai` (646 KB),
-  `images/swanky_leelo.obj` (236 KB), `images/abstractGeometricShapes.jpg` (1.0 MB),
-  `images/psysky.png` (694 KB), `images/surreal_sky_*.jpg`, three tracker modules
-  (`.S3M` / `.MOD` / `.XM`), `sounds/ophelia.mp3`, `sounds/getout.ogg`, and ~2.8 MB of
-  unused fonts (`fonts/Lato *_Regular.json` are only referenced by the dead `font.js`).
-- [ ] Compress what stays: `sounds/music.mp3` is 4.1 MB, `images/background.png` 2.6 MB,
-  `sounds/verschwinden.wav` 1.8 MB.
-- [ ] Add `package.json`, a `.gitignore`, a README, and a linter.
-- [ ] `tetris.html`: invalid `<!DOCTYPE>` (line 1), missing `<html lang>`, inline
-  `onresize` / `onload` handlers, malformed Google Fonts URL (spaces in
-  `family=Lato:100, 300, 400,900`), no favicon.
-- [ ] Mobile is hard-blocked below 800px (`benstyle.css`) with no touch controls;
-  `#frame` height is hardcoded to `534px`.
-- [ ] Consider a deploy target (GitHub Pages) once there's a build step.
+- [x] `package.json`, `.gitignore`, Vite build.
+- [x] Valid doctype, `lang`, no inline handlers, fixed Google Fonts URL.
+- [ ] ~10 MB of unused assets still committed: `images/controlls.ai`,
+      `images/swanky_leelo.obj`, `images/abstractGeometricShapes.jpg`,
+      `images/psysky.png`, `images/surreal_sky_*.jpg`, the `.S3M`/`.MOD`/`.XM`
+      trackers, `sounds/ophelia.mp3`, `sounds/getout.ogg`, and the `fonts/`
+      directory (only the deleted `font.js` ever referenced it).
+- [ ] Compress what stays: `sounds/music.mp3` 4.1 MB, `images/background.png`
+      2.6 MB, `sounds/verschwinden.wav` 1.8 MB.
+- [ ] README, linter.
+- [ ] Mobile is hard-blocked below 800px with no touch controls.
+- [ ] Deploy to GitHub Pages (`vite build` output is ready; `base: './'` set).
