@@ -3,6 +3,7 @@
 
 import * as THREE from 'three';
 import * as scenery from './scenery.js';
+import { isMobile } from './device.js';
 import {
   X_LEN,
   Y_LEN,
@@ -66,8 +67,10 @@ let cameraViewIndex = 0;
 export function init(containerId) {
   container = document.getElementById(containerId);
 
-  renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+  // Phones have both a high device pixel ratio and a tight GPU memory budget;
+  // rendering a 3x buffer is the quickest way to have iOS drop the context.
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   // The physical sky is far brighter than the old flat clear colour, so it
@@ -99,21 +102,31 @@ export function init(containerId) {
 
   // Scenery first: it produces the environment map and the sun direction that
   // the key light is then aimed along.
-  const { sunDirection } = scenery.create(scene, renderer);
-  addLights(sunDirection);
+  const { sunDirection, hasEnvironment } = scenery.create(scene, renderer);
+  addLights(sunDirection, hasEnvironment);
   addFloor();
   applyCameraView(0);
   resize();
 
   window.addEventListener('resize', resize);
+  // iOS does not always fire resize on rotation, and when it does it can be
+  // before the new viewport dimensions are readable.
+  window.addEventListener('orientationchange', () => setTimeout(resize, 150));
+
+  // A lost context renders as a frozen or unlit scene with nothing in the
+  // console, which is exactly the kind of failure that is hard to report.
+  renderer.domElement.addEventListener('webglcontextlost', (event) => {
+    event.preventDefault();
+    console.error('WebGL context lost — the GPU dropped the scene.');
+  });
 }
 
-function addLights(sunDirection) {
+function addLights(sunDirection, hasEnvironment) {
   // Warm, low sun matching the sky's own sun position.
   const key = new THREE.DirectionalLight(0xfff0d8, 3.0);
   key.position.copy(sunDirection).multiplyScalar(4000);
   key.castShadow = true;
-  key.shadow.mapSize.set(2048, 2048);
+  key.shadow.mapSize.set(isMobile ? 1024 : 2048, isMobile ? 1024 : 2048);
   key.shadow.camera.near = 100;
   key.shadow.camera.far = 9000;
   // A full stack is 12 cubes tall and the sun is low, so its shadow is thrown
@@ -127,9 +140,23 @@ function addLights(sunDirection) {
   key.shadow.normalBias = 2;
   scene.add(key);
 
-  // Sky above, warm sand bounce below.
-  const fill = new THREE.HemisphereLight(0xbfd8ff, 0xc9ab7d, 0.8);
+  // Sky above, warm sand bounce below. Without an environment map this is the
+  // only ambient term there is, so it has to carry much more: with IBL the
+  // cubes get their fill light and their reflections from the sky capture.
+  const fill = new THREE.HemisphereLight(
+    0xbfd8ff,
+    0xc9ab7d,
+    hasEnvironment ? 0.8 : 2.6,
+  );
   scene.add(fill);
+
+  if (!hasEnvironment) {
+    // A dim opposite-side light so faces turned away from the sun are shaped
+    // rather than flat, standing in for the sky's wrap-around contribution.
+    const bounce = new THREE.DirectionalLight(0xdce8ff, 0.7);
+    bounce.position.copy(sunDirection).multiplyScalar(-3000).setY(1500);
+    scene.add(bounce);
+  }
 }
 
 function addFloor() {
@@ -274,8 +301,20 @@ export function solidCubes() {
 }
 
 export function resize() {
-  const height = window.innerHeight * 0.8;
-  const width = (height * 4) / 3;
+  let height = window.innerHeight * 0.8;
+  let width = (height * 4) / 3;
+
+  // On a short, wide screen — a phone in landscape — height alone is not the
+  // binding constraint: the legend takes a fixed slice of the width, and a
+  // 4:3 board sized from height overflows what is left. Fall back to fitting
+  // the width in that case and derive the height from it.
+  const left = document.getElementById('left');
+  const available = window.innerWidth - (left?.offsetWidth ?? 0) - 24;
+  if (available > 0 && width > available) {
+    width = available;
+    height = (width * 3) / 4;
+  }
+
   container.style.width = `${width}px`;
   container.style.height = `${height}px`;
   renderer.setSize(width, height);

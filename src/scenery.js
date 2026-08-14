@@ -12,6 +12,7 @@ import {
   createCloudTexture,
 } from './textures.js';
 import { CUBE_DIM, FLOOR_TOP } from './config.js';
+import { isIOS, isMobile, envOverride } from './device.js';
 
 /**
  * World heights, derived from the board so the beach follows if the cube size
@@ -123,12 +124,12 @@ export function create(scene, renderer) {
   scene.fog = new THREE.Fog(0xbcd4e0, OCEAN_SIZE * 0.25, OCEAN_SIZE * 0.5);
 
   const sky = createSky(scene);
-  applyEnvironment(scene, renderer, sky);
+  const hasEnvironment = applyEnvironment(scene, renderer, sky);
   createBeach(scene, renderer);
   createOcean(scene);
   createClouds(scene);
 
-  return { sunDirection };
+  return { sunDirection, hasEnvironment };
 }
 
 function computeSunDirection() {
@@ -160,16 +161,40 @@ function createSky(scene) {
  * sky reflections instead of being lit by lights alone.
  */
 function applyEnvironment(scene, renderer, sky) {
-  const pmrem = new THREE.PMREMGenerator(renderer);
+  const override = envOverride();
 
-  // The sky has to be alone in a scene for the capture, then handed back.
-  const captureScene = new THREE.Scene();
-  captureScene.add(sky);
-  const target = pmrem.fromScene(captureScene);
-  scene.add(sky);
+  // PMREM renders into a half-float target and filters it. On iOS/WebKit that
+  // combination is unreliable — the capture comes back black, which leaves
+  // every MeshStandardMaterial in the scene unlit no matter what the lights
+  // do. Skip it there and light the scene analytically instead.
+  // `?env=on` forces it back on to check whether a given device still needs
+  // this; `?env=off` reproduces the fallback anywhere.
+  const wanted = override ?? !isIOS;
+  if (!wanted) {
+    scene.add(sky);
+    return false;
+  }
 
-  scene.environment = target.texture;
-  pmrem.dispose();
+  try {
+    const pmrem = new THREE.PMREMGenerator(renderer);
+
+    // The sky has to be alone in a scene for the capture, then handed back.
+    const captureScene = new THREE.Scene();
+    captureScene.add(sky);
+    const target = pmrem.fromScene(captureScene);
+    scene.add(sky);
+
+    scene.environment = target.texture;
+    pmrem.dispose();
+    return true;
+  } catch (error) {
+    // A driver that refuses the half-float target throws rather than
+    // returning something unusable; either way the fallback lighting applies.
+    console.warn('Environment capture failed; using lights only.', error);
+    scene.add(sky);
+    scene.environment = null;
+    return false;
+  }
 }
 
 /**
@@ -302,9 +327,14 @@ function createOcean(scene) {
   waterNormals.wrapS = THREE.RepeatWrapping;
   waterNormals.wrapT = THREE.RepeatWrapping;
 
+  // Water renders the whole scene into its reflection buffer every frame; on
+  // a phone that buffer is a real cost, and half the resolution is invisible
+  // at this distance.
+  const reflectionSize = isMobile ? 512 : 1024;
+
   water = new Water(new THREE.PlaneGeometry(OCEAN_SIZE, OCEAN_SIZE), {
-    textureWidth: 1024,
-    textureHeight: 1024,
+    textureWidth: reflectionSize,
+    textureHeight: reflectionSize,
     waterNormals,
     sunDirection: sunDirection.clone(),
     sunColor: 0xe8dcc4,
