@@ -254,8 +254,10 @@ button.key.is-active{
 
 
 /* --- Compact layouts ------------------------------------------------------
-   Two axes matter: how much room the legend may take, and whether it sits
-   beside the board or beneath it. */
+   Touch targets come first here: the keycaps are roughly double their desktop
+   size, which means fewer rows fit per column. The labels give the width back
+   by wrapping to two or three short lines instead of running on one long one,
+   so each control is a tall narrow cell and more columns fit across. */
 
 /* Portrait handheld: board on top, legend across the bottom. column-reverse
    puts #mid above #left without reordering the markup, which keeps the tab
@@ -283,15 +285,16 @@ button.key.is-active{
 
     #controls{
         min-width: 0;
-        padding: .6em .7em;
+        padding: .5em .6em;
     }
 
-    /* Two columns of rows, so nine controls fit in a short strip rather than
-       a tall list that would eat the board's half of the screen. */
+    /* As many ~9em cells as fit — three across on a phone, four or five on a
+       tablet — rather than a fixed count that would be wrong on one of them. */
     .controls-body{
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: .1em 1.2em;
+        grid-template-columns: repeat(auto-fit, minmax(8.5em, 1fr));
+        gap: .5em .8em;
+        justify-content: center;
     }
 
     .controls-title, .controls-hint{
@@ -299,8 +302,8 @@ button.key.is-active{
     }
 }
 
-/* Landscape on a phone: legend stays beside the board but has to give up
-   room. Height discriminates handhelds from desktops better than width. */
+/* Landscape on a phone: the legend stays beside the board, so it stays a
+   single column -- but with the same large caps and wrapped labels. */
 @media (orientation: landscape) and (max-height: 560px){
     #left{
         padding: .4rem;
@@ -316,39 +319,50 @@ button.key.is-active{
     .controls-hint{
         display: none;
     }
+    .controls-body{
+        display: grid;
+        gap: .35em .8em;
+    }
 }
 
-/* Shared shrink for both compact layouts. */
+/* Shared: large caps, narrow multi-line labels. */
 @media (orientation: portrait) and (max-width: 900px),
        (orientation: landscape) and (max-height: 560px){
     .control{
-        gap: .6em;
-        padding: .12em 0;
+        gap: .5em;
+        padding: 0;
+        justify-content: flex-start;
     }
+
+    /* Narrow enough to force the wrap, and top-aligned so a two-line label
+       starts level with the top of the keycap beside it. */
     .control-label{
         font-size: .72rem;
+        line-height: 1.2;
+        max-width: 5.5em;
+        align-self: center;
     }
+
     .keys{
-        gap: .25em;
+        gap: .3em;
     }
+
+    /* Roughly double the desktop cap: a 44px-ish touch target. */
     button.key{
-        font-size: .78rem;
-        min-width: 2em;
-        padding: .4em .3em;
-        border-radius: 5px;
-        box-shadow:
-            0 3px 0 #6e6a58,
-            0 4px 5px rgba(0, 0, 0, .45),
-            inset 0 1px 0 rgba(255, 255, 255, .9);
+        font-size: 1.15rem;
+        min-width: 2.2em;
+        padding: .7em .45em;
+        border-radius: 7px;
     }
+
+    /* The wide caps carry words, so they cannot shrink to a square -- but they
+       do not need the full desktop width either. */
     button.key.key-wide{
-        min-width: 4.2em;
+        font-size: .95rem;
+        min-width: 5em;
+        padding: .85em .5em;
     }
-    /* Travel has to match the shallower shelf above. */
-    button.key:active,
-    button.key.is-down{
-        transform: translateY(3px);
-    }
+
     button.key:hover{
         transform: none;
     }
