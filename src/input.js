@@ -87,6 +87,14 @@ function handleKeyDown(event) {
       return;
   }
 
+  // Once the game is over the only other meaningful action is starting again.
+  // Space is swallowed above, so the focused restart button never sees it —
+  // handle both it and Enter here instead.
+  if (game.state.phase === game.State.GAME_OVER) {
+    if (event.code === 'Space' || event.code === 'Enter') game.restart();
+    return;
+  }
+
   const { arenaPos } = game.state;
 
   const movement = MOVES[event.code];

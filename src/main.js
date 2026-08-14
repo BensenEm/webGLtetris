@@ -17,6 +17,7 @@ function main() {
   ui.init();
   input.init();
   audio.init();
+  ui.onRestart(game.restart);
   game.start();
   requestAnimationFrame(loop);
 }

@@ -270,6 +270,29 @@ export function start() {
   spawnPiece();
 }
 
+/** Back to a fresh board. The board rotation and camera view are left alone. */
+export function restart() {
+  state.phase = State.FALLING;
+  state.paused = false;
+  state.arena = createArena();
+  state.piece = null;
+  state.ghostCells = [];
+  state.score = 0;
+  state.totalLines = 0;
+  state.level = 1;
+  state.clearStartedAt = 0;
+  state.pendingClear = null;
+  state.gameOverIndex = 0;
+  state.gameOverSteppedAt = 0;
+
+  ui.hideGameOver();
+  ui.setPaused(false);
+  render.clearPiece();
+  render.syncArena(render.groups.cleared, state.arena);
+  render.showArenaVariant('solid');
+  start();
+}
+
 export function update(now) {
   if (state.paused) return;
 

@@ -115,6 +115,7 @@ Now: three **r185** via npm, Vite build, ES modules under `src/`.
 - [ ] SFX: the wav files ship but are never played (landing, rotate, clear,
       game over). `sounds/` has them already.
 - [ ] Proper HUD rather than a score div in the corner.
+- [x] Restart button on game over (also Space/Enter), instead of reloading.
 
 ---
 
@@ -138,4 +139,6 @@ Now: three **r185** via npm, Vite build, ES modules under `src/`.
       2.6 MB, `sounds/verschwinden.wav` 1.8 MB.
 - [ ] README, linter.
 - [ ] Mobile is hard-blocked below 800px with no touch controls.
-- [ ] Deploy to GitHub Pages (`vite build` output is ready; `base: './'` set).
+- [x] Deploy to GitHub Pages — `.github/workflows/deploy.yml` builds and
+      publishes `dist/` on every push to `master`. Needs Pages set to
+      "GitHub Actions" in the repo settings once.
