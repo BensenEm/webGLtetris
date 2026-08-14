@@ -367,3 +367,49 @@ button.key.is-active{
         transform: none;
     }
 }
+
+/* Portrait: three fixed columns of aligned rows.
+   Each control is itself a grid -- label, key, key -- with the same track
+   sizes everywhere, so every keycap lines up down the column instead of
+   sitting wherever its label happened to end. `.keys` uses display:contents
+   so the buttons become direct grid items of the row rather than a nested
+   flex box that would break that alignment. */
+@media (orientation: portrait) and (max-width: 900px){
+    .controls-body{
+        grid-template-columns: repeat(3, 1fr);
+        gap: .45em .7em;
+    }
+
+    .control{
+        display: grid;
+        grid-template-columns: 3.4em 1fr 1fr;
+        align-items: center;
+        gap: .3em;
+    }
+
+    .keys{
+        display: contents;
+    }
+
+    .control-label{
+        max-width: none;
+        font-size: .68rem;
+        line-height: 1.15;
+    }
+
+    button.key{
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        font-size: 1.35rem;
+        padding: .8em .2em;
+    }
+
+    /* A word-carrying cap takes both key slots rather than being squeezed
+       into one. */
+    button.key.key-wide{
+        grid-column: span 2;
+        font-size: 1rem;
+        padding: .95em .2em;
+    }
+}
