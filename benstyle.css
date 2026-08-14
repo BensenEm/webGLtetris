@@ -1,34 +1,17 @@
 html{
     background-color: #333366;
-    background-size: cover;
     color: #fdeba4;
-    _height: 90%;
     font-size: 12px;
     font-family: 'Lato', sans-serif;
-
 }
+
 body {
     margin: 0;
-}
-
-
-
-.logo {
-    background: url(images/background.png) no-repeat center fixed;
-    background-size: cover;
-    display: flex;
-    width: 100%;
-    height: 100px;
-    justify-content: center;
-    align-items: center;
-    border-bottom-style: none;
-}
-h1 {
-    font-size: 4em;
-    font-weight: 300;
-    margin: 0;
-    color: #333366 ;
-    text-align: center;
+    /* The page never scrolls or zooms — the board fills the viewport and
+       pinching is handled by the camera instead. */
+    overflow: hidden;
+    overscroll-behavior: none;
+    touch-action: none;
 }
 
 a {
@@ -36,16 +19,26 @@ a {
     text-decoration: none;
 }
 
+/* Fills the viewport. dvh rather than vh so the mobile URL bar collapsing
+   does not leave the board taller than the visible area. */
 #all {
     display: flex;
     flex-direction: row;
+    align-items: center;
     justify-content: flex-start;
+    gap: .5rem;
+    height: 100vh;
+    height: 100dvh;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right)
+             env(safe-area-inset-bottom) env(safe-area-inset-left);
+    box-sizing: border-box;
 }
+
+/* The legend column: vertically centred beside the board on wide screens. */
 #left{
-    display: inline;
+    flex: none;
     font-size: 20px;
-    padding: 1rem;
-    
+    padding: .75rem;
 }
 /* Control legend / on-screen keyboard. */
 #controls{
@@ -155,19 +148,27 @@ button.key.is-down{
         0 0 18px rgba(245, 200, 80, .75),
         inset 0 1px 0 rgba(255, 255, 255, .65);
 }
+/* Takes whatever the legend leaves. render.js measures #frame and matches the
+   renderer and the camera aspect to it, so the board just fills this box. */
 #mid{
-  padding: 1rem 0 0 0;
-
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
 }
-/* Sized by render.js to keep the canvas at 4:3; the HUD overlays it. */
+
 #frame{
     position: relative;
-    margin: auto;
+    width: 100%;
+    height: 100%;
 }
+
 canvas{
     display: block;
     width: 100%;
     height: 100%;
+    /* Pinch on the board is ours to handle, not the browser's. */
+    touch-action: none;
 }
 
 #hud{
@@ -252,68 +253,55 @@ button.key.is-active{
 }
 
 
-/* Blocking notice. Fixed and flex-centred rather than absolutely positioned
-   inside a percentage-height parent: html/body have no height here, so the old
-   `height: 100%` collapsed to nothing and the box sat wherever it landed. */
-#wrong-device {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 10;
-    align-items: center;
-    justify-content: center;
-    padding: 1.5rem;
-    background-color: #333366;
-}
+/* --- Compact layouts ------------------------------------------------------
+   Two axes matter: how much room the legend may take, and whether it sits
+   beside the board or beneath it. */
 
-#wrong-device .wrapper {
-    max-width: 22em;
-    text-align: center;
-    font-size: 1.15rem;
-    font-weight: 300;
-    line-height: 1.5;
-    background-color: rgba(0, 0, 0, .25);
-    padding: 1.75em;
-}
-
-#wrong-device h2 {
-    margin: 0 0 .6em;
-    font-size: 1.6rem;
-    font-weight: 400;
-}
-
-#wrong-device p {
-    margin: 0 0 .8em;
-}
-
-#wrong-device p.small {
-    margin-bottom: 0;
-    font-size: .85rem;
-    opacity: .7;
-}
-
-/* Portrait on a handheld: the 4:3 board and the legend beside it cannot both
-   fit, so block with the rotate prompt. Keyed on orientation rather than width
-   alone, since a phone in landscape is narrow-ish but perfectly playable. */
+/* Portrait handheld: board on top, legend across the bottom. column-reverse
+   puts #mid above #left without reordering the markup, which keeps the tab
+   order (board first, then controls) matching the visual order. */
 @media (orientation: portrait) and (max-width: 900px){
-    #wrong-device{
-        display: flex;
+    #all{
+        flex-direction: column-reverse;
+        align-items: stretch;
+        gap: 0;
     }
-    #all, .logo{
+
+    #left{
+        flex: none;
+        width: 100%;
+        box-sizing: border-box;
+        padding: .4rem;
+        font-size: 16px;
+    }
+
+    #mid{
+        flex: 1 1 auto;
+        width: 100%;
+        height: auto;
+    }
+
+    #controls{
+        min-width: 0;
+        padding: .6em .7em;
+    }
+
+    /* Two columns of rows, so nine controls fit in a short strip rather than
+       a tall list that would eat the board's half of the screen. */
+    .controls-body{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: .1em 1.2em;
+    }
+
+    .controls-title, .controls-hint{
         display: none;
     }
 }
 
-/* Landscape on a phone. Height is the better discriminator than width here:
-   a handheld on its side is ~320-450px tall, a desktop window rarely is.
-   Everything shrinks so the legend stops crowding the board. */
+/* Landscape on a phone: legend stays beside the board but has to give up
+   room. Height discriminates handhelds from desktops better than width. */
 @media (orientation: landscape) and (max-height: 560px){
-    .logo{
-        height: 42px;
-    }
-    h1{
-        font-size: 1.6rem;
-    }
     #left{
         padding: .4rem;
         font-size: 16px;
@@ -328,6 +316,11 @@ button.key.is-active{
     .controls-hint{
         display: none;
     }
+}
+
+/* Shared shrink for both compact layouts. */
+@media (orientation: portrait) and (max-width: 900px),
+       (orientation: landscape) and (max-height: 560px){
     .control{
         gap: .6em;
         padding: .12em 0;
@@ -358,8 +351,5 @@ button.key.is-active{
     }
     button.key:hover{
         transform: none;
-    }
-    #mid{
-        padding: .25rem 0 0 0;
     }
 }

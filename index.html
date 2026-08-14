@@ -2,7 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The page itself must not zoom or pan: pinching zooms the 3D camera
+         instead, handled on the canvas. viewport-fit=cover lets the layout
+         reach under the notch/home indicator. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <meta name="author" content="Benjamin Molnár">
     <meta name="keywords" content="tetris online 3D">
     <title>3D Tetris</title>
@@ -13,10 +16,6 @@
   </head>
 
   <body>
-    <div class="logo">
-      <h1>3D TETRIS</h1>
-    </div>
-
     <div id="all">
       <div id="left">
         <!-- Doubles as the legend and as a playable on-screen keyboard: every
@@ -25,6 +24,7 @@
           <h2 class="controls-title">Controls</h2>
           <p class="controls-hint">Click a key or use the keyboard.</p>
 
+          <div class="controls-body">
           <div class="control">
             <span class="control-label">Move to front/back</span>
             <span class="keys">
@@ -96,6 +96,7 @@
               <button type="button" class="key key-wide" data-key="Enter">Enter</button>
             </span>
           </div>
+          </div>
         </div>
       </div>
 
@@ -109,15 +110,6 @@
             <button type="button" id="restartButton">Play again</button>
           </div>
         </div>
-      </div>
-    </div>
-
-    <div id="wrong-device">
-      <div class="wrapper">
-        <h2>Rotate your device</h2>
-        <p>The board and its controls need more width than this screen has in
-           portrait. Turn the device sideways to play.</p>
-        <p class="small">On a narrow window, widen it instead.</p>
       </div>
     </div>
 

@@ -112,6 +112,11 @@ export function init(containerId) {
   // iOS does not always fire resize on rotation, and when it does it can be
   // before the new viewport dimensions are readable.
   window.addEventListener('orientationchange', () => setTimeout(resize, 150));
+  // The frame is sized by flex layout, which can change without the window
+  // changing at all — the legend rewrapping, for instance.
+  new ResizeObserver(resize).observe(container);
+
+  initZoom();
 
   // A lost context renders as a frozen or unlit scene with nothing in the
   // console, which is exactly the kind of failure that is hard to report.
@@ -241,6 +246,74 @@ function applyCameraView(index) {
   camera.lookAt(new THREE.Vector3(...view.target));
 }
 
+// --- zoom -------------------------------------------------------------------
+
+const MIN_ZOOM = 0.6;
+const MAX_ZOOM = 3.0;
+
+/**
+ * Zoom is applied to the camera rather than the page: the viewport meta blocks
+ * browser zoom, so a pinch anywhere on the board scales the scene and leaves
+ * the legend and HUD at their normal size.
+ *
+ * PerspectiveCamera.zoom narrows the frustum, which keeps the camera where it
+ * is — dollying it in would push it through the arena's near corner.
+ */
+function setZoom(value) {
+  camera.zoom = THREE.MathUtils.clamp(value, MIN_ZOOM, MAX_ZOOM);
+  camera.updateProjectionMatrix();
+}
+
+function initZoom() {
+  const canvas = renderer.domElement;
+
+  canvas.addEventListener(
+    'wheel',
+    (event) => {
+      event.preventDefault();
+      setZoom(camera.zoom * (event.deltaY < 0 ? 1.1 : 1 / 1.1));
+    },
+    { passive: false },
+  );
+
+  // Pinch: track the two active pointers and scale by how the distance
+  // between them changes.
+  const pointers = new Map();
+  let pinchStartDistance = 0;
+  let pinchStartZoom = 1;
+
+  const distance = () => {
+    const [a, b] = [...pointers.values()];
+    return Math.hypot(a.x - b.x, a.y - b.y);
+  };
+
+  canvas.addEventListener('pointerdown', (event) => {
+    if (event.pointerType === 'mouse') return;
+    pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (pointers.size === 2) {
+      pinchStartDistance = distance();
+      pinchStartZoom = camera.zoom;
+    }
+  });
+
+  canvas.addEventListener('pointermove', (event) => {
+    if (!pointers.has(event.pointerId)) return;
+    pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (pointers.size === 2 && pinchStartDistance > 0) {
+      event.preventDefault();
+      setZoom((pinchStartZoom * distance()) / pinchStartDistance);
+    }
+  });
+
+  const drop = (event) => {
+    pointers.delete(event.pointerId);
+    if (pointers.size < 2) pinchStartDistance = 0;
+  };
+  canvas.addEventListener('pointerup', drop);
+  canvas.addEventListener('pointercancel', drop);
+  canvas.addEventListener('pointerleave', drop);
+}
+
 const turnStep = THREE.MathUtils.degToRad(90) / ARENA_TURN_FRAMES;
 
 /** Advances an in-progress quarter turn of the board. */
@@ -300,24 +373,18 @@ export function solidCubes() {
   return groups.solid.children;
 }
 
+/**
+ * Matches the renderer to whatever box the layout gave #frame. The board used
+ * to be pinned to 4:3 and sized from the window height, which left it letter-
+ * boxed on wide screens and overflowing on short ones; CSS now owns the box
+ * and this just follows it.
+ */
 export function resize() {
-  let height = window.innerHeight * 0.8;
-  let width = (height * 4) / 3;
+  const width = container.clientWidth;
+  const height = container.clientHeight;
+  if (width === 0 || height === 0) return;
 
-  // On a short, wide screen — a phone in landscape — height alone is not the
-  // binding constraint: the legend takes a fixed slice of the width, and a
-  // 4:3 board sized from height overflows what is left. Fall back to fitting
-  // the width in that case and derive the height from it.
-  const left = document.getElementById('left');
-  const available = window.innerWidth - (left?.offsetWidth ?? 0) - 24;
-  if (available > 0 && width > available) {
-    width = available;
-    height = (width * 3) / 4;
-  }
-
-  container.style.width = `${width}px`;
-  container.style.height = `${height}px`;
-  renderer.setSize(width, height);
+  renderer.setSize(width, height, false);
   // The original resized the renderer but left the camera's aspect at its
   // initial 4/3, so any non-4:3 window rendered distorted.
   camera.aspect = width / height;
