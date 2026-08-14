@@ -413,3 +413,20 @@ button.key.is-active{
         padding: .95em .2em;
     }
 }
+
+/* Groups of related controls. On wide screens they simply stack, separated by
+   a little air; in portrait each group becomes one of the three columns. */
+.control-group + .control-group{
+    margin-top: .5em;
+}
+
+@media (orientation: portrait) and (max-width: 900px){
+    .control-group{
+        display: grid;
+        gap: .45em;
+        align-content: start;
+    }
+    .control-group + .control-group{
+        margin-top: 0;
+    }
+}
