@@ -30,7 +30,14 @@ function materialFor(color) {
       color,
       roughness: 0.35,
       metalness: 0.15,
-      envMapIntensity: 1.1,
+      envMapIntensity: 1.4,
+      // The darker palette entries (the navy and the deep greens) reflect so
+      // little that a face turned away from the sun read as flat black. A
+      // little self-illumination in the cube's own colour keeps it readable
+      // as *that colour*, which raising the lights alone would not do — it
+      // would wash out the bright cubes to get the dark ones legible.
+      emissive: color,
+      emissiveIntensity: 0.22,
     });
     materialCache.set(color, material);
   }
@@ -76,7 +83,10 @@ export function init(containerId) {
   // The physical sky is far brighter than the old flat clear colour, so it
   // needs tone mapping to land in a sane range.
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.45;
+  // Raised from 0.45: the whole scene read a shade too dark, most obviously on
+  // phones. High enough to lift the shadows, low enough that the sky's bright
+  // quadrant does not clip to white.
+  renderer.toneMappingExposure = 0.58;
   container.appendChild(renderer.domElement);
 
   scene = new THREE.Scene();
@@ -154,6 +164,9 @@ function addLights(sunDirection, hasEnvironment) {
     hasEnvironment ? 0.8 : 2.6,
   );
   scene.add(fill);
+
+  // Lifts the deepest shadows off black without flattening the key light.
+  scene.add(new THREE.AmbientLight(0xdfe8f5, 0.35));
 
   if (!hasEnvironment) {
     // A dim opposite-side light so faces turned away from the sun are shaped
