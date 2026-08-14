@@ -34,11 +34,38 @@ a {
     box-sizing: border-box;
 }
 
-/* The legend column: vertically centred beside the board on wide screens. */
+/* The legend column: vertically centred beside the board on wide screens.
+   It scrolls rather than overflowing when the viewport is too short for it —
+   a phone in landscape, or a short desktop window. */
 #left{
     flex: none;
     font-size: 20px;
     padding: .75rem;
+    box-sizing: border-box;
+    max-height: 100%;
+    overflow-y: auto;
+    /* The keycaps' shadows and hover lift would otherwise be clipped by the
+       scroll container's edge. */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(253, 235, 164, .45) rgba(0, 0, 0, .25);
+    /* A flick-scroll in the legend must not turn into a page gesture. */
+    touch-action: pan-y;
+    overscroll-behavior: contain;
+}
+
+/* WebKit needs its own scrollbar rules; Safari ignores scrollbar-color. */
+#left::-webkit-scrollbar{
+    width: 8px;
+}
+#left::-webkit-scrollbar-track{
+    background: rgba(0, 0, 0, .25);
+}
+#left::-webkit-scrollbar-thumb{
+    background: rgba(253, 235, 164, .45);
+    border-radius: 4px;
+}
+#left::-webkit-scrollbar-thumb:hover{
+    background: rgba(253, 235, 164, .7);
 }
 /* Control legend / on-screen keyboard. */
 #controls{
@@ -280,6 +307,9 @@ button.key.is-active{
         box-sizing: border-box;
         padding: .4rem;
         font-size: 16px;
+        /* Never let the legend take more than its half of the screen; it
+           scrolls internally past that so the board keeps its space. */
+        max-height: 45dvh;
     }
 
     #mid{
@@ -307,32 +337,12 @@ button.key.is-active{
     }
 }
 
-/* Landscape on a phone: the legend stays beside the board, so it stays a
-   single column -- but with the same large caps and wrapped labels. */
-@media (orientation: landscape) and (max-height: 560px){
-    #left{
-        padding: .4rem;
-        font-size: 16px;
-    }
-    #controls{
-        min-width: 0;
-        padding: .5em .6em;
-    }
-    .controls-title{
-        font-size: 1rem;
-    }
-    .controls-hint{
-        display: none;
-    }
-    .controls-body{
-        display: grid;
-        gap: .35em .8em;
-    }
-}
+/* Landscape on a phone deliberately has no overrides: it keeps the desktop
+   legend, which reads better than the compact one and fits beside the board
+   at that width. If it runs past the viewport height, #left scrolls. */
 
-/* Shared: large caps, narrow multi-line labels. */
-@media (orientation: portrait) and (max-width: 900px),
-       (orientation: landscape) and (max-height: 560px){
+/* Large caps and narrow multi-line labels — portrait only. */
+@media (orientation: portrait) and (max-width: 900px){
     .control{
         gap: .5em;
         padding: 0;
