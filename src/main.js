@@ -4,6 +4,7 @@ import * as render from './render.js';
 import * as game from './game.js';
 import * as ui from './ui.js';
 import * as input from './input.js';
+import * as controls from './controls.js';
 import * as audio from './audio.js';
 
 function loop(now) {
@@ -16,6 +17,7 @@ function main() {
   render.init('frame');
   ui.init();
   input.init();
+  controls.init();
   audio.init();
   ui.onRestart(game.restart);
   game.start();

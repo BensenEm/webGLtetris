@@ -43,5 +43,24 @@ export const ARENA_TURN_FRAMES = 20;
 export const CLEAR_FLASH_INTERVAL = 500;
 export const CLEAR_FLASH_COUNT = 5;
 
+/**
+ * Collapse animation: how long a cube takes to fall one cell into the gap a
+ * cleared line left behind. Cubes with further to fall simply take longer.
+ */
+export const COLLAPSE_MS_PER_CELL = 70;
+
 /** Game-over animation: delay between hiding successive cubes. */
 export const GAME_OVER_STEP_MS = 100;
+
+/**
+ * Grace period once a piece has nothing left to fall onto, so it can still be
+ * slid and turned after touching down. Moving or rotating restarts it.
+ */
+export const LOCK_DELAY_MS = 1500;
+
+/**
+ * How many times that grace period may be restarted before the piece locks
+ * regardless. Without a cap, a piece that can keep shuffling along the floor
+ * never locks and the game can be stalled forever.
+ */
+export const MAX_LOCK_RESETS = 10;

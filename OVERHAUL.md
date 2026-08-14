@@ -69,6 +69,8 @@ Now: three **r185** via npm, Vite build, ES modules under `src/`.
 - [x] Shared cached materials per colour — the per-cube material leak is gone.
 - [ ] Real arena surfaces: glass/frosted case walls, a grid on the floor to
       read x/z position.
+- [x] Cubes above a cleared line fall into the gap over
+      `COLLAPSE_MS_PER_CELL` (70ms) per row instead of teleporting down.
 - [ ] Post-processing (bloom on line clears, vignette).
 - [ ] Per-level environment/palette swap driven by `Level` — `levels.js`
       already carries `colors` per level; the sky/water could shift with it.
@@ -99,7 +101,10 @@ Now: three **r185** via npm, Vite build, ES modules under `src/`.
 - [x] The six repeated four-way `switch (arenaPos)` blocks collapsed into
       per-key mapping tables.
 - [ ] Key repeat / DAS — held movement keys still do not auto-repeat.
-- [ ] Soft drop.
+- [x] Soft drop on Space (one cell per press, auto-repeats when held); hard
+      drop moved to Enter.
+- [x] The legend is now an on-screen keyboard — every keycap is a button that
+      dispatches the same action, and lights up when its real key is pressed.
 
 ---
 
@@ -107,7 +112,9 @@ Now: three **r185** via npm, Vite build, ES modules under `src/`.
 
 - [x] Level-up now advances past every threshold crossed, not just one.
 - [ ] Next-piece preview, hold slot.
-- [ ] Lock delay on hard drop.
+- [x] Lock delay — a landed piece waits `LOCK_DELAY_MS` before locking, and
+      every move restarts it up to `MAX_LOCK_RESETS`. Hard drop still locks
+      instantly, on purpose.
 - [ ] Genuinely 3D pieces. All 5 shapes are flat 4-cube tetrominoes despite the
       3D arena. `Piece` no longer assumes a fixed cube count, so pentacubes and
       3D S/T shapes are now a data change in `piece.js` rather than a rewrite.

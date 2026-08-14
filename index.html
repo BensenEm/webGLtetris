@@ -8,7 +8,7 @@
     <title>3D Tetris</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <link href="benstyle.css" rel="stylesheet">
   </head>
 
@@ -19,20 +19,84 @@
 
     <div id="all">
       <div id="left">
-        <table>
-          <tbody>
-            <tr><td class="c1">Move to front/back</td><td class="c2">k-i</td></tr>
-            <tr><td class="c1">Move left/right</td><td class="c2">j-l</td></tr>
-            <tr><td class="c1">Rotate around X</td><td class="c2">e-r</td></tr>
-            <tr><td class="c1">Rotate around Y</td><td class="c2">d-f</td></tr>
-            <tr><td class="c1">Rotate around Z</td><td class="c2">c-v</td></tr>
-            <tr><td class="c1">Rotate Game</td><td class="c2">q</td></tr>
-            <tr><td class="c1">Toggle View</td><td class="c2">a</td></tr>
-            <tr><td class="c1">Drop</td><td class="c2">space</td></tr>
-            <tr><td class="c1">Pause</td><td class="c2">p</td></tr>
-          </tbody>
-        </table>
-        <button type="button" id="soundButton" class="soundButton">Sound</button>
+        <!-- Doubles as the legend and as a playable on-screen keyboard: every
+             keycap is a real button wired to the same action as its key. -->
+        <div id="controls">
+          <h2 class="controls-title">Controls</h2>
+          <p class="controls-hint">Click a key or use the keyboard.</p>
+
+          <div class="control">
+            <span class="control-label">Move to front/back</span>
+            <span class="keys">
+              <button type="button" class="key" data-key="KeyK">K</button>
+              <button type="button" class="key" data-key="KeyI">I</button>
+            </span>
+          </div>
+          <div class="control">
+            <span class="control-label">Move left/right</span>
+            <span class="keys">
+              <button type="button" class="key" data-key="KeyJ">J</button>
+              <button type="button" class="key" data-key="KeyL">L</button>
+            </span>
+          </div>
+          <div class="control">
+            <span class="control-label">Rotate around X</span>
+            <span class="keys">
+              <button type="button" class="key" data-key="KeyE">E</button>
+              <button type="button" class="key" data-key="KeyR">R</button>
+            </span>
+          </div>
+          <div class="control">
+            <span class="control-label">Rotate around Y</span>
+            <span class="keys">
+              <button type="button" class="key" data-key="KeyD">D</button>
+              <button type="button" class="key" data-key="KeyF">F</button>
+            </span>
+          </div>
+          <div class="control">
+            <span class="control-label">Rotate around Z</span>
+            <span class="keys">
+              <button type="button" class="key" data-key="KeyC">C</button>
+              <button type="button" class="key" data-key="KeyV">V</button>
+            </span>
+          </div>
+          <div class="control">
+            <span class="control-label">Rotate game</span>
+            <span class="keys">
+              <button type="button" class="key" data-key="KeyQ">Q</button>
+            </span>
+          </div>
+          <div class="control">
+            <span class="control-label">Toggle view</span>
+            <span class="keys">
+              <button type="button" class="key" data-key="KeyA">A</button>
+            </span>
+          </div>
+          <div class="control">
+            <span class="control-label">Pause</span>
+            <span class="keys">
+              <button type="button" class="key" data-key="KeyP">P</button>
+            </span>
+          </div>
+          <div class="control">
+            <span class="control-label">Music on/off</span>
+            <span class="keys">
+              <button type="button" class="key" data-key="Digit0">0</button>
+            </span>
+          </div>
+          <div class="control">
+            <span class="control-label">Drop one step (hold to fall)</span>
+            <span class="keys">
+              <button type="button" class="key key-wide" data-key="Space">Space</button>
+            </span>
+          </div>
+          <div class="control">
+            <span class="control-label">Drop all the way</span>
+            <span class="keys">
+              <button type="button" class="key key-wide" data-key="Enter">Enter</button>
+            </span>
+          </div>
+        </div>
       </div>
 
       <div id="mid">

@@ -7,6 +7,7 @@
 
 import * as game from './game.js';
 import * as render from './render.js';
+import * as audio from './audio.js';
 
 /** [axis, delta] per arenaPos (0-3). */
 const MOVES = {
@@ -70,12 +71,13 @@ const ROTATIONS = {
 /** Keys whose default browser behaviour would disrupt play. */
 const SWALLOWED = new Set(['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']);
 
-function handleKeyDown(event) {
-  if (event.repeat) return;
-  if (SWALLOWED.has(event.code)) event.preventDefault();
-
+/**
+ * Runs the action bound to a key code. The on-screen keyboard in controls.js
+ * calls this too, so a click and a keypress take exactly the same path.
+ */
+export function dispatch(code) {
   // Always available, even once the game is over.
-  switch (event.code) {
+  switch (code) {
     case 'KeyP':
       game.togglePause();
       return;
@@ -85,35 +87,51 @@ function handleKeyDown(event) {
     case 'KeyQ':
       game.turnArena();
       return;
+    case 'Digit0':
+      audio.toggleMusic();
+      return;
   }
 
   // Once the game is over the only other meaningful action is starting again.
   // Space is swallowed above, so the focused restart button never sees it —
   // handle both it and Enter here instead.
   if (game.state.phase === game.State.GAME_OVER) {
-    if (event.code === 'Space' || event.code === 'Enter') game.restart();
+    if (code === 'Space' || code === 'Enter') game.restart();
     return;
   }
 
   const { arenaPos } = game.state;
 
-  const movement = MOVES[event.code];
+  const movement = MOVES[code];
   if (movement) {
     const [axis, delta] = movement[arenaPos];
     game.move(axis, delta);
     return;
   }
 
-  const rotation = ROTATIONS[event.code];
+  const rotation = ROTATIONS[code];
   if (rotation) {
     const [axis, positive] = rotation[arenaPos];
     game.rotate(axis, positive);
     return;
   }
 
-  if (event.code === 'Space') {
+  if (code === 'Space') {
+    game.softDrop();
+    return;
+  }
+
+  if (code === 'Enter') {
     game.hardDrop();
   }
+}
+
+function handleKeyDown(event) {
+  // Soft drop is the one action worth auto-repeating: holding Space should
+  // walk the piece down rather than needing a press per cell.
+  if (event.repeat && event.code !== 'Space') return;
+  if (SWALLOWED.has(event.code)) event.preventDefault();
+  dispatch(event.code);
 }
 
 export function init() {

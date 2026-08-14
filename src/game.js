@@ -7,7 +7,10 @@ import {
   ARENA_TURN_FRAMES,
   CLEAR_FLASH_INTERVAL,
   CLEAR_FLASH_COUNT,
+  COLLAPSE_MS_PER_CELL,
   GAME_OVER_STEP_MS,
+  LOCK_DELAY_MS,
+  MAX_LOCK_RESETS,
 } from './config.js';
 import {
   createArena,
@@ -15,6 +18,7 @@ import {
   findCompletedLines,
   withCellsCleared,
   collapseCells,
+  collapseFalls,
 } from './arena.js';
 import { Piece, SHAPE_NAMES } from './piece.js';
 import { getLevel, levelForScore } from './levels.js';
@@ -26,6 +30,8 @@ import * as ui from './ui.js';
 const State = {
   FALLING: 'falling',
   CLEARING: 'clearing',
+  /** The flash is over and the cubes above the gap are dropping into it. */
+  COLLAPSING: 'collapsing',
   GAME_OVER: 'gameOver',
 };
 
@@ -48,6 +54,15 @@ export const state = {
   lastDropAt: 0,
   clearStartedAt: 0,
   pendingClear: null,
+
+  /** Per-cube movement for the collapse, and how far the animation runs. */
+  pendingFalls: null,
+  collapseStartedAt: 0,
+  collapseDrop: 0,
+
+  /** When the piece touched down, or 0 while it still has room to fall. */
+  lockStartedAt: 0,
+  lockResets: 0,
 
   gameOverIndex: 0,
   gameOverSteppedAt: 0,
@@ -78,6 +93,8 @@ function spawnPiece() {
   }
 
   state.piece = piece;
+  state.lockStartedAt = 0;
+  state.lockResets = 0;
   updateGhost();
   render.syncPiece(piece.cells, piece.color);
 }
@@ -111,6 +128,13 @@ function commit(cells) {
   state.piece.setCells(cells);
   updateGhost();
   render.syncPiece(state.piece.cells, state.piece.color);
+
+  // Acting on a piece that has already touched down restarts its grace period,
+  // up to the reset cap, so it can be walked along the floor.
+  if (state.lockStartedAt !== 0 && state.lockResets < MAX_LOCK_RESETS) {
+    state.lockStartedAt = performance.now();
+    state.lockResets++;
+  }
 }
 
 /** Attempts a one-cell move. Returns whether it happened. */
@@ -137,14 +161,19 @@ function canAct() {
 
 // --- falling and locking ----------------------------------------------------
 
-/** One gravity step. Locks the piece if it cannot fall further. */
-export function stepDown() {
+/**
+ * Soft drop: one cell down, immediately. Does not lock — a piece that has
+ * landed keeps its grace period, which is the point of dropping it quickly.
+ */
+export function softDrop() {
   if (!canAct()) return;
-  if (move('y', -1)) return;
-  lockPiece();
+  if (move('y', -1)) {
+    // Gravity would otherwise fire again straight after a manual step.
+    state.lastDropAt = performance.now();
+  }
 }
 
-/** Hard drop: fall as far as possible, then lock. */
+/** Hard drop: fall as far as possible, then lock at once. */
 export function hardDrop() {
   if (!canAct()) return;
   const distance = dropDistance(state.piece.cells);
@@ -152,6 +181,27 @@ export function hardDrop() {
     commit(state.piece.movedBy('y', -distance));
   }
   lockPiece();
+}
+
+/**
+ * Gravity, plus the landed grace period. A piece with room below falls on the
+ * level's timer; one that has touched down waits out LOCK_DELAY_MS, restarted
+ * by every move, before it locks.
+ */
+function updateFalling(now) {
+  if (!state.piece) return;
+
+  if (dropDistance(state.piece.cells) > 0) {
+    state.lockStartedAt = 0;
+    if (now - state.lastDropAt > levelConfig().dropTime) {
+      move('y', -1);
+      state.lastDropAt = now;
+    }
+    return;
+  }
+
+  if (state.lockStartedAt === 0) state.lockStartedAt = now;
+  if (now - state.lockStartedAt >= LOCK_DELAY_MS) lockPiece();
 }
 
 function lockPiece() {
@@ -183,6 +233,7 @@ function beginClear(cells, lines) {
   render.syncArena(render.groups.cleared, withCellsCleared(state.arena, cells));
 
   state.pendingClear = collapseCells(state.arena, cells);
+  state.pendingFalls = collapseFalls(state.arena, cells);
   state.clearStartedAt = performance.now();
   state.phase = State.CLEARING;
 }
@@ -192,17 +243,46 @@ function updateClearing(now) {
   const stepsDone = Math.floor(elapsed / CLEAR_FLASH_INTERVAL);
 
   if (stepsDone >= CLEAR_FLASH_COUNT) {
-    state.arena = state.pendingClear;
-    state.pendingClear = null;
-    render.syncArena(render.groups.solid, state.arena);
-    render.showArenaVariant('solid');
-    state.phase = State.FALLING;
-    state.lastDropAt = now;
-    spawnPiece();
+    beginCollapse(now);
     return;
   }
 
   render.showArenaVariant(stepsDone % 2 === 0 ? 'cleared' : 'solid');
+}
+
+/** Hands the cleared board to the falling animation. */
+function beginCollapse(now) {
+  render.showArenaVariant('solid');
+  state.collapseDrop = render.startCollapse(state.pendingFalls);
+  state.pendingFalls = null;
+  state.collapseStartedAt = now;
+  state.phase = State.COLLAPSING;
+
+  // Nothing actually moved (the cleared rows were the top of every column),
+  // so there is no animation to play.
+  if (state.collapseDrop === 0) finishCollapse(now);
+}
+
+function updateCollapsing(now) {
+  const elapsed = now - state.collapseStartedAt;
+  render.updateCollapse(elapsed / COLLAPSE_MS_PER_CELL);
+
+  if (elapsed >= state.collapseDrop * COLLAPSE_MS_PER_CELL) {
+    finishCollapse(now);
+  }
+}
+
+function finishCollapse(now) {
+  render.endCollapse();
+  state.arena = state.pendingClear;
+  state.pendingClear = null;
+  // Rebuild from the grid so the meshes sit on exact cell centres rather than
+  // wherever the last animation frame left them.
+  render.syncArena(render.groups.solid, state.arena);
+  render.showArenaVariant('solid');
+  state.phase = State.FALLING;
+  state.lastDropAt = now;
+  spawnPiece();
 }
 
 // --- game over --------------------------------------------------------------
@@ -282,6 +362,12 @@ export function restart() {
   state.level = 1;
   state.clearStartedAt = 0;
   state.pendingClear = null;
+  state.pendingFalls = null;
+  state.collapseStartedAt = 0;
+  state.collapseDrop = 0;
+  render.endCollapse();
+  state.lockStartedAt = 0;
+  state.lockResets = 0;
   state.gameOverIndex = 0;
   state.gameOverSteppedAt = 0;
 
@@ -300,13 +386,13 @@ export function update(now) {
 
   switch (state.phase) {
     case State.FALLING:
-      if (now - state.lastDropAt > levelConfig().dropTime) {
-        stepDown();
-        state.lastDropAt = now;
-      }
+      updateFalling(now);
       break;
     case State.CLEARING:
       updateClearing(now);
+      break;
+    case State.COLLAPSING:
+      updateCollapsing(now);
       break;
     case State.GAME_OVER:
       updateGameOver(now);

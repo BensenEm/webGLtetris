@@ -47,40 +47,115 @@ a {
     padding: 1rem;
     
 }
-#left table {
-    display: flex;
-    justify-content: space-between;
-    align-content: space-between;
-    font-weight: 100;
-    background-color: rgba(0, 0, 0, .2);
-    padding: .5em;
-    min-width: 200px;
+/* Control legend / on-screen keyboard. */
+#controls{
+    background-color: rgba(0, 0, 0, .25);
+    padding: 1em 1.25em;
+    min-width: 320px;
+    font-weight: 300;
+}
 
-}
-#left tr { 
-}
-#left table td{
-    padding: .2em;
-}
-#left table td.c2{
-}
-button.soundButton{
-    display: block;
-    font-family: 'Lato', sans-serif;
-    font-weight: 100;
-    color: #fdeba4;
-    margin-top: 1rem;
+.controls-title{
+    margin: 0 0 .15em;
     font-size: 1.5rem;
-    padding: .5rem 1.5rem;
-    background-color: rgba(0, 0, 0, .2);
-    border: none;
+    font-weight: 400;
+    letter-spacing: .04em;
+    color: #fdeba4;
+}
+
+.controls-hint{
+    margin: 0 0 1em;
+    font-size: .9rem;
+    font-weight: 300;
+    letter-spacing: .02em;
+    opacity: .85;
+}
+
+.control{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25em;
+    padding: .3em 0;
+}
+
+/* The thin 100-weight Lato at small sizes was hard to read against the dark
+   panel; 400 at a full rem holds up. */
+.control-label{
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: .01em;
+    color: #fdeba4;
+}
+
+.keys{
+    display: flex;
+    gap: .45em;
+    flex: none;
+}
+
+/* A keycap: light top face, dark shelf under it for the key's side wall. The
+   cap sinks into that shelf when pressed. */
+button.key{
+    font-family: 'Lato', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: .03em;
+    color: #23232f;
+    min-width: 2.6em;
+    padding: .75em .5em;
     cursor: pointer;
- }
- .soundButton:hover, .soundButton:active{
-  background-color: #993366;
- }
-  
- #mid{
+    background: linear-gradient(180deg, #fdfaf0 0%, #ddd7c2 100%);
+    border: 1px solid rgba(0, 0, 0, .5);
+    border-radius: 7px;
+    box-shadow:
+        0 5px 0 #6e6a58,
+        0 7px 8px rgba(0, 0, 0, .45),
+        inset 0 1px 0 rgba(255, 255, 255, .95);
+    transform: translateY(0);
+    transition: transform .05s ease-out, box-shadow .05s ease-out,
+                background .12s ease-out, color .12s ease-out;
+}
+
+button.key.key-wide{
+    min-width: 7.5em;
+}
+
+/* Hover lifts the cap a little and warms it, so it reads as reachable before
+   it is pressed. */
+button.key:hover{
+    color: #1a1a24;
+    background: linear-gradient(180deg, #ffffff 0%, #f2ecd8 100%);
+    transform: translateY(-1px);
+    box-shadow:
+        0 6px 0 #7d7863,
+        0 9px 12px rgba(0, 0, 0, .5),
+        0 0 12px rgba(253, 235, 164, .35),
+        inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+button.key:focus-visible{
+    outline: 2px solid #ff3366;
+    outline-offset: 3px;
+}
+
+/* Pressed, whether by pointer or by the real key (controls.js adds is-down).
+   Travel down by the full 5px shelf so the cap bottoms out on its base, and
+   glow so a keyboard press is obvious without the pointer being anywhere near
+   the cap. */
+button.key:active,
+button.key.is-down{
+    transform: translateY(5px);
+    color: #3a2a00;
+    background: linear-gradient(180deg, #ffe9a8 0%, #f0c33f 100%);
+    box-shadow:
+        0 0 0 #6e6a58,
+        0 1px 2px rgba(0, 0, 0, .5),
+        0 0 18px rgba(245, 200, 80, .75),
+        inset 0 1px 0 rgba(255, 255, 255, .65);
+}
+#mid{
   padding: 1rem 0 0 0;
 
 }
@@ -164,8 +239,16 @@ body.is-paused #frame::after{
     z-index: 2;
 }
 
-button.soundButton.is-on{
-    background-color: #993366;
+/* A toggle that is currently on (music playing). Distinct from .is-down, which
+   is the momentary press: this one stays lit but keeps its full key travel. */
+button.key.is-active{
+    color: #2a1230;
+    background: linear-gradient(180deg, #ffc7e4 0%, #e58cbd 100%);
+    box-shadow:
+        0 5px 0 #7d4a68,
+        0 7px 8px rgba(0, 0, 0, .45),
+        0 0 14px rgba(255, 120, 190, .5),
+        inset 0 1px 0 rgba(255, 255, 255, .9);
 }
 
 

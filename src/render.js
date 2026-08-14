@@ -226,6 +226,48 @@ export function settleArenaTurn(quarterTurns) {
   arenaCase.rotation.y = Math.PI / 4 + (quarterTurns * Math.PI) / 2;
 }
 
+// --- collapse animation -----------------------------------------------------
+
+/** Cubes currently falling into the gap left by a cleared line. */
+let collapsing = [];
+
+/**
+ * Rebuilds the solid group from `falls` (see arena.collapseFalls) with every
+ * cube still at its pre-collapse height, ready to be animated down.
+ * Returns the largest distance any cube has to fall, in cells.
+ */
+export function startCollapse(falls) {
+  clearGroup(groups.solid);
+  collapsing = [];
+  let maxDrop = 0;
+
+  for (const fall of falls) {
+    const mesh = addCube(groups.solid, fall.x, fall.y, fall.z, materialFor(fall.color));
+    const drop = fall.y - fall.targetY;
+    if (drop > 0) {
+      collapsing.push({ mesh, fromY: fall.y, targetY: fall.targetY, drop });
+      maxDrop = Math.max(maxDrop, drop);
+    }
+  }
+  return maxDrop;
+}
+
+/**
+ * Positions the falling cubes for a point in the animation. `cellsFallen` is
+ * how far a cube has dropped by now; each stops at its own target, so a cube
+ * with one row to fall lands while a cube with three is still moving.
+ */
+export function updateCollapse(cellsFallen) {
+  for (const { mesh, fromY, targetY } of collapsing) {
+    const y = Math.max(targetY, fromY - cellsFallen);
+    mesh.position.y = y * CUBE_DIM;
+  }
+}
+
+export function endCollapse() {
+  collapsing = [];
+}
+
 /** The settled cubes, used by the game-over animation. */
 export function solidCubes() {
   return groups.solid.children;

@@ -106,6 +106,40 @@ export function withCellsCleared(arena, cells) {
  * (`i < yLen - 2`) and collapsed upper rows before lower ones when a single
  * column contained two completed rows.
  */
+/**
+ * The same collapse expressed as per-cube movement, for animating it.
+ *
+ * Returns one entry per surviving cube: `{ x, y, z, color, targetY }`, where
+ * `y` is where it sits now and `targetY` where the collapse puts it. Cubes
+ * that do not move are included too, since the caller rebuilds the whole
+ * arena group from this list.
+ */
+export function collapseFalls(arena, cells) {
+  const clearedByColumn = new Map(); // "x,z" -> Set of y
+  for (const { x, y, z } of cells) {
+    const key = `${x},${z}`;
+    if (!clearedByColumn.has(key)) clearedByColumn.set(key, new Set());
+    clearedByColumn.get(key).add(y);
+  }
+
+  const falls = [];
+  for (let x = 0; x < X_LEN; x++) {
+    for (let z = 0; z < Z_LEN; z++) {
+      const cleared = clearedByColumn.get(`${x},${z}`);
+      let write = 0;
+      for (let y = 0; y < Y_LEN; y++) {
+        if (cleared?.has(y)) continue;
+        // `write` tracks the same repacking collapseCells performs, so a cube
+        // falls by however many cleared rows sat below it in its column.
+        const targetY = write++;
+        const color = arena[x][y][z];
+        if (color !== EMPTY) falls.push({ x, y, z, color, targetY });
+      }
+    }
+  }
+  return falls;
+}
+
 export function collapseCells(arena, cells) {
   const clearedByColumn = new Map(); // "x,z" -> Set of y
   for (const { x, y, z } of cells) {
