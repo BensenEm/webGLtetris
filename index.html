@@ -71,23 +71,29 @@
                  Same markup as a d-pad arrow, and the same clip-path — only
                  the box it is drawn into is taller. -->
             <div class="pad pad-drop" role="group" aria-label="Drop">
-              <button type="button" class="key key-arrow key-drop drop-step" data-key="Space"
-                      aria-label="Drop one step">
-                <span class="arrow-shell" aria-hidden="true"><span class="arrow-face"></span></span>
-                <span class="arrow-key">Space</span>
-              </button>
-              <!-- The channel between the two arrows is dead space otherwise,
-                   and the board turn is the one rotation that is not about an
-                   axis of the piece, so it is no loss to the row below. -->
+              <!-- The two arrows keep a row to themselves, spread across the
+                   d-pad's width so they stand under its side arrows. -->
+              <div class="drop-arrows">
+                <button type="button" class="key key-arrow key-drop drop-step" data-key="Space"
+                        aria-label="Drop one step">
+                  <span class="arrow-shell" aria-hidden="true"><span class="arrow-face"></span></span>
+                  <span class="arrow-key">Space</span>
+                </button>
+                <button type="button" class="key key-arrow key-drop" data-key="Enter"
+                        aria-label="Drop all the way">
+                  <span class="arrow-shell" aria-hidden="true"><span class="arrow-face"></span></span>
+                  <span class="arrow-key">Enter</span>
+                </button>
+              </div>
+              <!-- The board turn rides along on the right: it is the one
+                   rotation that is not about an axis of the piece, so it is no
+                   loss to the row below, and there is room for it here. Last
+                   in the markup as well as on screen, so the tab order follows
+                   the eye. -->
               <div class="cell cell-mid">
                 <button type="button" class="key" data-key="KeyQ">Q</button>
                 <span class="cap-label">Rotate game</span>
               </div>
-              <button type="button" class="key key-arrow key-drop" data-key="Enter"
-                      aria-label="Drop all the way">
-                <span class="arrow-shell" aria-hidden="true"><span class="arrow-face"></span></span>
-                <span class="arrow-key">Enter</span>
-              </button>
             </div>
 
             <!-- One cap per axis. Each has a reverse on the keyboard — w, e, r

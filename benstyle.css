@@ -270,7 +270,16 @@ button.key.key-arrow.is-down .arrow-face{
 .pad-drop{
     --key: calc(var(--cap) * 1.5);
     display: flex;
-    align-items: center;
+    align-items: flex-end;
+    gap: .4em;
+    /* The board turn hangs off the right of this pad, so the pad is wider than
+       the others. Pinned to the start of the column rather than centred in it,
+       which is what keeps the arrows themselves under the d-pad. */
+    align-self: flex-start;
+}
+
+.drop-arrows{
+    display: flex;
     justify-content: space-between;
     width: var(--pad-w);
 }
@@ -280,51 +289,37 @@ button.key.key-drop{
     height: calc(var(--pad-w) / 2);
 }
 
-/* The board turn, in the channel between the two arrows: pushed up against the
-   right-hand one by the auto margin, and sat at the foot of the channel. Its
-   label goes beside it rather than under it, so the pad keeps its height. */
+/* The board turn, to the right of the drop arrows and level with their heads.
+   Its label goes beside it rather than under it, so the pad keeps its height. */
 .cell-mid{
     display: flex;
     flex-direction: row-reverse;
     align-items: center;
-    align-self: flex-end;
-    margin-left: auto;
     gap: .25em;
 }
 
-/* One step per press, drawn as a broken shaft. Two mask layers rather than a
-   dashed border: the dashes are confined to the top, and the bottom band —
-   the head plus the room the key name needs above it — stays solid.
-
-   Two dashes at fixed percentages of that top band rather than a repeating
-   pattern at some length: a repeat leaves whatever is left over as a stub at
-   the bottom of the run, and the leftover changes with every breakpoint. This
-   way they are evenly spaced by construction, at any height. Two rather than
-   three, and the upper one long, so the key name at the tail of the shaft sits
-   on solid metal instead of straddling a gap. */
+/* One step per press, drawn as a broken shaft: a dash from the tail worth 30%
+   of the arrow's height, a gap, then solid the rest of the way down — the
+   lower part carries the key name and the head, and neither wants a hole in
+   it. Percentages of the arrow rather than a repeating pattern at some length:
+   a repeat leaves whatever does not divide evenly as a stub, and the leftover
+   changes with every breakpoint. */
 .drop-step .arrow-face{
-    --solid: calc(var(--head) * 1.1);
     --dashes: linear-gradient(180deg,
-        #000 0 58%, transparent 58% 73%,
-        #000 73% 100%);
-    -webkit-mask-image: var(--dashes), linear-gradient(#000, #000);
-    mask-image: var(--dashes), linear-gradient(#000, #000);
-    -webkit-mask-size: 100% calc(100% - var(--solid)), 100% var(--solid);
-    mask-size: 100% calc(100% - var(--solid)), 100% var(--solid);
-    -webkit-mask-position: top left, bottom left;
-    mask-position: top left, bottom left;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
+        #000 0 30%, transparent 30% 52%, #000 52% 100%);
+    -webkit-mask-image: var(--dashes);
+    mask-image: var(--dashes);
 }
 
-/* On the shaft, running up it. These are keys, not labels: they are the dark
-   of the lettering on a keycap (inherited, so a press darkens them with the
-   cap), not the cream of a label. Up at the tail — flex-end, not -start,
-   because the box is turned 180 degrees, so the end of its main axis is what
-   ends up at the top. */
+/* Running up the arrow over its head, where it is widest. These are keys, not
+   labels: they are the dark of the lettering on a keycap (inherited, so a
+   press darkens them with the cap), not the cream of a label. Both arrows use
+   this one rule, so the two names sit at the same height. flex-start, not
+   -end: the box is turned 180 degrees, so the start of its main axis is what
+   ends up at the bottom. */
 .key-drop .arrow-key{
-    justify-content: flex-end;
-    padding-bottom: .3em;
+    justify-content: flex-start;
+    padding-top: .35em;
     writing-mode: vertical-rl;
     transform: rotate(180deg);
     font-size: calc(var(--cap) * .4);
@@ -744,10 +739,18 @@ button.key.is-active{
 
     /* Only the side layout stacks the pads, and only there do the drop arrows
        have to line up with the d-pad's columns. Here they take the wider
-       column instead, and spread across it. */
-    .pad-drop,
+       column instead, and spread across it — minus the room the board turn
+       beside them needs, so the pad as a whole still fits the column. */
+    .drop-arrows{
+        width: calc(var(--right-pad-w) - var(--cap) * 2.6);
+    }
+
     .controls-body .pad-keys{
         width: var(--right-pad-w);
+    }
+
+    .pad-drop{
+        align-self: center;
     }
 
     /* A label beside every cap makes the row wider than it is in the side
