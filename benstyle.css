@@ -267,21 +267,25 @@ button.key.key-arrow.is-down .arrow-face{
 }
 
 /* --- Dropping: the same arrow, long but not tall ------------------------- */
+/* This row is the widest thing in the pad, and the one the others measure
+   themselves against: it takes exactly the width its contents need, and the
+   rotation row below stretches to match, which is what puts the board turn
+   over that row's last cap. Nothing here is a width picked by hand. */
 .pad-drop{
     --key: calc(var(--cap) * 1.5);
     display: flex;
     align-items: flex-end;
-    gap: .4em;
-    /* The board turn hangs off the right of this pad, so the pad is wider than
-       the others. Pinned to the start of the column rather than centred in it,
-       which is what keeps the arrows themselves under the d-pad. */
-    align-self: flex-start;
+    justify-content: space-between;
+    width: max-content;
 }
 
+/* The two of them read as one control, so they stand together, half an arrow
+   apart, rather than at opposite ends of the row. Set in off the left so the
+   pair sits under the body of the d-pad rather than under its left edge. */
 .drop-arrows{
     display: flex;
-    justify-content: space-between;
-    width: var(--pad-w);
+    gap: calc(var(--dir) * .5);
+    margin-left: calc(var(--dir) * .22);
 }
 
 button.key.key-drop{
@@ -333,10 +337,11 @@ button.key.key-drop{
     align-items: flex-start;
 }
 
-/* In the pad the row takes the d-pad's width and spreads its cells across it,
-   so the outer two line up with the arrows above them. */
+/* In the pad the row stretches to whatever the widest pad is — the drop row —
+   and spreads its cells across that, so its last cap sits under the board turn
+   and its first under the left-hand drop arrow. */
 .controls-body .pad-keys{
-    width: var(--pad-w);
+    align-self: stretch;
     justify-content: space-between;
     gap: 0;
 }
@@ -737,20 +742,11 @@ button.key.is-active{
         gap: .8em 1em;
     }
 
-    /* Only the side layout stacks the pads, and only there do the drop arrows
-       have to line up with the d-pad's columns. Here they take the wider
-       column instead, and spread across it — minus the room the board turn
-       beside them needs, so the pad as a whole still fits the column. */
-    .drop-arrows{
-        width: calc(var(--right-pad-w) - var(--cap) * 2.6);
-    }
-
+    /* Both rows of the right-hand column take its full width, so the board
+       turn still sits over the last cap of the rotation row. */
+    .pad-drop,
     .controls-body .pad-keys{
         width: var(--right-pad-w);
-    }
-
-    .pad-drop{
-        align-self: center;
     }
 
     /* A label beside every cap makes the row wider than it is in the side
@@ -758,7 +754,6 @@ button.key.is-active{
        column on a narrow phone. */
     .controls-body .pad-keys{
         flex-wrap: wrap;
-        justify-content: space-around;
         row-gap: .5em;
     }
 
