@@ -19,7 +19,8 @@ function release(code) {
 }
 
 export function init() {
-  for (const cap of document.querySelectorAll('#controls .key')) {
+  // Both the pad beside the board and the session controls in the corner.
+  for (const cap of document.querySelectorAll('.key')) {
     const code = cap.dataset.key;
     // A cap held open for an action the game does not have yet carries no
     // code; it is a placeholder, not an input.

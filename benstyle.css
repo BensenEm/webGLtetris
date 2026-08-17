@@ -94,14 +94,18 @@ a {
 /* The pad row. Everything below is sized off --cap, the edge of one square
    keycap, so a breakpoint only has to restate that one number. The arrows are
    the pad you aim at under time pressure, so they get --dir, twice a cap.
-   --pad-h is the d-pad's height: three arrow cells and the gaps between them.
-   The drop arrows match it, which is what makes the two shape-based pads read
-   as one block. */
+   --pad-w is the d-pad's width: three arrow cells and the gaps between them.
+   The drop pad takes that width too, and puts an arrow at each end of it, so
+   the two of them stand in the same two columns as the left and right movement
+   arrows above. */
 .controls-body{
     --cap: 2.7rem;
     --dir: calc(var(--cap) * 2);
-    --gap: .2em;
-    --pad-h: calc(var(--dir) * 3 + var(--gap) * 2);
+    /* The arrows leave their cells' corners empty, so they read as separate
+       long before their boxes do: no gap at all still looks like a cross with
+       air in it, and it pulls the drop arrows in under the side arrows. */
+    --gap: 0px;
+    --pad-w: calc(var(--dir) * 3 + var(--gap) * 2);
     /* The arrow's own proportions, in absolute lengths rather than percentages
        of the box, so all five come out identical: the drop arrows are drawn
        into a box three times as tall as a d-pad cell, and a percentage head
@@ -262,11 +266,12 @@ button.key.key-arrow.is-down .arrow-face{
     background: linear-gradient(180deg, #ffe9a8 0%, #f0c33f 100%);
 }
 
-/* --- Dropping: the same arrow in a pad-tall box -------------------------- */
+/* --- Dropping: the same arrow, long but not tall ------------------------- */
 .pad-drop{
     display: flex;
-    gap: calc(var(--gap) * 2);
-    height: var(--pad-h);
+    justify-content: space-between;
+    width: var(--pad-w);
+    height: calc(var(--pad-w) / 2);
 }
 
 button.key.key-drop{
@@ -283,7 +288,7 @@ button.key.key-drop{
    the bottom of the run, and the leftover changes with every breakpoint. This
    way the dashes are evenly spaced by construction, at any height. */
 .drop-step .arrow-face{
-    --solid: calc(var(--head) + var(--cap) * 2.2);
+    --solid: calc(var(--head) * 1.1);
     --dashes: linear-gradient(180deg,
         #000 0 22%, transparent 22% 39%,
         #000 39% 61%, transparent 61% 78%,
@@ -298,17 +303,28 @@ button.key.key-drop{
     mask-repeat: no-repeat;
 }
 
-/* "Space" and "Enter" do not fit across a shaft this thin, so they run up it,
-   the same quarter turn the pad labels take. Sat just above the head, inside
-   the band the dash mask leaves solid. */
+/* Beside the arrow rather than on it: in the channel between the two, turned
+   the same quarter turn as the pad labels and in the same cream, so the arrow
+   itself stays a clean shape. */
 .key-drop .arrow-key{
-    top: auto;
-    height: calc(var(--cap) * 2.2);
-    bottom: var(--head);
+    inset: 0 auto;
+    width: auto;
     writing-mode: vertical-rl;
     transform: rotate(180deg);
-    font-size: calc(var(--cap) * .34);
-    letter-spacing: .04em;
+    font-size: calc(var(--cap) * .42);
+    letter-spacing: .02em;
+    color: #fdeba4;
+}
+
+/* The left arrow's name goes on its right, and the right one's on its left. */
+.drop-step .arrow-key{
+    left: 100%;
+    margin-left: .35em;
+}
+
+.key-drop:not(.drop-step) .arrow-key{
+    right: 100%;
+    margin-right: .35em;
 }
 
 /* --- Plain caps with a label under them --------------------------------- */
@@ -316,6 +332,14 @@ button.key.key-drop{
     display: flex;
     gap: .45em;
     align-items: flex-start;
+}
+
+/* In the pad the row takes the d-pad's width and spreads its cells across it,
+   so the outer two line up with the arrows above them. */
+.controls-body .pad-keys{
+    width: var(--pad-w);
+    justify-content: space-between;
+    gap: 0;
 }
 
 /* Forward key, reverse key under it, label under both. */
@@ -334,15 +358,39 @@ button.key.key-drop{
     padding: 0;
 }
 
-/* An action with no reverse still holds the slot, so every label in the row
-   starts at the same height. */
-.key-spacer{
-    width: 100%;
-    height: var(--cap);
-}
-
 .pad-keys .cap-label{
     margin-top: .15em;
+}
+
+/* --- Session controls, top right ---------------------------------------- */
+
+/* Outside #all, so it costs no layout anywhere and sits in the same corner on
+   every screen. It has its own --cap: it is not part of .controls-body, which
+   is where the pad variables live. */
+#sessionControls{
+    --cap: 2.2rem;
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 3;
+    padding: calc(env(safe-area-inset-top) + 1.6rem)
+             calc(env(safe-area-inset-right) + 1.6rem) 0 0;
+    gap: .5em;
+    /* The caps take the pointer; the gaps around them let a drag through to
+       the board underneath. */
+    pointer-events: none;
+}
+
+#sessionControls .key{
+    pointer-events: auto;
+}
+
+/* No panel behind these, so they read against the sky the way the score does
+   rather than against a dark background like the pad's labels. */
+#sessionControls .cap-label{
+    color: #000;
+    font-weight: 700;
+    opacity: .75;
 }
 
 /* Turned a quarter turn anticlockwise, so it reads bottom-to-top under its
@@ -580,6 +628,10 @@ button.key.is-active{
         gap: .5em;
     }
 
+    #sessionControls{
+        --cap: 1.7rem;
+    }
+
     .cap-label{
         font-size: .72rem;
     }
@@ -656,6 +708,11 @@ button.key.is-active{
 
     .cap-label{
         font-size: .95rem;
+    }
+
+    /* A finger-sized cap in the corner too. */
+    #sessionControls{
+        --cap: 2.6rem;
     }
 
     button.key:hover{

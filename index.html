@@ -27,9 +27,11 @@
           <h2 class="controls-title">Controls</h2>
           <p class="controls-hint">Click a key or use the keyboard.</p>
 
-          <!-- Four pads: a movement d-pad, the two drop arrows, the rotations,
-               and everything else. The first two carry their meaning in their
-               shape, so only the last two are labelled. -->
+          <!-- Three pads: a movement d-pad, the two drop arrows, and every
+               rotation. The first two carry their meaning in their shape, so
+               only the last is labelled. What is left — the controls that act
+               on the session rather than on the piece — is #sessionControls,
+               pinned to the top right of the screen. -->
           <div class="controls-body">
             <!-- Arrow-shaped caps in a d-pad cross. Up moves the piece away
                  from the viewer, down towards them.
@@ -98,28 +100,10 @@
                 <button type="button" class="key" data-key="KeyR">R</button>
                 <span class="cap-label">Rotate Z</span>
               </div>
-            </div>
-
-            <div class="pad pad-keys" role="group" aria-label="Other">
               <div class="cell">
                 <button type="button" class="key" data-key="KeyQ">Q</button>
                 <button type="button" class="key" data-key="KeyA">A</button>
                 <span class="cap-label">Rotate game</span>
-              </div>
-              <div class="cell">
-                <button type="button" class="key" data-key="KeyO">O</button>
-                <span class="key-spacer" aria-hidden="true"></span>
-                <span class="cap-label">Toggle view</span>
-              </div>
-              <div class="cell">
-                <button type="button" class="key" data-key="KeyP">P</button>
-                <span class="key-spacer" aria-hidden="true"></span>
-                <span class="cap-label">Pause</span>
-              </div>
-              <div class="cell">
-                <button type="button" class="key" data-key="Digit0">0</button>
-                <span class="key-spacer" aria-hidden="true"></span>
-                <span class="cap-label">Music on/off</span>
               </div>
             </div>
           </div>
@@ -136,6 +120,25 @@
             <button type="button" id="restartButton">Play again</button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- The controls that act on the session rather than on the piece. Pinned
+         to the top right of the screen on every layout, opposite the score,
+         and outside #all so no layout has to make room for it. Bare caps: it
+         sits directly on the sky, so its labels are dark rather than cream. -->
+    <div id="sessionControls" class="pad pad-keys" role="group" aria-label="Game">
+      <div class="cell">
+        <button type="button" class="key" data-key="KeyO">O</button>
+        <span class="cap-label">Toggle view</span>
+      </div>
+      <div class="cell">
+        <button type="button" class="key" data-key="KeyP">P</button>
+        <span class="cap-label">Pause</span>
+      </div>
+      <div class="cell">
+        <button type="button" class="key" data-key="Digit0">0</button>
+        <span class="cap-label">Music on/off</span>
       </div>
     </div>
 
