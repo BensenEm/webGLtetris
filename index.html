@@ -17,93 +17,109 @@
 
   <body>
     <div id="all">
+      <!-- On wide screens CSS lifts this out of the flex row and floats it over
+           the board as a compact overlay; in portrait it stays a panel under
+           the board. Either way it doubles as the legend and as a playable
+           on-screen keyboard: every keycap is a real button wired to the same
+           action as its key. -->
       <div id="left">
-        <!-- Doubles as the legend and as a playable on-screen keyboard: every
-             keycap is a real button wired to the same action as its key. -->
         <div id="controls">
           <h2 class="controls-title">Controls</h2>
           <p class="controls-hint">Click a key or use the keyboard.</p>
 
-          <!-- Three groups, which become the three columns in portrait:
-               movement and dropping, then rotation, then everything else. -->
+          <!-- Four pads: a movement d-pad, the two drop arrows, the rotations,
+               and everything else. The first two carry their meaning in their
+               shape, so only the last two are labelled. -->
           <div class="controls-body">
-            <div class="control-group">
-              <div class="control">
-                <span class="control-label">Move left/right</span>
-                <span class="keys">
-                  <button type="button" class="key" data-key="KeyJ">J</button>
-                  <button type="button" class="key" data-key="KeyL">L</button>
-                </span>
+            <!-- Arrow-shaped caps in a d-pad cross. Up moves the piece away
+                 from the viewer, down towards them.
+
+                 Three nested elements per arrow, and each level earns its
+                 keep: the button is the hit target, .arrow-shell carries the
+                 drop-shadow, and .arrow-face carries the clip-path. They have
+                 to be separate because clip-path is applied *after* filter, so
+                 an arrow that clipped and shadowed itself would clip its own
+                 shadow away. Where an arrow carries text (the drop pad), it is
+                 a sibling of the shell rather than inside it, so the shadow is
+                 not traced under the lettering as well.
+
+                 These four are the keyboard's own arrow keys, so they carry no
+                 lettering at all. -->
+            <div class="pad pad-move" role="group" aria-label="Move">
+              <button type="button" class="key key-arrow dir-up" data-key="ArrowUp"
+                      aria-label="Move back">
+                <span class="arrow-shell" aria-hidden="true"><span class="arrow-face"></span></span>
+              </button>
+              <button type="button" class="key key-arrow dir-left" data-key="ArrowLeft"
+                      aria-label="Move left">
+                <span class="arrow-shell" aria-hidden="true"><span class="arrow-face"></span></span>
+              </button>
+              <button type="button" class="key key-arrow dir-right" data-key="ArrowRight"
+                      aria-label="Move right">
+                <span class="arrow-shell" aria-hidden="true"><span class="arrow-face"></span></span>
+              </button>
+              <button type="button" class="key key-arrow dir-down" data-key="ArrowDown"
+                      aria-label="Move front">
+                <span class="arrow-shell" aria-hidden="true"><span class="arrow-face"></span></span>
+              </button>
+            </div>
+
+            <!-- The down arrow again, stretched to the pad's full height:
+                 dashed for the one-step drop, solid for the drop all the way.
+                 Same markup as a d-pad arrow, and the same clip-path — only
+                 the box it is drawn into is taller. -->
+            <div class="pad pad-drop" role="group" aria-label="Drop">
+              <button type="button" class="key key-arrow key-drop drop-step" data-key="Space"
+                      aria-label="Drop one step">
+                <span class="arrow-shell" aria-hidden="true"><span class="arrow-face"></span></span>
+                <span class="arrow-key">Space</span>
+              </button>
+              <button type="button" class="key key-arrow key-drop" data-key="Enter"
+                      aria-label="Drop all the way">
+                <span class="arrow-shell" aria-hidden="true"><span class="arrow-face"></span></span>
+                <span class="arrow-key">Enter</span>
+              </button>
+            </div>
+
+            <!-- One cap per direction, the reverse under the forward one. -->
+            <div class="pad pad-keys" role="group" aria-label="Rotate">
+              <div class="cell">
+                <button type="button" class="key" data-key="KeyS">S</button>
+                <button type="button" class="key" data-key="KeyW">W</button>
+                <span class="cap-label">Rotate X</span>
               </div>
-              <div class="control">
-                <span class="control-label">Move front/back</span>
-                <span class="keys">
-                  <button type="button" class="key" data-key="KeyK">K</button>
-                  <button type="button" class="key" data-key="KeyI">I</button>
-                </span>
+              <div class="cell">
+                <button type="button" class="key" data-key="KeyD">D</button>
+                <button type="button" class="key" data-key="KeyE">E</button>
+                <span class="cap-label">Rotate Y</span>
               </div>
-              <div class="control">
-                <span class="control-label">Drop one step</span>
-                <span class="keys">
-                  <button type="button" class="key key-wide" data-key="Space">Space</button>
-                </span>
-              </div>
-              <div class="control">
-                <span class="control-label">Drop all the way</span>
-                <span class="keys">
-                  <button type="button" class="key key-wide" data-key="Enter">Enter</button>
-                </span>
+              <div class="cell">
+                <button type="button" class="key" data-key="KeyF">F</button>
+                <button type="button" class="key" data-key="KeyR">R</button>
+                <span class="cap-label">Rotate Z</span>
               </div>
             </div>
 
-            <div class="control-group">
-              <div class="control">
-                <span class="control-label">Rotate around X</span>
-                <span class="keys">
-                  <button type="button" class="key" data-key="KeyE">E</button>
-                  <button type="button" class="key" data-key="KeyR">R</button>
-                </span>
+            <div class="pad pad-keys" role="group" aria-label="Other">
+              <div class="cell">
+                <button type="button" class="key" data-key="KeyQ">Q</button>
+                <button type="button" class="key" data-key="KeyA">A</button>
+                <span class="cap-label">Rotate game</span>
               </div>
-              <div class="control">
-                <span class="control-label">Rotate around Y</span>
-                <span class="keys">
-                  <button type="button" class="key" data-key="KeyD">D</button>
-                  <button type="button" class="key" data-key="KeyF">F</button>
-                </span>
+              <div class="cell">
+                <button type="button" class="key" data-key="KeyO">O</button>
+                <span class="key-spacer" aria-hidden="true"></span>
+                <span class="cap-label">Toggle view</span>
               </div>
-              <div class="control">
-                <span class="control-label">Rotate around Z</span>
-                <span class="keys">
-                  <button type="button" class="key" data-key="KeyC">C</button>
-                  <button type="button" class="key" data-key="KeyV">V</button>
-                </span>
+              <div class="cell">
+                <button type="button" class="key" data-key="KeyP">P</button>
+                <span class="key-spacer" aria-hidden="true"></span>
+                <span class="cap-label">Pause</span>
               </div>
-              <div class="control">
-                <span class="control-label">Rotate game</span>
-                <span class="keys">
-                  <button type="button" class="key" data-key="KeyQ">Q</button>
-                </span>
-              </div>
-            </div>
-
-            <div class="control-group">
-              <div class="control">
-                <span class="control-label">Toggle view</span>
-                <span class="keys">
-                  <button type="button" class="key" data-key="KeyA">A</button>
-                </span>
-              </div>
-              <div class="control">
-                <span class="control-label">Pause</span>
-                <span class="keys">
-                  <button type="button" class="key" data-key="KeyP">P</button>
-                </span>
-              </div>
-              <div class="control">
-                <span class="control-label">Music on/off</span>
-                <span class="keys">
-                  <button type="button" class="key" data-key="Digit0">0</button>
-                </span>
+              <div class="cell">
+                <button type="button" class="key" data-key="Digit0">0</button>
+                <span class="key-spacer" aria-hidden="true"></span>
+                <span class="cap-label">Music on/off</span>
               </div>
             </div>
           </div>

@@ -12,6 +12,7 @@ import {
   EMPTY,
   CAMERA_VIEWS,
   ARENA_TURN_FRAMES,
+  ARENA_STEP_RADIANS,
 } from './config.js';
 
 const cubeGeometry = new THREE.BoxGeometry(CUBE_DIM, CUBE_DIM, CUBE_DIM);
@@ -327,16 +328,19 @@ function initZoom() {
   canvas.addEventListener('pointerleave', drop);
 }
 
-const turnStep = THREE.MathUtils.degToRad(90) / ARENA_TURN_FRAMES;
+const turnStep = ARENA_STEP_RADIANS / ARENA_TURN_FRAMES;
 
-/** Advances an in-progress quarter turn of the board. */
-export function stepArenaTurn() {
-  arenaCase.rotation.y += turnStep;
+/** Advances an in-progress turn of the board by one frame. */
+export function stepArenaTurn(direction = 1) {
+  arenaCase.rotation.y += turnStep * direction;
 }
 
-/** Snaps the board to an exact quarter-turn multiple once a turn finishes. */
-export function settleArenaTurn(quarterTurns) {
-  arenaCase.rotation.y = Math.PI / 4 + (quarterTurns * Math.PI) / 2;
+/**
+ * Snaps the board to an exact step once a turn finishes. Step 0 is the resting
+ * corner-on angle; odd steps sit face-on to the camera.
+ */
+export function settleArenaTurn(step) {
+  arenaCase.rotation.y = Math.PI / 4 + step * ARENA_STEP_RADIANS;
 }
 
 // --- collapse animation -----------------------------------------------------

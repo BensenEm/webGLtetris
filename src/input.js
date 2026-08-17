@@ -9,63 +9,79 @@ import * as game from './game.js';
 import * as render from './render.js';
 import * as audio from './audio.js';
 
-/** [axis, delta] per arenaPos (0-3). */
+/** [axis, delta] per arenaPos (0-3), one table per direction. */
+const BACK = [
+  ['z', -1],
+  ['x', +1],
+  ['z', +1],
+  ['x', -1],
+];
+const FRONT = [
+  ['z', +1],
+  ['x', -1],
+  ['z', -1],
+  ['x', +1],
+];
+const LEFT = [
+  ['x', -1],
+  ['z', -1],
+  ['x', +1],
+  ['z', +1],
+];
+const RIGHT = [
+  ['x', +1],
+  ['z', +1],
+  ['x', -1],
+  ['z', -1],
+];
+
+/**
+ * The arrow keys are what the legend shows; i/j/k/l stay bound to the same
+ * four directions for anyone already playing with a hand on the home row.
+ */
 const MOVES = {
-  KeyI: [
-    ['z', -1],
-    ['x', +1],
-    ['z', +1],
-    ['x', -1],
-  ],
-  KeyK: [
-    ['z', +1],
-    ['x', -1],
-    ['z', -1],
-    ['x', +1],
-  ],
-  KeyJ: [
-    ['x', -1],
-    ['z', -1],
-    ['x', +1],
-    ['z', +1],
-  ],
-  KeyL: [
-    ['x', +1],
-    ['z', +1],
-    ['x', -1],
-    ['z', -1],
-  ],
+  ArrowUp: BACK,
+  ArrowDown: FRONT,
+  ArrowLeft: LEFT,
+  ArrowRight: RIGHT,
+  KeyI: BACK,
+  KeyK: FRONT,
+  KeyJ: LEFT,
+  KeyL: RIGHT,
 };
 
-/** [axis, positive] per arenaPos (0-3). */
+/**
+ * [axis, positive] per arenaPos (0-3). One key per axis and direction: s/w for
+ * x, d/e for y, f/r for z.
+ */
 const ROTATIONS = {
+  KeyS: [
+    ['x', true],
+    ['z', false],
+    ['x', false],
+    ['z', true],
+  ],
+  KeyW: [
+    ['x', false],
+    ['z', true],
+    ['x', true],
+    ['z', false],
+  ],
+  KeyF: [
+    ['z', true],
+    ['x', true],
+    ['z', false],
+    ['x', false],
+  ],
   KeyR: [
-    ['x', true],
-    ['z', false],
-    ['x', false],
-    ['z', true],
-  ],
-  KeyE: [
-    ['x', false],
-    ['z', true],
-    ['x', true],
-    ['z', false],
-  ],
-  KeyV: [
     ['z', false],
     ['x', false],
     ['z', true],
     ['x', true],
-  ],
-  KeyC: [
-    ['z', true],
-    ['x', true],
-    ['z', false],
-    ['x', false],
   ],
   // Rotation about y is unaffected by spinning the board about y.
-  KeyF: [['y', true], ['y', true], ['y', true], ['y', true]],
-  KeyD: [['y', false], ['y', false], ['y', false], ['y', false]],
+  KeyD: [['y', true], ['y', true], ['y', true], ['y', true]],
+  KeyE: [['y', false], ['y', false], ['y', false], ['y', false]],
 };
 
 /** Keys whose default browser behaviour would disrupt play. */
@@ -81,11 +97,14 @@ export function dispatch(code) {
     case 'KeyP':
       game.togglePause();
       return;
-    case 'KeyA':
+    case 'KeyO':
       render.cycleCameraView();
       return;
     case 'KeyQ':
-      game.turnArena();
+      game.turnArena(1);
+      return;
+    case 'KeyA':
+      game.turnArena(-1);
       return;
     case 'Digit0':
       audio.toggleMusic();

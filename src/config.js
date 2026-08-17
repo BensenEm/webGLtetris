@@ -36,8 +36,20 @@ export const CAMERA_VIEWS = [
   },
 ];
 
-/** Whole-arena rotation (the "q" key): a quarter turn, eased over N frames. */
-export const ARENA_TURN_FRAMES = 20;
+/**
+ * Whole-arena rotation, the "q" and "a" keys.
+ *
+ * The board turns an eighth at a time, so it alternates between resting
+ * corner-on to the camera (where the grid axes read as screen diagonals) and
+ * face-on (where they line up with the screen). Both give the direction keys an
+ * unambiguous meaning; only the control frame, ARENA_STEPS / 2 of these apart,
+ * has to stay quantised.
+ */
+export const ARENA_STEPS = 8;
+export const ARENA_STEP_RADIANS = (Math.PI * 2) / ARENA_STEPS;
+
+/** Frames the eased turn runs for. Half the arc as before, and quicker. */
+export const ARENA_TURN_FRAMES = 4;
 
 /** Timeline for the line-clear flash, in milliseconds. */
 export const CLEAR_FLASH_INTERVAL = 500;

@@ -5,6 +5,7 @@ import {
   Y_LEN,
   EMPTY,
   ARENA_TURN_FRAMES,
+  ARENA_STEPS,
   CLEAR_FLASH_INTERVAL,
   CLEAR_FLASH_COUNT,
   COLLAPSE_MS_PER_CELL,
@@ -18,7 +19,8 @@ import {
   findCompletedLines,
   withCellsCleared,
   collapseCells,
-  collapseFalls,
+  settleFloating,
+  fallsBetween,
 } from './arena.js';
 import { Piece, SHAPE_NAMES } from './piece.js';
 import { getLevel, levelForScore } from './levels.js';
@@ -47,9 +49,13 @@ export const state = {
   totalLines: 0,
   level: 1,
 
-  /** Quarter turns applied to the board, 0-3, driven by the "q" key. */
+  /** Eighth turns applied to the board, 0 to ARENA_STEPS-1, from q and a. */
+  arenaStep: 0,
+  /** The control frame that step implies, 0-3. See controlFrameFor. */
   arenaPos: 0,
   turnFramesLeft: 0,
+  /** Which way the turn in progress is going: +1 or -1. */
+  turnDirection: 1,
 
   lastDropAt: 0,
   clearStartedAt: 0,
@@ -230,10 +236,15 @@ function beginClear(cells, lines) {
 
   // Pre-build both frames of the flash: the board as-is, and the board with
   // the completed cells removed.
-  render.syncArena(render.groups.cleared, withCellsCleared(state.arena, cells));
+  const cleared = withCellsCleared(state.arena, cells);
+  render.syncArena(render.groups.cleared, cleared);
 
-  state.pendingClear = collapseCells(state.arena, cells);
-  state.pendingFalls = collapseFalls(state.arena, cells);
+  // Two steps: close the gaps the cleared rows left in each column, then drop
+  // anything the clear has left floating. Both only ever move cubes straight
+  // down, so the whole thing animates as one fall from the cleared board to
+  // the settled one.
+  state.pendingClear = settleFloating(collapseCells(state.arena, cells));
+  state.pendingFalls = fallsBetween(cleared, state.pendingClear);
   state.clearStartedAt = performance.now();
   state.phase = State.CLEARING;
 }
@@ -321,18 +332,39 @@ function shuffle(array) {
 
 // --- board rotation ---------------------------------------------------------
 
-export function turnArena() {
+/**
+ * The control frame for a board step: which quarter turn the direction keys
+ * should be read against.
+ *
+ * The board moves in eighths but a piece only has four horizontal directions
+ * to move in, so the mapping has to be quantised. Even steps rest corner-on,
+ * where the grid axes read as screen diagonals and the two neighbouring
+ * quarter turns are equally defensible — those keep the lower one, which is
+ * the convention the game has always used. Odd steps rest face-on, where the
+ * grid axes line up with the screen and exactly one mapping is correct. Hence
+ * rounding up rather than to nearest.
+ */
+function controlFrameFor(step) {
+  return Math.floor((step + 1) / 2) % 4;
+}
+
+/** `direction` is +1 for the turn to the left, -1 for the one back. */
+export function turnArena(direction = 1) {
   if (state.turnFramesLeft > 0) return;
   state.turnFramesLeft = ARENA_TURN_FRAMES;
-  state.arenaPos = (state.arenaPos + 1) % 4;
+  state.turnDirection = direction;
+  // + ARENA_STEPS so a turn back from step 0 lands on the last step rather
+  // than on JavaScript's negative remainder.
+  state.arenaStep = (state.arenaStep + direction + ARENA_STEPS) % ARENA_STEPS;
+  state.arenaPos = controlFrameFor(state.arenaStep);
 }
 
 function updateArenaTurn() {
   if (state.turnFramesLeft <= 0) return;
-  render.stepArenaTurn();
+  render.stepArenaTurn(state.turnDirection);
   state.turnFramesLeft--;
   if (state.turnFramesLeft === 0) {
-    render.settleArenaTurn(state.arenaPos);
+    render.settleArenaTurn(state.arenaStep);
   }
 }
 
