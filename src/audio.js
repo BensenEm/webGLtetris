@@ -37,9 +37,9 @@ export function toggleMusic() {
 
 /** Keeps the keycap's lit state matching whether music is actually on. */
 function syncButton() {
-  document
-    .querySelector('[data-key="Digit0"]')
-    ?.classList.toggle('is-active', playing);
+  for (const cap of document.querySelectorAll('[data-key="Digit0"]')) {
+    cap.classList.toggle('is-active', playing);
+  }
 }
 
 export function init() {

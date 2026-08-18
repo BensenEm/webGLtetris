@@ -4,28 +4,35 @@
 
 import * as input from './input.js';
 
-/** event.code -> keycap element. */
+/**
+ * event.code -> every keycap standing for it.
+ *
+ * A list rather than one element: the wide panel and the compact one both
+ * carry a cap for most keys, and only one of the two is on screen at a time.
+ * Lighting them all is simpler than asking which that is.
+ */
 const caps = new Map();
 
 /** How long a clicked cap stays lit, since there is no matching keyup. */
 const CLICK_FLASH_MS = 120;
 
 function press(code) {
-  caps.get(code)?.classList.add('is-down');
+  for (const cap of caps.get(code) ?? []) cap.classList.add('is-down');
 }
 
 function release(code) {
-  caps.get(code)?.classList.remove('is-down');
+  for (const cap of caps.get(code) ?? []) cap.classList.remove('is-down');
 }
 
 export function init() {
-  // Both the pad beside the board and the session controls in the corner.
+  // Both control panels, and the session controls in the corner.
   for (const cap of document.querySelectorAll('.key')) {
     const code = cap.dataset.key;
     // A cap held open for an action the game does not have yet carries no
     // code; it is a placeholder, not an input.
     if (!code) continue;
-    caps.set(code, cap);
+    if (!caps.has(code)) caps.set(code, []);
+    caps.get(code).push(cap);
 
     cap.addEventListener('click', () => {
       input.dispatch(code);

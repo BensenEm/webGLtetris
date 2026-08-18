@@ -67,39 +67,30 @@ a {
 #left::-webkit-scrollbar-thumb:hover{
     background: rgba(253, 235, 164, .7);
 }
-/* Control legend / on-screen keyboard. */
-#controls{
-    background-color: rgba(0, 0, 0, .25);
-    padding: 1em 1.25em;
-    min-width: 320px;
+/* --- The two panels -------------------------------------------------------
+   Exactly one is on screen: the wide one beside the board, the compact one
+   under a phone held upright. Each owns its own markup and its own layout
+   rules, so neither has to be talked out of the other's shape. Everything
+   between here and those two blocks is what they share — the pads, the caps,
+   the arrows — and is written once. */
+.controls-panel{
+    padding: .7em .8em;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, .38);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, .35);
     font-weight: 300;
 }
 
-.controls-title{
-    margin: 0 0 .15em;
-    font-size: 1.5rem;
-    font-weight: 400;
-    letter-spacing: .04em;
-    color: #fdeba4;
+.controls-compact{
+    display: none;
 }
 
-.controls-hint{
-    margin: 0 0 1em;
-    font-size: .9rem;
-    font-weight: 300;
-    letter-spacing: .02em;
-    opacity: .85;
-}
-
-/* The pad row. Everything below is sized off --cap, the edge of one square
-   keycap, so a breakpoint only has to restate that one number. The arrows are
-   the pad you aim at under time pressure, so they get --dir, twice a cap.
-   --pad-w is the d-pad's width: three arrow cells and the gaps between them.
-   The drop pad takes that width too, and puts an arrow at each end of it, so
-   the two of them stand in the same two columns as the left and right movement
-   arrows above. */
+/* Everything below is sized off --cap, the edge of one square keycap, so a
+   panel only has to restate that one number. The arrows are what you aim at
+   under time pressure, so they get --dir, twice a cap. --pad-w is the d-pad's
+   width: three arrow cells and the gaps between them. */
 .controls-body{
-    --cap: 2.7rem;
+    --cap: 1.9rem;
     --dir: calc(var(--cap) * 2);
     /* The arrows leave their cells' corners empty, so they read as separate
        long before their boxes do: no gap at all still looks like a cross with
@@ -113,12 +104,28 @@ a {
        half-width. */
     --head: calc(var(--dir) * .46);
     --shaft: calc(var(--dir) * .23);
-    /* One pad above the next, since the panel is a column down the side of the
-       screen. Portrait turns this back into a row — see the breakpoint. */
+}
+
+/* --- Wide panel: one pad above the next ---------------------------------- */
+.controls-wide .controls-body{
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.1em;
+    gap: .9em;
+}
+
+/* Two arrows and nothing else, so they can sit centred under the d-pad. */
+.controls-wide .pad-drop{
+    width: var(--pad-w);
+    justify-content: center;
+}
+
+/* Four cells of two caps each, spread across the d-pad's width so the outer
+   two stand under its side arrows. */
+.controls-wide .pad-keys{
+    width: var(--pad-w);
+    justify-content: space-between;
+    gap: 0;
 }
 
 /* --- Movement: four arrow caps in a cross ------------------------------- */
@@ -267,25 +274,18 @@ button.key.key-arrow.is-down .arrow-face{
 }
 
 /* --- Dropping: the same arrow, long but not tall ------------------------- */
-/* This row is the widest thing in the pad, and the one the others measure
-   themselves against: it takes exactly the width its contents need, and the
-   rotation row below stretches to match, which is what puts the board turn
-   over that row's last cap. Nothing here is a width picked by hand. */
 .pad-drop{
     --key: calc(var(--cap) * 1.5);
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    width: max-content;
 }
 
 /* The two of them read as one control, so they stand together, half an arrow
-   apart, rather than at opposite ends of the row. Set in off the left so the
-   pair sits under the body of the d-pad rather than under its left edge. */
+   apart, rather than at opposite ends of the row. */
 .drop-arrows{
     display: flex;
     gap: calc(var(--dir) * .5);
-    margin-left: calc(var(--dir) * .22);
 }
 
 button.key.key-drop{
@@ -337,17 +337,8 @@ button.key.key-drop{
     align-items: flex-start;
 }
 
-/* In the pad the row stretches to whatever the widest pad is — the drop row —
-   and spreads its cells across that, so its last cap sits under the board turn
-   and its first under the left-hand drop arrow. */
-.controls-body .pad-keys{
-    align-self: stretch;
-    justify-content: space-between;
-    gap: 0;
-}
-
-/* One cap with its label under it. These caps carry a whole action each rather
-   than one of a pair, so they are half again the size of a nominal cap. */
+/* These caps carry a whole action each, so they are half again the size of a
+   nominal cap. */
 .pad-keys{
     --key: calc(var(--cap) * 1.5);
 }
@@ -629,54 +620,22 @@ button.key.is-active{
 }
 
 
-/* --- Side legend ----------------------------------------------------------
+/* --- The side layout ------------------------------------------------------
    Anywhere but a portrait handheld the panel is a column down the left of the
-   screen, beside the board rather than over it, with the four pads stacked. It
-   stays in the flex row, so #mid simply takes the width that is left.
-
-   This is the complement of the portrait breakpoint below, so exactly one of
-   the two layouts is ever active. */
-@media (orientation: landscape), (min-width: 901px){
-    #left{
-        padding: .6rem;
-    }
-
-    #controls{
-        min-width: 0;
-        padding: .7em .8em;
-        border-radius: 10px;
-        background-color: rgba(0, 0, 0, .38);
-        box-shadow: 0 6px 22px rgba(0, 0, 0, .35);
-    }
-
-    .controls-title{
-        display: none;
-    }
-
-    /* Small enough that all four pads stacked still clear the bottom of an
-       ordinary window; #left scrolls if they do not. */
-    .controls-body{
-        --cap: 1.9rem;
-        gap: .9em;
-    }
-
-    .controls-hint{
-        display: none;
-    }
+   screen, beside the board. It stays in the flex row, so #mid simply takes the
+   width that is left, and #left scrolls if the stack outgrows the window. */
+#left{
+    padding: .6rem;
 }
 
-/* A short landscape window — a phone on its side — has no room for the four
-   pads at full size, and the stack is what runs out of room first. */
+/* A short landscape window — a phone on its side — has no room for the stack
+   at full size, and the stack is what runs out of room first. */
 @media (orientation: landscape) and (max-height: 560px){
     #left{
         padding: .35rem;
     }
 
-    button.key{
-        font-size: .8rem;
-    }
-
-    .controls-body{
+    .controls-wide .controls-body{
         --cap: 1.4rem;
         gap: .5em;
     }
@@ -684,19 +643,92 @@ button.key.is-active{
     #sessionControls{
         --cap: 1.2rem;
     }
-
 }
 
-/* --- Compact layouts ------------------------------------------------------
-   Touch targets come first here: the caps are roughly double their side-column
-   size. There is no room for a column beside the board on a phone held
-   upright, so the panel goes back across the bottom of the screen — the pads
-   in a row rather than a stack, centred under the board. */
+/* --- Compact panel: two columns, one per thumb ----------------------------
+   These rules need no media query of their own: the panel they style is only
+   ever on screen at the portrait breakpoint, which is the one thing below
+   that switches between the two. */
 
-/* Portrait handheld: board on top, legend across the bottom. column-reverse
+/* The d-pad on the left under the left thumb, and the right thumb's column
+   beside it — drops on top, rotations under them. The right column is the
+   wider of the two, since it holds two pads to the d-pad's one. */
+.controls-compact .controls-body{
+    --cap: 1.8rem;
+    --right-w: calc(var(--pad-w) * 1.4);
+    display: grid;
+    grid-template-columns: auto auto;
+    align-items: center;
+    justify-content: center;
+    gap: .8em 1em;
+}
+
+.controls-compact .pad-move{
+    grid-column: 1;
+    grid-row: 1 / span 2;
+}
+
+/* The right-hand column is three tracks wide, and both its rows are laid on
+   those same tracks: drop, drop, board turn over rotate X, Y, Z. Neither row
+   is positioned by hand, and neither can drift out of step with the other. */
+.controls-compact .pad-drop,
+.controls-compact .pad-keys{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-items: center;
+    align-items: end;
+    width: var(--right-w);
+    grid-column: 2;
+}
+
+.controls-compact .pad-drop{
+    grid-row: 1;
+}
+
+.controls-compact .pad-keys{
+    grid-row: 2;
+}
+
+/* The two arrows are a pair in the markup — it is what lets the wide panel
+   stand them together — but here they are two of the three tracks, so the
+   wrapper steps out of the way. */
+.controls-compact .drop-arrows{
+    display: contents;
+}
+
+/* The label goes to the left of its cap rather than under it: beside the cap
+   it costs the row a little width, under it it would cost the column the
+   label's whole length in height. row-reverse rather than reordering the
+   markup, so the cap still comes first for a screen reader and the tab key. */
+.controls-compact .cell{
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: .35em;
+    width: auto;
+}
+
+.controls-compact .cap-label{
+    margin-top: 0;
+}
+
+/* No hover lift under a finger, and a bigger target in the corner. */
+.controls-compact button.key:hover{
+    transform: none;
+}
+
+/* --- Switching between the two --------------------------------------------
+   Portrait handheld: board on top, legend across the bottom. column-reverse
    puts #mid above #left without reordering the markup, which keeps the tab
    order (board first, then controls) matching the visual order. */
 @media (orientation: portrait) and (max-width: 900px){
+    .controls-wide{
+        display: none;
+    }
+
+    .controls-compact{
+        display: block;
+    }
+
     #all{
         flex-direction: column-reverse;
         align-items: stretch;
@@ -723,85 +755,8 @@ button.key.is-active{
         height: auto;
     }
 
-    #controls{
-        min-width: 0;
+    .controls-panel{
         padding: .5em .6em;
-    }
-
-    /* Two columns rather than a stack: the d-pad on the left under the left
-       thumb, and the right thumb's column beside it — drops on top, rotations
-       under them. The right column is the wider of the two, roughly 60 to 40,
-       since it holds two pads to the d-pad's one. */
-    .controls-body{
-        --cap: 1.8rem;
-        --right-pad-w: calc(var(--pad-w) * 1.4);
-        display: grid;
-        grid-template-columns: auto auto;
-        align-items: center;
-        justify-content: center;
-        gap: .8em 1em;
-    }
-
-    /* Both rows of the right-hand column take its full width, so the board
-       turn still sits over the last cap of the rotation row. */
-    .pad-drop,
-    .controls-body .pad-keys{
-        width: var(--right-pad-w);
-    }
-
-    /* A label beside every cap makes the row wider than it is in the side
-       layout, so let it fall into two rows of two rather than overflow the
-       column on a narrow phone. */
-    .controls-body .pad-keys{
-        flex-wrap: wrap;
-        row-gap: .5em;
-    }
-
-    .pad-move{
-        grid-column: 1;
-        grid-row: 1 / span 2;
-    }
-
-    .pad-drop{
-        grid-column: 2;
-        grid-row: 1;
-    }
-
-    .controls-body .pad-keys{
-        grid-column: 2;
-        grid-row: 2;
-    }
-
-    /* The label moves from under the cap to its left, still turned on end:
-       beside the cap it costs the row a little width, under it it would have
-       cost the whole column the label's length in height. row-reverse rather
-       than reordering the markup, so the cap still comes first for a screen
-       reader and for the tab order. */
-    .controls-body .cell{
-        flex-direction: row-reverse;
-        align-items: center;
-        gap: .35em;
-        width: auto;
-    }
-
-    .controls-body .cap-label{
-        margin-top: 0;
-    }
-
-    .controls-title, .controls-hint{
-        display: none;
-    }
-}
-
-/* Landscape on a phone deliberately has no overrides: it keeps the desktop
-   legend, which reads better than the compact one and fits beside the board
-   at that width. If it runs past the viewport height, #left scrolls. */
-
-/* Bigger type on the caps, and no hover lift: touch has no hover, and the
-   lift only ever shows up stuck under a finger. */
-@media (orientation: portrait) and (max-width: 900px){
-    button.key{
-        font-size: 1.35rem;
     }
 
     /* Still a finger-sized target in the corner, even bare — and touch has no
@@ -812,10 +767,6 @@ button.key.is-active{
 
     #sessionControls .cap-label{
         opacity: .8;
-    }
-
-    button.key:hover{
-        transform: none;
     }
 }
 

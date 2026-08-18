@@ -17,21 +17,19 @@
 
   <body>
     <div id="all">
-      <!-- On wide screens CSS lifts this out of the flex row and floats it over
-           the board as a compact overlay; in portrait it stays a panel under
-           the board. Either way it doubles as the legend and as a playable
-           on-screen keyboard: every keycap is a real button wired to the same
-           action as its key. -->
-      <div id="left">
-        <div id="controls">
-          <h2 class="controls-title">Controls</h2>
-          <p class="controls-hint">Click a key or use the keyboard.</p>
+      <!-- The legend, and a playable on-screen keyboard: every keycap is a real
+           button wired to the same action as its key.
 
-          <!-- Three pads: a movement d-pad, the two drop arrows, and every
-               rotation. The first two carry their meaning in their shape, so
-               only the last is labelled. What is left — the controls that act
-               on the session rather than on the piece — is #sessionControls,
-               pinned to the top right of the screen. -->
+           Two panels, of which CSS shows exactly one. They are not one panel
+           reflowed, because the two want different content as well as a
+           different shape: the roomy one beside the board shows both
+           directions of every rotation, while the one under a phone held
+           upright cannot afford eight caps and shows the forward direction
+           only. Trying to serve both from one set of markup is what made this
+           a pile of breakpoint overrides. -->
+      <div id="left">
+        <!-- Beside the board: one pad above the next. -->
+        <div class="controls-panel controls-wide">
           <div class="controls-body">
             <!-- Arrow-shaped caps in a d-pad cross. Up moves the piece away
                  from the viewer, down towards them.
@@ -66,13 +64,11 @@
               </button>
             </div>
 
-            <!-- The down arrow again, stretched to the pad's full height:
-                 dashed for the one-step drop, solid for the drop all the way.
-                 Same markup as a d-pad arrow, and the same clip-path — only
-                 the box it is drawn into is taller. -->
+            <!-- The down arrow again, stretched: dashed for the one-step drop,
+                 solid for the drop all the way. Same markup as a d-pad arrow,
+                 and the same clip-path — only the box it is drawn into is
+                 taller. -->
             <div class="pad pad-drop" role="group" aria-label="Drop">
-              <!-- The two arrows keep a row to themselves, spread across the
-                   d-pad's width so they stand under its side arrows. -->
               <div class="drop-arrows">
                 <button type="button" class="key key-arrow key-drop drop-step" data-key="Space"
                         aria-label="Drop one step">
@@ -85,21 +81,79 @@
                   <span class="arrow-key">Enter</span>
                 </button>
               </div>
-              <!-- The board turn rides along on the right: it is the one
-                   rotation that is not about an axis of the piece, so it is no
-                   loss to the row below, and there is room for it here. Last
-                   in the markup as well as on screen, so the tab order follows
-                   the eye. -->
+            </div>
+
+            <!-- Forward cap on top, the reverse under it, label under both. -->
+            <div class="pad pad-keys" role="group" aria-label="Rotate">
+              <div class="cell">
+                <button type="button" class="key" data-key="KeyS">S</button>
+                <button type="button" class="key" data-key="KeyW">W</button>
+                <span class="cap-label">Rotate X</span>
+              </div>
+              <div class="cell">
+                <button type="button" class="key" data-key="KeyD">D</button>
+                <button type="button" class="key" data-key="KeyE">E</button>
+                <span class="cap-label">Rotate Y</span>
+              </div>
+              <div class="cell">
+                <button type="button" class="key" data-key="KeyF">F</button>
+                <button type="button" class="key" data-key="KeyR">R</button>
+                <span class="cap-label">Rotate Z</span>
+              </div>
+              <div class="cell">
+                <button type="button" class="key" data-key="KeyQ">Q</button>
+                <button type="button" class="key" data-key="KeyA">A</button>
+                <span class="cap-label">Rotate game</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Under a phone held upright: two columns, one per thumb. Forward
+             rotations only, and the board turn rides along with the drop
+             arrows, where there is room going spare. -->
+        <div class="controls-panel controls-compact">
+          <div class="controls-body">
+            <div class="pad pad-move" role="group" aria-label="Move">
+              <button type="button" class="key key-arrow dir-up" data-key="ArrowUp"
+                      aria-label="Move back">
+                <span class="arrow-shell" aria-hidden="true"><span class="arrow-face"></span></span>
+              </button>
+              <button type="button" class="key key-arrow dir-left" data-key="ArrowLeft"
+                      aria-label="Move left">
+                <span class="arrow-shell" aria-hidden="true"><span class="arrow-face"></span></span>
+              </button>
+              <button type="button" class="key key-arrow dir-right" data-key="ArrowRight"
+                      aria-label="Move right">
+                <span class="arrow-shell" aria-hidden="true"><span class="arrow-face"></span></span>
+              </button>
+              <button type="button" class="key key-arrow dir-down" data-key="ArrowDown"
+                      aria-label="Move front">
+                <span class="arrow-shell" aria-hidden="true"><span class="arrow-face"></span></span>
+              </button>
+            </div>
+
+            <div class="pad pad-drop" role="group" aria-label="Drop">
+              <div class="drop-arrows">
+                <button type="button" class="key key-arrow key-drop drop-step" data-key="Space"
+                        aria-label="Drop one step">
+                  <span class="arrow-shell" aria-hidden="true"><span class="arrow-face"></span></span>
+                  <span class="arrow-key">Space</span>
+                </button>
+                <button type="button" class="key key-arrow key-drop" data-key="Enter"
+                        aria-label="Drop all the way">
+                  <span class="arrow-shell" aria-hidden="true"><span class="arrow-face"></span></span>
+                  <span class="arrow-key">Enter</span>
+                </button>
+              </div>
+              <!-- Last in the markup as well as on screen, so the tab order
+                   follows the eye. -->
               <div class="cell cell-mid">
                 <button type="button" class="key" data-key="KeyQ">Q</button>
                 <span class="cap-label">Rotate game</span>
               </div>
             </div>
 
-            <!-- One cap per axis. Each has a reverse on the keyboard — w, e, r
-                 and a, the key left of the one shown — but the legend does not
-                 show them: four more caps cost more room than the reverses are
-                 worth, and a rotation repeated is a rotation undone. -->
             <div class="pad pad-keys" role="group" aria-label="Rotate">
               <div class="cell">
                 <button type="button" class="key" data-key="KeyS">S</button>
